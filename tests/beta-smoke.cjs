@@ -99,9 +99,9 @@
   assert.equal(get('D.customers[0].archived'), true);
   assert.equal(get('D.ledger.length'), 2);
   exec('ACT.rules()');
-  assert.match(node('#sheet .sheet-card').innerHTML, /Explore Finance Rules/);
+  assert.match(node('#sheet').innerHTML, /Explore Finance Rules/);
   exec('ACT.storage()');
-  assert.match(node('#sheet .sheet-card').innerHTML, /Device storage/);
+  assert.match(node('#sheet').innerHTML, /Device storage/);
   const sw = fs.readFileSync('beta/sw.js', 'utf8');
   assert.match(sw, /const VERSION = '1\.3\.0'/);
   assert.match(sw, /upgrade-v1\.3\.js/);
