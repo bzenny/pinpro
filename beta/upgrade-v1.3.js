@@ -462,8 +462,7 @@
   // Archived records stay accessible; history is never silently erased.
   state.showArchivedCustomers = false;
   state.showArchivedItems = false;
-  const baseIsLow = isLow;
-  isLow = i => !i.archived && baseIsLow(i);
+  // Archived items have a zero low-stock alert threshold, keeping active reorder lists clean.
   const baseCustRows = custRows;
   custRows = function () {
     const all = D.customers;
@@ -542,13 +541,17 @@
       return notice('Count stock to zero before archiving an item with transaction history.');
     if (!(await ask((history ? 'Archive item and keep its history: ' :
       'Delete unused item: ') + i.name + '?'))) return;
-    if (history) i.archived = true;
+    if (history) { i.savedLow = i.low; i.low = 0; i.archived = true; }
     else D.items = D.items.filter(x => x.id !== id);
     if (commit()) notice(history ? 'Item archived. History preserved.' : 'Item removed.');
   };
   ACT.unarchiveItem = id => {
     const i = getItem(id);
-    if (i) { i.archived = false; if (commit()) notice('Item restored to active stock.'); }
+    if (i) {
+      i.archived = false;
+      if (typeof i.savedLow === 'number') { i.low = i.savedLow; delete i.savedLow; }
+      if (commit()) notice('Item restored to active stock.');
+    }
   };
   const oldItemSheet = sheetItem;
   sheetItem = function (id) {
