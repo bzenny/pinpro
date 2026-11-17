@@ -134,7 +134,7 @@
           !finite(e.amount) || e.amount <= 0 || !dateOK(e.date)) throw new Error('Invalid customer ledger');
     }
     for (const c of obj.cash) {
-      if (!CATS[c.cat] || !finite(c.amount) || c.amount < 0 || !dateOK(c.date))
+      if (!Object.prototype.hasOwnProperty.call(CATS, c.cat) || !finite(c.amount) || c.amount < 0 || !dateOK(c.date))
         throw new Error('Invalid cash entry');
     }
     return true;
@@ -458,7 +458,7 @@
   FORM.cash = function (fd) {
     const amount = r2(num(fd.amount));
     if (amount <= 0) return notice(t('t_need_amount'));
-    if (!CATS[fd.cat]) return notice('Choose a valid cash category.');
+    if (!Object.prototype.hasOwnProperty.call(CATS, fd.cat)) return notice('Choose a valid cash category.');
     if (CATS[fd.cat] === 'out' && amount > cashOnHand())
       return notice('Not enough drawer cash. Record actual owner funding before this expense.');
     D.cash.push({ id: uid(), cat: fd.cat, amount, note: (fd.note || '').trim(),
@@ -469,6 +469,8 @@
     const name = (fd.name || '').trim();
     if (!name) return notice(t('t_need_name'));
     const cost = r2(num(fd.cost)), price = r2(num(fd.price));
+    if (cost < 0 || price < 0 || num(fd.stock) < 0 || num(fd.low) < 0)
+      return notice('Prices and stock quantities cannot be negative.');
     if (price < cost && !(await ask(t('a_price_below')))) return;
     const low = r2(num(fd.low)), packSize = Math.max(1, Math.round(num(fd.packSize)) || 1);
     if (id) {
@@ -616,6 +618,11 @@
     return oldDelCash(id);
   };
 
+  // Check already-stored records before the upgraded UI can render them.
+  if (D) {
+    try { validateFile(D); }
+    catch (_) { storageCorrupt = true; D = null; savedSnapshot = null; }
+  }
   // The main store data in 1.2 may have no adjustments. The field is optional for old backups.
   if (D && !Array.isArray(D.adjustments)) D.adjustments = [];
   render();
