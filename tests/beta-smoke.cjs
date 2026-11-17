@@ -87,17 +87,28 @@
     target: { files: [{ size: 50, text: async () => '{"items":[]}' }], value: '' }
   });
   assert.equal(get('JSON.stringify(D)'), original, 'malformed backup rejected');
+  const malicious = JSON.parse(original);
+  malicious.items[0].id = 'bad"><img src=x onerror=alert(1)>';
+  exec('ACT.restore()');
+  await handler.fn({
+    stopImmediatePropagation() {},
+    target: { files: [{ size: 500, text: async () => JSON.stringify(malicious) }], value: '' }
+  });
+  assert.equal(get('JSON.stringify(D)'), original, 'unsafe imported identifiers rejected');
   exec('ACT.verify()');
   await handler.fn({
     stopImmediatePropagation() {},
     target: { files: [{ size: original.length, text: async () => original }], value: '' }
   });
   assert.equal(get('D.store.lastBackup.length'), 10, 'verified backup marked');
+  assert.equal(get('D.store.lastBackupVerified'), true);
+  assert.doesNotMatch(get('viewHome()'), /Recovery copy needed/, 'current backup marked fresh');
   // Preserve a settled customer's history via archive.
   exec('ask = async () => true');
   await exec('ACT.delCust(D.customers[0].id)');
   assert.equal(get('D.customers[0].archived'), true);
   assert.equal(get('D.ledger.length'), 2);
+  assert.match(get('viewHome()'), /Recovery copy needed/, 'new transaction makes backup stale');
   exec('ACT.rules()');
   assert.match(node('#sheet').innerHTML, /Explore Finance Rules/);
   exec('ACT.storage()');
