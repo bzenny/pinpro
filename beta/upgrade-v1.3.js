@@ -37,13 +37,26 @@
   const storedRaw = (() => { try { return localStorage.getItem(KEY); } catch (_) { return null; } })();
   let storageCorrupt = !!storedRaw && !D;
   let savedSnapshot = D ? JSON.stringify(D) : null;
+  let lastStorageRaw = storedRaw;
   const baseSave = Store.save.bind(Store);
   const baseWipe = ACT.wipe;
   let pickerMode = 'restore';
 
   function persistOrRollback() {
+    try {
+      if (localStorage.getItem(KEY) !== lastStorageRaw) {
+        D = savedSnapshot ? JSON.parse(savedSnapshot) : null;
+        notice('This store changed in another tab. Reload the app to avoid overwriting newer transactions.');
+        return false;
+      }
+    } catch (_) {
+      D = savedSnapshot ? JSON.parse(savedSnapshot) : null;
+      notice('Device storage is unavailable. No changes were recorded.');
+      return false;
+    }
     if (baseSave(D)) {
       savedSnapshot = JSON.stringify(D);
+      lastStorageRaw = localStorage.getItem(KEY);
       return true;
     }
     D = savedSnapshot ? JSON.parse(savedSnapshot) : null;
@@ -79,7 +92,7 @@
     try {
       Store.clear();
       if (localStorage.getItem(KEY) !== null) throw new Error('Still present');
-      savedSnapshot = null; storageCorrupt = false; D = null;
+      savedSnapshot = null; lastStorageRaw = null; storageCorrupt = false; D = null;
       Object.assign(state, { tab: 'home', cust: null, q: '' });
       closeSheet(); render();
     } catch (_) { notice('Reset failed: device storage is unavailable.'); }
@@ -127,7 +140,7 @@
   }
 
   function comparable(d) {
-    const { lastBackup, ...store } = d.store || {};
+    const { lastBackup, lastBackupVerified, ...store } = d.store || {};
     return JSON.stringify({ store, items: d.items, customers: d.customers,
       ledger: d.ledger, cash: d.cash, adjustments: d.adjustments || [] });
   }
@@ -147,6 +160,7 @@
         if (comparable(obj) !== comparable(D))
           throw new Error('The saved file differs from current data. Make a new backup and verify it before more transactions.');
         D.store.lastBackup = today();
+        D.store.lastBackupVerified = true;
         if (commit()) notice('Backup verified. Keep the file in a safe location.');
       } else {
         if (D && !(await ask(t('a_restore')))) return;
@@ -207,7 +221,7 @@
   };
 
   function sheetStorage() {
-    const last = D && D.store.lastBackup ? esc(D.store.lastBackup) : say('notVerified');
+    const last = D && D.store.lastBackupVerified && D.store.lastBackup ? esc(D.store.lastBackup) : say('notVerified');
     openSheet('<h2>📁 ' + esc(say('storage')) + '</h2>' +
       '<p class="hint">' + esc(say('storageInfo')) + '</p>' +
       '<section class="card"><b>Working storage</b><p class="muted small">Browser: ' +
@@ -412,13 +426,37 @@
     if (commit()) notice('Stock count updated: ' + fmtQty(before) + ' → ' + fmtQty(n) + '.');
   };
 
-  const oldCash = FORM.cash;
   FORM.cash = function (fd) {
     const amount = r2(num(fd.amount));
     if (amount <= 0) return notice(t('t_need_amount'));
+    if (!CATS[fd.cat]) return notice('Choose a valid cash category.');
     if (CATS[fd.cat] === 'out' && amount > cashOnHand())
       return notice('Not enough drawer cash. Record actual owner funding before this expense.');
-    oldCash(fd);
+    D.cash.push({ id: uid(), cat: fd.cat, amount, note: (fd.note || '').trim(),
+      date: fd.date || today(), at: Date.now() });
+    if (commit()) notice(t('t_saved'));
+  };
+  FORM.item = async function (fd, id) {
+    const name = (fd.name || '').trim();
+    if (!name) return notice(t('t_need_name'));
+    const cost = r2(num(fd.cost)), price = r2(num(fd.price));
+    if (price < cost && !(await ask(t('a_price_below')))) return;
+    const low = r2(num(fd.low)), packSize = Math.max(1, Math.round(num(fd.packSize)) || 1);
+    if (id) {
+      const item = getItem(id);
+      if (!item) return notice('Item not found.');
+      Object.assign(item, { name, cost, price, low, packSize });
+    } else D.items.push({ id: uid(), name, cost, price, stock: r2(num(fd.stock)), low, packSize });
+    if (commit()) notice(t('t_saved'));
+  };
+  FORM.settings = function (fd) {
+    Object.assign(D.store, {
+      name: (fd.name || '').trim() || D.store.name,
+      openingCash: r2(num(fd.openingCash)),
+      capital: r2(num(fd.capital)),
+      budget: r2(num(fd.budget))
+    });
+    if (commit()) notice(t('t_saved'));
   };
 
   // Archived records stay accessible; history is never silently erased.
