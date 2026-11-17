@@ -116,7 +116,8 @@
       const ids = new Set();
       for (const x of obj[key]) {
         if (!x || typeof x !== 'object' || typeof x.id !== 'string' || !x.id ||
-            ids.has(x.id)) throw new Error('Invalid or duplicate ID in ' + key);
+            ids.has(x.id) || !/^[a-zA-Z0-9_-]{1,96}$/.test(x.id))
+          throw new Error('Invalid or duplicate ID in ' + key);
         ids.add(x.id);
       }
     }
@@ -140,9 +141,23 @@
   }
 
   function comparable(d) {
-    const { lastBackup, lastBackupVerified, ...store } = d.store || {};
+    const { lastBackup, lastBackupVerified, lastBackupFingerprint, ...store } = d.store || {};
     return JSON.stringify({ store, items: d.items, customers: d.customers,
       ledger: d.ledger, cash: d.cash, adjustments: d.adjustments || [] });
+  }
+
+  function fingerprint(data) {
+    // Fast non-cryptographic change detector for backup freshness (not a security checksum).
+    let h = 2166136261;
+    for (let i = 0; i < data.length; i++) {
+      h ^= data.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return (h >>> 0).toString(16) + ':' + data.length;
+  }
+  function backupIsCurrent() {
+    return !!(D && D.store.lastBackupVerified && D.store.lastBackupFingerprint &&
+      D.store.lastBackupFingerprint === fingerprint(comparable(D)));
   }
 
   async function handleFile(e) {
@@ -161,6 +176,7 @@
           throw new Error('The saved file differs from current data. Make a new backup and verify it before more transactions.');
         D.store.lastBackup = today();
         D.store.lastBackupVerified = true;
+        D.store.lastBackupFingerprint = fingerprint(comparable(D));
         if (commit()) notice('Backup verified. Keep the file in a safe location.');
       } else {
         if (D && !(await ask(t('a_restore')))) return;
@@ -227,7 +243,11 @@
       '<section class="card"><b>Working storage</b><p class="muted small">Browser: ' +
       esc(location.hostname + location.pathname) + '<br>Private data key: ' + esc(KEY) +
       '<br>Approximate stored size: ' + (Store.size() / 1024).toFixed(1) + ' KB</p></section>' +
-      '<p class="hint">' + esc(say('fileInfo')) + '</p><p><b>' +
+      '<p class="hint">' + esc(say('fileInfo')) + '</p>' +
+      '<p class="muted small">Android: Files → Downloads. iPhone/iPad: Files → Downloads (On My iPhone/iPad or iCloud Drive, depending on Safari settings). Computer: browser Downloads or a folder you select.</p>' +
+      '<p class="hint"><b>Current backup status:</b> ' +
+      (backupIsCurrent() ? 'Verified and up to date' : 'Missing or older than current records') +
+      '</p><p><b>' +
       esc(say('lastVerified')) + ': </b>' + last + '</p>' +
       '<button class="btn primary" data-act="backup">' + esc(say('download')) + '</button>' +
       '<button class="btn" data-act="verify">' + esc(say('verify')) + '</button>' +
@@ -235,6 +255,15 @@
       '<button class="btn ghost" data-act="shareBackup">' + esc(say('share')) + '</button>');
   }
   ACT.storage = sheetStorage;
+
+  const baseHome = viewHome;
+  viewHome = function () {
+    const html = baseHome();
+    if (backupIsCurrent()) return html;
+    return html + '<section class="card"><h3>📁 Recovery copy needed</h3>' +
+      '<p class="hint">Your latest store records are not in a verified backup. Save and verify a new file in Settings.</p>' +
+      '<button class="btn" data-act="storage">' + esc(say('storage')) + '</button></section>';
+  };
 
   const RULES = [
     {
