@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<!-- File: index.html  (Pin.Pro v1.2 — single-file, local-first, English / Cebuano / Tagalog) -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2563eb">
+<title>Pin.Pro</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Pin.Pro">
+<meta name="description" content="Stock, utang list and money for sari-sari stores — all on your phone, no internet needed.">
+<style>
+:root{--bg:#f4f5f2;--card:#fff;--ink:#1c1f1d;--muted:#6b716c;--line:#e3e6e1;--brand:#2563eb;--brand-soft:#e8effd;--good:#15803d;--warn:#b45309;--bad:#b91c1c;--c1:#2563eb;--c2:#f2a93b;--c3:#e8615a;--r:14px}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);padding-bottom:calc(76px + env(safe-area-inset-bottom));-webkit-tap-highlight-color:transparent}
+body.locked{overflow:hidden}
+#top{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 16px;padding-top:calc(12px + env(safe-area-inset-top));background:var(--brand);color:#fff}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;min-width:0}
+.brand span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mark{width:28px;height:28px;flex-shrink:0;color:#fff}
+.setup .hero-img{width:200px;height:200px;display:block;margin:0 auto -6px}
+.setup .mark{width:44px;height:44px;color:var(--ink);vertical-align:middle;margin-right:6px}
+.setup h1{display:flex;align-items:center;justify-content:center}
+#app{max-width:560px;margin:0 auto;padding:12px}
+.card{background:var(--card);border-radius:var(--r);padding:14px;margin-bottom:12px;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.hero .big{font-size:34px;font-weight:800;letter-spacing:-.5px;font-variant-numeric:tabular-nums;margin:2px 0 8px}
+.label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-weight:700}
+.muted{color:var(--muted)} .small{font-size:13px}
+h2{font-size:20px;margin:0 0 10px} h3{font-size:16px;margin:16px 4px 8px} .card h3{margin:0 0 8px}
+.row-between{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.mini{padding:10px 12px}
+.mini b{display:block;font-size:20px;font-variant-numeric:tabular-nums;margin-top:4px}
+.totals .mini b{font-size:16px}
+.btn{display:block;width:100%;min-height:48px;padding:10px 12px;border:0;border-radius:12px;background:var(--brand-soft);color:var(--brand);font:inherit;font-weight:700;cursor:pointer;text-align:center;margin-top:8px}
+.grid2>.btn,.grid3>.btn,.grid4>.btn{margin-top:0}
+.btn.primary{background:var(--brand);color:#fff}
+.btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink)}
+.btn.danger{color:var(--bad)}
+.actions .btn{font-size:12px;min-height:66px;padding:6px 2px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.actions .btn span{font-size:22px}
+.status{margin-top:10px;padding:10px 12px;border-radius:10px;font-weight:600}
+.status.good{background:#e8f5ec;color:var(--good)} .status.warn{background:#fdf3e4;color:var(--warn)} .status.bad{background:#fdecec;color:var(--bad)}
+.goodtxt{color:var(--good)} .badtxt{color:var(--bad)} .warntxt{color:var(--warn)}
+.hint{margin:8px 0 0;font-size:14px;color:var(--muted)}
+.bar3{display:flex;height:10px;border-radius:6px;overflow:hidden;background:var(--line)} .bar3 i{display:block;height:100%}
+.c1{background:var(--c1)} .c2{background:var(--c2)} .c3{background:var(--c3)}
+.legend{list-style:none;padding:0;margin:10px 0 0} .legend li{display:flex;align-items:center;gap:8px;padding:4px 0}
+.legend i{width:10px;height:10px;border-radius:3px;display:inline-block;flex-shrink:0} .legend b{margin-left:auto;font-variant-numeric:tabular-nums}
+.toolbar{display:flex;gap:8px;margin-bottom:10px;align-items:center}
+input,select,textarea{font:inherit;width:100%;min-height:48px;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--brand);border-color:transparent}
+.seg{display:flex;background:#e9ebe7;border-radius:12px;padding:3px;flex-shrink:0}
+.seg button{border:0;background:transparent;padding:10px 12px;border-radius:10px;font:inherit;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap}
+.seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.seg.wide{margin-bottom:12px} .seg.wide button{flex:1}
+.row{display:flex;width:100%;align-items:center;justify-content:space-between;gap:10px;background:var(--card);border:0;border-radius:12px;padding:12px 14px;margin-bottom:8px;text-align:left;font:inherit;color:inherit;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.row>div:first-child{min-width:0}
+.name{font-weight:700} .sub{font-size:13px;color:var(--muted)}
+.qty{text-align:right;font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.1;flex-shrink:0}
+.qty small{display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase}
+.qty.low{color:var(--bad)}
+.amt{font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+.amt small{display:block;font-weight:600;font-size:11px;color:var(--muted)}
+.badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 6px;border-radius:6px;background:#fdecec;color:var(--bad);margin-left:6px;vertical-align:middle}
+.fab{position:fixed;right:16px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:4;border:0;border-radius:999px;background:var(--brand);color:#fff;font:inherit;font-weight:700;padding:14px 20px;box-shadow:0 4px 12px rgba(37,99,235,.35);cursor:pointer}
+.pad-fab{height:70px}
+#tabs{position:fixed;left:0;right:0;bottom:0;z-index:5;display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+#tabs[hidden]{display:none}
+#tabs button{border:0;background:none;font:inherit;font-size:12px;font-weight:700;color:var(--muted);padding:8px 0 10px;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:60px;cursor:pointer}
+#tabs button span{font-size:22px} #tabs button.on{color:var(--brand)}
+.sheet{position:fixed;inset:0;z-index:20;display:none} .sheet.show{display:block}
+.sheet-bg{position:absolute;inset:0;background:rgba(0,0,0,.4)}
+.sheet-card{position:absolute;left:0;right:0;bottom:0;max-height:90vh;overflow:auto;background:#fff;border-radius:18px 18px 0 0;padding:20px 16px calc(20px + env(safe-area-inset-bottom));max-width:560px;margin:0 auto;animation:up .18s ease-out}
+@keyframes up{from{transform:translateY(30px);opacity:.6}to{transform:none;opacity:1}}
+.sheet-card h2{padding-right:40px}
+.close{position:absolute;top:8px;right:8px}
+.x{border:0;background:none;font-size:22px;color:var(--muted);width:40px;height:40px;cursor:pointer;flex-shrink:0}
+.f{display:block;margin-bottom:12px} .f span{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:4px}
+.check{display:flex;align-items:center;gap:10px;margin:4px 0 14px;font-weight:600}
+.check input{width:22px;height:22px;min-height:0;flex-shrink:0}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px;text-align:center}
+.stats b{display:block;font-size:17px} .stats span{font-size:11px;color:var(--muted)}
+.ledger,.plain{list-style:none;padding:0;margin:0}
+.ledger li{display:flex;align-items:center;gap:8px;background:#fff;border-radius:12px;padding:10px 4px 10px 14px;margin-bottom:6px}
+.ledger li>div:first-child{flex:1;min-width:0}
+.ledger li.muted{padding:14px}
+.amt.utang{color:var(--bad)} .amt.bayad,.amt.in{color:var(--good)}
+.plain li{padding:4px 0}
+.back{border:0;background:none;font:inherit;font-weight:700;color:var(--brand);padding:6px 0 10px;cursor:pointer}
+.catbar{margin:8px 0} .catbar .row-between{font-size:14px}
+.track{height:8px;background:var(--line);border-radius:5px;overflow:hidden;margin-top:4px} .fill{height:100%;background:var(--c1)}
+.fill.out{background:var(--c2)} .fill.kinuha,.fill.over{background:var(--bad)}
+.setup{text-align:center;padding:12px 4px 24px} .setup h1{margin:4px 0}
+.setup form{text-align:left;margin-top:18px}
+.empty{text-align:center;color:var(--muted);padding:28px 10px}
+#toast{position:fixed;left:50%;bottom:calc(150px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:#1c1f1d;color:#fff;padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:.2s;z-index:30;max-width:90vw;text-align:center}
+#toast.show{opacity:1;transform:translateX(-50%)}
+textarea.copy{min-height:180px}
+.icon-btn{border:0;background:rgba(255,255,255,.15);color:inherit;width:40px;height:40px;border-radius:10px;font-size:18px;cursor:pointer;flex-shrink:0}
+.card .icon-btn{background:var(--brand-soft)}
+.ask{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:20px}
+.ask-card{background:#fff;border-radius:16px;padding:18px;max-width:380px;width:100%}
+.ask-card p{margin:0 0 14px;font-size:16px;line-height:1.45}
+a{color:var(--brand)}
+.langs{display:flex;gap:6px;justify-content:center;margin:0 0 12px;flex-wrap:wrap}
+.langs button{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:8px 14px;font:inherit;font-weight:600;color:var(--muted);cursor:pointer;min-height:40px}
+.langs button.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.sheet-card .langs{justify-content:flex-start;margin:6px 0 14px}
+.contact{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:4px}
+.contact a{word-break:break-all}
+a.btn{text-decoration:none;box-sizing:border-box;display:flex;align-items:center;justify-content:center}
+.beta{flex-shrink:0;font-size:10px;letter-spacing:.06em;background:#f2a93b;color:#3b2500;padding:3px 6px;border-radius:6px}
+</style>
+</head>
+<body>
+<header id="top"></header>
+<main id="app"></main>
+<nav id="tabs" hidden></nav>
+<div id="sheet" class="sheet"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<input type="file" id="file" accept="application/json,.json" hidden>
+
+<script>
+'use strict';
+/* =====================================================================
+   Pin.Pro v1.1 — first principles
+   - All data lives on the phone (one JSON object).
+   - Balances, totals and stock value are COMPUTED from records, never stored.
+   - Storage is behind the tiny `Store` adapter. When porting to Android/iOS
+     (e.g. Capacitor), swap only its methods.
+   - Every on-screen word is in the STR table below: [English, Cebuano, Tagalog].
+   ===================================================================== */
+
+// ---------- Language ----------
+const LANGS = [['en', 'English'], ['ceb', 'Cebuano'], ['tl', 'Tagalog']];
+const LI = { en: 0, ceb: 1, tl: 2 };
+const STR = {
+  // tabs & general
+  tab_home:   ['Overview', 'Sumaryo', 'Buod'],
+  tab_stock:  ['Stock', 'Baligya', 'Paninda'],
+  tab_utang:  ['Utang', 'Utang', 'Listahan'],
+  tab_money:  ['Money', 'Kwarta', 'Pera'],
+  language:   ['Language', 'Pinulongan', 'Wika'],
+  save:       ['Save', 'I-save', 'I-save'],
+  close:      ['Close', 'Sirado', 'Isara'],
+  del:        ['Delete', 'Papasa', 'Burahin'],
+  copy:       ['Copy', 'Kopyaha', 'Kopyahin'],
+  ask_yes:    ['Yes, continue', 'Oo, padayon', 'Oo, ituloy'],
+  ask_no:     ['No', 'Dili', 'Hindi'],
+  pcs:        ['pcs', 'pcs', 'pcs'],
+  pick:       ['— choose —', '— pili —', '— pumili —'],
+  none_opt:   ['— none —', '— wala —', '— wala —'],
+  no_match:   ['No match.', 'Walay nakit-an.', 'Walang tugma.'],
+  more_n:     ['+{n} more', '+{n} pa', '+{n} pa'],
+
+  // setup
+  setup_tagline: ['Stock, utang list, and money — all on your phone.<br>No internet needed.',
+                  'Baligya, lista sa utang, ug kwarta — naa ra sa imong cellphone.<br>Dili kinahanglan og internet.',
+                  'Paninda, listahan ng utang, at pera — nasa phone mo lang.<br>Hindi kailangan ng internet.'],
+  setup_name:    ['Store name', 'Ngalan sa tindahan', 'Pangalan ng tindahan'],
+  setup_name_ph: ['e.g. Aling Rosa Sari-Sari', 'pananglitan: Manang Rosa Sari-Sari', 'hal. Aling Rosa Sari-Sari'],
+  setup_cash:    ['How much cash is in the drawer now? (₱)', 'Pila ang kwarta sa kaha karon? (₱)', 'Magkano ang pera sa kaha ngayon? (₱)'],
+  start:         ['Start', 'Sugdi', 'Simulan'],
+  try_sample:    ['Try it first with a sample store', 'Sulayi una gamit ang sample nga tindahan', 'Subukan muna gamit ang sample na tindahan'],
+  have_backup:   ['I have a backup', 'Naa koy backup', 'May backup ako'],
+
+  // overview
+  cap_now:       ['Capital now', 'Puhunan karon', 'Puhunan ngayon'],
+  watch:         ['target: {v}', 'gibantayan: {v}', 'bantay: {v}'],
+  cash_drawer:   ['Cash in drawer', 'Kwarta sa kaha', 'Pera sa kaha'],
+  stock_at_cost: ['Stock (at cost)', 'Baligya (sa puhunan)', 'Paninda (sa puhunan)'],
+  utang_owed:    ['Owed by customers', 'Utang sa mga suki', 'Utang ng suki'],
+  set_cap_hint:  ['Set your capital so you can watch whether it stays whole.', 'I-set ang imong puhunan aron mabantayan kung kompleto pa kini.', 'Itakda ang puhunan mo para mabantayan kung buo pa ito.'],
+  set_cap_btn:   ['Set {v} as my capital', 'I-set ang {v} isip akong puhunan', 'Itakda: {v} ang puhunan ko'],
+  cap_ok:        ['✅ Your capital is intact', '✅ Kompleto ang puhunan', '✅ Buo ang puhunan'],
+  cap_grew:      [' — grew by {v}', ' — mitubo og {v}', ' — lumago ng {v}'],
+  cap_short:     ['⚠️ Your capital is short by {v}.', '⚠️ Kulang og {v} ang puhunan.', '⚠️ Kulang ng {v} sa puhunan.'],
+  hint_utang:    ['{p}% of your capital is tied up in customer utang.', '{p}% sa imong puhunan naa sa utang sa mga suki.', '{p}% ng puhunan mo ay nasa utang ng suki.'],
+  hint_neg_cash: ['Cash in drawer is negative — maybe some sales weren’t recorded, or the starting cash is wrong (⚙️).',
+                  'Negatibo ang kwarta sa kaha — basin naay halin nga wala nalista, o sayop ang sinugdanang kwarta (⚙️).',
+                  'Negatibo ang pera sa kaha — baka may benta na hindi nailista, o mali ang panimulang pera (⚙️).'],
+  in_today:      ['Money in today', 'Misulod karon', 'Pumasok ngayon'],
+  out_today:     ['Money out today', 'Migawas karon', 'Lumabas ngayon'],
+  q_sale:        ['Sale', 'Halin', 'Benta'],
+  q_expense:     ['Expense', 'Gasto', 'Gastos'],
+  q_utang:       ['Utang', 'Utang', 'Utang'],
+  q_payment:     ['Payment', 'Bayad', 'Bayad'],
+  low_badge:     ['{n} low', '{n} hapit hurot', '{n} paubos'],
+  no_items:      ['No stock items yet.', 'Wala pay baligya.', 'Wala pang paninda.'],
+  add_item_btn:  ['+ Add an item', '+ Pagdugang og baligya', '+ Magdagdag ng paninda'],
+  n_left:        ['only {n} left', '{n} na lang', '{n} na lang'],
+  see_buy:       ['See shopping list', 'Tan-awa ang paliton', 'Tingnan ang bibilhin'],
+  stock_ok:      ['✅ All items are well stocked.', '✅ Igo pa ang tanang baligya.', '✅ Sapat pa ang lahat ng paninda.'],
+  top_utang:     ['Biggest utang', 'Pinakadako nga utang', 'Pinakamalaking utang'],
+  all_total:     ['{v} total', '{v} tanan', '{v} lahat'],
+  days_pay:      ['{n} days since last payment', '{n} ka adlaw sukad sa katapusang bayad', '{n} araw mula huling bayad'],
+  days_first:    ['{n} days since first utang', '{n} ka adlaw sukad sa unang utang', '{n} araw mula unang utang'],
+  no_one_owes:   ['Nobody owes you. 🎉', 'Walay nakautang. 🎉', 'Walang may utang. 🎉'],
+  backup_title:  ['💾 Back up', '💾 Pag-backup', '💾 Mag-backup'],
+  backup_why:    ['Your data is only on this phone. If the phone is lost or broken, the data is gone. Back up weekly and send it to yourself.',
+                  'Naa ra sa cellphone ang imong data. Kung mawala o maguba ang cellphone, mawala sab kini. Pag-backup kada semana ug ipadala sa imong kaugalingon.',
+                  'Nasa phone lang ang data mo. Kapag nawala o nasira ang phone, mawawala ito. Mag-backup lingguhan at ipadala sa sarili.'],
+  backup_now:    ['Back up now', 'I-backup karon', 'I-backup ngayon'],
+
+  // stock
+  to_buy:        ['🛒 To buy ({n})', '🛒 Paliton ({n})', '🛒 Bibilhin ({n})'],
+  only_left:     ['({n} left)', '({n} na lang)', '({n} na lang)'],
+  send_list:     ['📤 Send the list', '📤 Ipadala ang lista', '📤 Ipadala ang listahan'],
+  search_items:  ['Search items...', 'Pangitaa ang baligya...', 'Hanapin ang paninda...'],
+  f_all:         ['All', 'Tanan', 'Lahat'],
+  f_low:         ['Low', 'Hapit hurot', 'Paubos'],
+  empty_items:   ['No items yet.<br>Tap <b>+ Item</b> to start.', 'Wala pay baligya.<br>Pindota ang <b>+ Baligya</b> aron magsugod.', 'Wala pang paninda.<br>Pindutin ang <b>+ Paninda</b> para magsimula.'],
+  price_profit:  ['{p} · profit {g}', '{p} · ganansya {g}', '{p} · tubo {g}'],
+  lbl_low:       ['low', 'hapit hurot', 'paubos'],
+  lbl_left:      ['left', 'nabilin', 'natira'],
+  fab_item:      ['+ Item', '+ Baligya', '+ Paninda'],
+
+  // utang list
+  total_utang:   ['Total owed by customers', 'Kinatibuk-ang utang sa mga suki', 'Kabuuang utang ng mga suki'],
+  n_owe:         ['{n} customers owe', '{n} ka suki ang naay utang', '{n} suki ang may utang'],
+  search_cust:   ['Search customers...', 'Pangitaa ang suki...', 'Hanapin ang suki...'],
+  empty_cust:    ['No customers yet.<br>Tap <b>+ Customer</b>.', 'Wala pay suki sa lista.<br>Pindota ang <b>+ Suki</b>.', 'Wala pang suki sa listahan.<br>Pindutin ang <b>+ Suki</b>.'],
+  overpaid:      ['Overpaid by {v}', 'Sobra ang bayad og {v}', 'May sobrang bayad na {v}'],
+  paid_up:       ['Paid up ✓', 'Bayad na ✓', 'Bayad na ✓'],
+  over_limit:    ['over limit', 'lapas sa limit', 'lagpas limit'],
+  fab_cust:      ['+ Customer', '+ Suki', '+ Suki'],
+  back_list:     ['‹ Utang list', '‹ Lista sa utang', '‹ Listahan'],
+  balance:       ['balance', 'balanse', 'balanse'],
+  no_utang:      ['no utang', 'walay utang', 'walang utang'],
+  limit_v:       [' · limit {v}', ' · limit {v}', ' · limit {v}'],
+  over_limit_by: ['Over the limit by {v}', 'Lapas na sa limit og {v}', 'Lagpas na sa limit ng {v}'],
+  add_utang:     ['+ Utang', '+ Utang', '+ Utang'],
+  add_pay:       ['+ Payment', '+ Bayad', '+ Bayad'],
+  send:          ['📤 Send', '📤 Ipadala', '📤 Ipadala'],
+  history:       ['History', 'Kasaysayan', 'Kasaysayan'],
+  e_utang:       ['📝 Utang', '📝 Utang', '📝 Utang'],
+  e_bayad:       ['✅ Payment', '✅ Bayad', '✅ Bayad'],
+  bal_v:         ['bal {v}', 'bal {v}', 'bal {v}'],
+  nothing_yet:   ['Nothing recorded yet.', 'Wala pay nalista.', 'Wala pang nakalista.'],
+
+  // money
+  p_today:       ['Today', 'Karon', 'Ngayon'],
+  p_week:        ['7 days', '7 ka adlaw', '7 araw'],
+  p_month:       ['Month', 'Bulan', 'Buwan'],
+  lbl_today:     ['Today', 'Karong adlawa', 'Ngayong araw'],
+  lbl_week:      ['Last 7 days', 'Niaging 7 ka adlaw', 'Huling 7 araw'],
+  lbl_month:     ['This month', 'Karong bulana', 'Ngayong buwan'],
+  m_in:          ['In', 'Misulod', 'Pumasok'],
+  m_out:         ['Out', 'Migawas', 'Lumabas'],
+  m_left:        ['Left', 'Nabilin', 'Natira'],
+  cash_now:      ['Cash in drawer now', 'Kwarta sa kaha karon', 'Pera sa kaha ngayon'],
+  budget_title:  ['Expense budget', 'Budget sa gasto', 'Budget sa gastos'],
+  b_over:        ['⚠️ Over budget by {v} this month.', '⚠️ Lapas na og {v} sa budget karong bulana.', '⚠️ Lagpas na ng {v} sa budget ngayong buwan.'],
+  b_fast:        ['⚠️ Spending fast — should only be around {v} by today.', '⚠️ Paspas ang gasto — mga {v} pa lang unta karong adlawa.', '⚠️ Mabilis ang gastos — dapat nasa {v} pa lang sa araw na ito.'],
+  b_ok:          ['✅ Within budget. Left: {v}.', '✅ Sulod pa sa budget. Nabilin: {v}.', '✅ Pasok sa budget. Natitira: {v}.'],
+  b_note:        ['(Not counting stock purchases and money taken home.)', '(Wala giapil ang pagpalit og baligya ug ang gikuha para sa balay.)', '(Hindi kasama ang pamili ng paninda at kinuha para sa bahay.)'],
+  where:         ['Where it came from / went', 'Asa gikan / asa napadulong', 'Saan galing / saan napunta'],
+  kinuha_hint:   ['💡 <b>Taken home</b> reduces your capital. Check the Overview to see if it’s still whole.',
+                  '💡 Ang <b>gikuha para sa balay</b> mobawas sa puhunan. Tan-awa sa Sumaryo kung kompleto pa.',
+                  '💡 Ang <b>kinuha para sa bahay</b> ay bawas sa puhunan. Tingnan sa Buod kung buo pa ito.'],
+  btn_in:        ['+ Money in', '+ Misulod', '+ Pumasok'],
+  btn_out:       ['− Money out', '− Migawas', '− Lumabas'],
+  records:       ['Records · {p}', 'Mga lista · {p}', 'Mga tala · {p}'],
+  no_records:    ['No records yet.', 'Wala pay lista.', 'Wala pang tala.'],
+
+  // money categories
+  cat_benta:     ['Sales', 'Halin', 'Benta'],
+  cat_bayad:     ['Utang payment', 'Bayad sa utang', 'Bayad sa utang'],
+  cat_dagdag:    ['Added capital', 'Dugang puhunan', 'Dagdag puhunan'],
+  cat_paninda:   ['Stock purchase', 'Pagpalit og baligya', 'Pamili ng paninda'],
+  cat_bills:     ['Electricity / Water', 'Kuryente / Tubig', 'Kuryente / Tubig'],
+  cat_upa:       ['Rent', 'Abang', 'Upa'],
+  cat_pamasahe:  ['Fare / Delivery', 'Pliti / Delivery', 'Pamasahe / Delivery'],
+  cat_gastos:    ['Other expenses', 'Uban pang gasto', 'Iba pang gastos'],
+  cat_kinuha:    ['Taken home', 'Gikuha para sa balay', 'Kinuha para sa bahay'],
+
+  // item sheets
+  st_left:       ['left', 'nabilin', 'natira'],
+  st_cost:       ['cost/pc', 'puhunan/pc', 'puhunan/pc'],
+  st_price:      ['price/pc', 'presyo/pc', 'benta/pc'],
+  st_profit:     ['profit', 'ganansya', 'tubo'],
+  a_sold:        ['🛒 Sold', '🛒 Nabaligya', '🛒 Nabenta'],
+  a_restock:     ['📦 Restock', '📦 Restock', '📦 Restock'],
+  a_count:       ['🔢 Count', '🔢 Ihapon', '🔢 Bilangin'],
+  a_edit:        ['✏️ Edit', '✏️ Usba', '✏️ I-edit'],
+  item_help:     ['Sold = less stock + more cash. Restock = more stock. Count = correct the number.',
+                  'Nabaligya = kuhaan ang baligya + dugangan ang kaha. Restock = dugangan ang baligya. Ihapon = tul-ira ang ihap.',
+                  'Nabenta = bawas sa paninda + dagdag sa kaha. Restock = dagdag sa paninda. Bilangin = itama ang bilang.'],
+  edit_item:     ['Edit item', 'Usba ang baligya', 'I-edit ang paninda'],
+  new_item:      ['New item', 'Bag-ong baligya', 'Bagong paninda'],
+  f_name:        ['Name', 'Ngalan', 'Pangalan'],
+  f_item_ph:     ['e.g. 3-in-1 coffee', 'pananglitan: Kape 3-in-1', 'hal. Kape 3-in-1'],
+  f_cost:        ['Cost per piece (₱)', 'Puhunan kada piraso (₱)', 'Puhunan bawat piraso (₱)'],
+  f_price:       ['Selling price per piece (₱)', 'Presyo kada piraso (₱)', 'Benta bawat piraso (₱)'],
+  f_stock_now:   ['How many now', 'Pila karon', 'Ilan ngayon'],
+  f_low:         ['Remind me when ≤', 'Pahinumdumi kung ≤', 'Paalalahanan kapag ≤'],
+  f_pack:        ['Pieces per pack/box you buy', 'Pila ka piraso kada pack/kahon nga imong paliton', 'Ilang piraso bawat pack/kahon na binibili mo'],
+  del_item_btn:  ['Delete item', 'Papasa ang baligya', 'Burahin ang paninda'],
+  sold_title:    ['Sold: {n}', 'Nabaligya: {n}', 'Nabenta: {n}'],
+  f_qty:         ['How many', 'Pila', 'Ilan'],
+  f_price_pc:    ['Price per piece (₱)', 'Presyo kada piraso (₱)', 'Presyo bawat piraso (₱)'],
+  sold_help:     ['Adds to the cash drawer and subtracts from stock.', 'Idugang sa kaha ug ibawas sa baligya.', 'Idadagdag sa kaha at ibabawas sa paninda.'],
+  restock_title: ['Restock: {n}', 'Restock: {n}', 'Restock: {n}'],
+  f_packs:       ['How many packs/boxes', 'Pila ka pack/kahon', 'Ilang pack/kahon'],
+  f_pcs:         ['Pieces per pack', 'Piraso kada pack', 'Piraso bawat pack'],
+  f_packcost:    ['Price per pack (₱)', 'Presyo kada pack (₱)', 'Presyo bawat pack (₱)'],
+  from_cash:     ['Paid from the cash drawer', 'Gikuha ang ibayad sa kaha', 'Kinuha ang pambayad sa kaha'],
+  restock_pv:    ['+{q} pieces · {pc} per piece · {tot} total', '+{q} ka piraso · {pc} kada piraso · {tot} tanan', '+{q} piraso · {pc} bawat piraso · {tot} kabuuan'],
+  count_title:   ['Count: {n}', 'Ihapon: {n}', 'Bilangin: {n}'],
+  f_count:       ['How many are actually left? (recorded: {n})', 'Pila gyud ang nabilin? (nalista: {n})', 'Ilan talaga ang natira? (nakalista: {n})'],
+  count_help:    ['Use this if you don’t record every sale — just count now and then.', 'Gamita kini kung dili nimo ilista ang matag halin — ihapa lang matag karon ug unya.', 'Gamitin ito kung hindi mo nililista bawat benta — bilangin lang paminsan-minsan.'],
+
+  // customer & utang sheets
+  edit_cust:     ['Edit customer', 'Usba ang suki', 'I-edit ang suki'],
+  new_cust:      ['New customer', 'Bag-ong suki', 'Bagong suki'],
+  f_cname:       ['Name or nickname', 'Ngalan o angga', 'Pangalan o palayaw'],
+  f_cname_ph:    ['e.g. Aling Nena', 'pananglitan: Manang Nena', 'hal. Aling Nena'],
+  f_phone:       ['Phone number (optional)', 'Numero (opsyonal)', 'Numero (opsyonal)'],
+  f_email:       ['Email (optional)', 'Email (opsyonal)', 'Email (opsyonal)'],
+  email_bal:     ['✉️ Email balance', '✉️ I-email ang balanse', '✉️ I-email ang balanse'],
+  email_subj:    ['Your balance at {s}', 'Imong balanse sa {s}', 'Balanse mo sa {s}'],
+  t_bad_email:   ['That email doesn’t look right', 'Murag sayop ang email', 'Mukhang mali ang email'],
+  f_limit:       ['Max utang allowed? (₱, optional)', 'Hangtod pila ra ang pwede iutang? (₱, opsyonal)', 'Hanggang magkano lang ang pwedeng utang? (₱, opsyonal)'],
+  del_cust_btn:  ['Delete customer', 'Papasa ang suki', 'Burahin ang suki'],
+  f_cust:        ['Customer', 'Suki', 'Suki'],
+  f_newcust:     ['or new customer (name)', 'o bag-ong suki (ngalan)', 'o bagong suki (pangalan)'],
+  new_utang:     ['📝 New utang', '📝 Bag-ong utang', '📝 Bagong utang'],
+  bal_inline:    ['balance {v}', 'balanse {v}', 'balanse {v}'],
+  f_item_opt:    ['Item (optional)', 'Baligya (opsyonal)', 'Paninda (opsyonal)'],
+  f_amount:      ['Amount (₱)', 'Kantidad (₱)', 'Halaga (₱)'],
+  f_note:        ['Note (optional)', 'Nota (opsyonal)', 'Tala (opsyonal)'],
+  f_note_ph:     ['e.g. 2 coffee, 1 sardines', 'pananglitan: 2 kape, 1 sardinas', 'hal. 2 kape, 1 sardinas'],
+  record_btn:    ['Record', 'Ilista', 'I-lista'],
+  pay_title:     ['✅ Utang payment', '✅ Bayad sa utang', '✅ Bayad sa utang'],
+  no_owing:      ['No customers owe anything right now. 🎉', 'Walay suki nga naay utang karon. 🎉', 'Walang suki na may utang ngayon. 🎉'],
+  full_bal:      ['Full balance: {v}', 'Tibuok balanse: {v}', 'Buong balanse: {v}'],
+  to_cash:       ['Put in the cash drawer', 'Ibutang sa kaha', 'Ilagay sa kaha'],
+
+  // money sheet
+  cash_in_title: ['⬆️ Money in', '⬆️ Misulod nga kwarta', '⬆️ Pumasok na pera'],
+  cash_out_title:['⬇️ Money out', '⬇️ Migawas nga kwarta', '⬇️ Lumabas na pera'],
+  f_type:        ['Type', 'Klase', 'Uri'],
+  f_date:        ['Date', 'Petsa', 'Petsa'],
+  in_tip:        ['💡 If you don’t record every sale, enter the day’s total sales here, then count your stock now and then.',
+                  '💡 Kung dili nimo ilista ang matag halin, ibutang dinhi ang tibuok halin sa adlaw, unya ihapa ang baligya matag karon ug unya.',
+                  '💡 Kung hindi mo nililista bawat benta, ilagay dito ang kabuuang benta ng araw, tapos bilangin ang paninda paminsan-minsan.'],
+  out_tip:       ['💡 For new stock, better to use <b>Restock</b> in Stock so the count goes up too.',
+                  '💡 Para sa bag-ong baligya, mas maayo gamiton ang <b>Restock</b> sa Baligya aron madugangan sab ang ihap.',
+                  '💡 Para sa bagong paninda, mas mabuting gamitin ang <b>Restock</b> sa Paninda para madagdag din ang bilang.'],
+
+  // settings
+  s_open:        ['Cash in drawer when you started (₱)', 'Kwarta sa kaha sa pagsugod (₱)', 'Pera sa kaha noong nagsimula (₱)'],
+  s_cap:         ['Capital to watch (₱)', 'Puhunan nga bantayan (₱)', 'Puhunan na babantayan (₱)'],
+  s_budget:      ['Monthly expense budget (₱, optional)', 'Budget sa gasto kada bulan (₱, opsyonal)', 'Budget sa gastos bawat buwan (₱, opsyonal)'],
+  backup_info:   ['Your data is only on this phone. Back up weekly and send it to yourself (Messenger, Drive, or email).',
+                  'Naa ra sa cellphone ang imong data. Pag-backup kada semana ug ipadala sa imong kaugalingon (Messenger, Drive, o email).',
+                  'Nasa phone lang ang data mo. Mag-backup lingguhan at ipadala sa sarili (Messenger, Drive, o email).'],
+  last_backup:   [' Last backup: <b>{d}</b>.', ' Katapusang backup: <b>{d}</b>.', ' Huling backup: <b>{d}</b>.'],
+  no_backup:     [' No backup yet.', ' Wala pay backup.', ' Wala pang backup.'],
+  do_backup:     ['⬇️ Back up', '⬇️ I-backup', '⬇️ I-backup'],
+  do_restore:    ['⬆️ Restore', '⬆️ I-restore', '⬆️ I-restore'],
+  other:         ['Other', 'Uban pa', 'Iba pa'],
+  wipe_btn:      ['Delete all data', 'Papasa ang tanang data', 'Burahin lahat ng data'],
+  kb_used:       ['Pin.Pro v{v} · {k} KB used', 'Pin.Pro v{v} · {k} KB ang gamit', 'Pin.Pro v{v} · {k} KB ang gamit'],
+  beta_note:     ['🧪 Test version. Your data here is separate from the official app.', '🧪 Test nga bersyon. Lahi ang imong data dinhi sa opisyal nga app.', '🧪 Test na bersyon. Hiwalay ang data mo dito sa opisyal na app.'],
+
+  // messages
+  t_cant_save:   ['Couldn’t save! Storage may be full. Back up now.', 'Dili ma-save! Basin puno na ang storage. Pag-backup karon.', 'Hindi ma-save! Baka puno ang storage. Mag-backup.'],
+  t_ready:       ['Ready! Add your items.', 'Andam na! Pagdugang og baligya.', 'Handa na! Magdagdag ng paninda.'],
+  t_need_name:   ['Enter the name', 'Ibutang ang ngalan', 'Ilagay ang pangalan'],
+  a_price_below: ['Selling price is lower than cost. Continue anyway?', 'Mas ubos ang presyo kaysa puhunan. Padayon gihapon?', 'Mas mababa ang benta kaysa puhunan. Ituloy pa rin?'],
+  t_saved:       ['Saved', 'Na-save', 'Na-save'],
+  t_need_qty:    ['Enter how many', 'Ibutang kung pila', 'Ilagay kung ilan'],
+  a_qty_over:    ['Only {n} recorded. Continue anyway?', '{n} ra ang nalista. Padayon gihapon?', '{n} lang ang nakalista. Ituloy pa rin?'],
+  t_plus_cash:   ['+{v} to cash drawer', '+{v} sa kaha', '+{v} sa kaha'],
+  t_need_packs:  ['Enter how many packs', 'Ibutang kung pila ka pack', 'Ilagay kung ilang pack'],
+  c_ok:          ['Count is correct ✓', 'Sakto ang ihap ✓', 'Tama ang bilang ✓'],
+  c_short:       ['{n} fewer than recorded', 'Kulang og {n} sa nalista', 'Kulang ng {n} sa nakalista'],
+  c_over:        ['{n} more than recorded', 'Sobra og {n} sa nalista', 'Sobra ng {n} sa nakalista'],
+  t_need_amount: ['Enter the amount', 'Ibutang ang kantidad', 'Ilagay ang halaga'],
+  t_need_cust:   ['Choose or enter a customer', 'Pagpili o pagbutang og suki', 'Pumili o maglagay ng suki'],
+  a_over_limit:  ['{c} will go over the {l} limit (to {b}). Continue?', 'Molapas si {c} sa limit nga {l} (mahimong {b}). Padayon?', 'Lalagpas si {c} sa limit na {l} (magiging {b}). Ituloy?'],
+  t_recorded:    ['Recorded: {c} {v}', 'Nalista: {c} {v}', 'Nailista: {c} {v}'],
+  t_pick_cust:   ['Choose a customer', 'Pagpili og suki', 'Pumili ng suki'],
+  a_overpay:     ['This is more than the balance ({v}). Record it as an overpayment?', 'Mas dako kini sa balanse ({v}). Ilista isip sobra nga bayad?', 'Mas malaki ito sa balanse ({v}). Itala bilang sobrang bayad?'],
+  t_paid_full:   ['🎉 {c} is fully paid!', '🎉 Bayad na si {c}!', '🎉 Bayad na si {c}!'],
+  t_received:    ['Received. Remaining: {v}', 'Nadawat. Nabilin: {v}', 'Natanggap. Natitira: {v}'],
+  note_pay:      ['Payment from {c}', 'Bayad ni {c}', 'Bayad ni {c}'],
+  type_utang:    ['utang', 'utang', 'utang'],
+  type_bayad:    ['payment', 'bayad', 'bayad'],
+  a_del_entry:   ['Delete this {type} of {v} ({d})?', 'Papason ang {type} nga {v} ({d})?', 'Burahin ang {type} na {v} ({d})?'],
+  a_also_cash:   ['\nIt will also be removed from Money.', '\nPapason sab kini sa Kwarta.', '\nBuburahin din ito sa Pera.'],
+  a_del_cash:    ['Delete “{c}” of {v}?', 'Papason ang “{c}” nga {v}?', 'Burahin ang “{c}” na {v}?'],
+  a_also_ledger: ['\nThe payment will also be removed from the customer’s list.', '\nPapason sab ang bayad sa lista sa suki.', '\nBuburahin din ang bayad sa listahan ng suki.'],
+  a_also_stock:  ['\nThe stock count will be put back too.', '\nIbalik sab ang ihap sa baligya.', '\nIbabalik din ang bilang ng paninda.'],
+  a_del_cust_owes:['{c} still owes {v}. Delete anyway, with their history?', 'Naa pay utang si {c} nga {v}. Papason gihapon pati ang kasaysayan?', 'May utang pa si {c} na {v}. Burahin pa rin pati ang kasaysayan?'],
+  a_del_cust:    ['Delete {c} and their history?', 'Papason si {c} ug ang iyang kasaysayan?', 'Burahin si {c} at ang kasaysayan niya?'],
+  a_del_item:    ['Delete this item? Old records in Money will stay.', 'Papason ang baligya? Magpabilin ang daang lista sa Kwarta.', 'Burahin ang paninda? Mananatili ang mga lumang tala sa Pera.'],
+  t_copied:      ['Copied! Paste it in Messenger or SMS.', 'Nakopya! I-paste sa Messenger o text.', 'Nakopya! I-paste sa Messenger o text.'],
+  share_cust:    ['Hi {c}! A reminder from {s}:\nYour balance: {v} (as of {d})\n\nRecent:\n{lines}\n\nThank you! 🙏',
+                  'Hi {c}! Pahinumdom gikan sa {s}:\nImong balanse: {v} (hangtod {d})\n\nKatapusang lista:\n{lines}\n\nSalamat kaayo! 🙏',
+                  'Hi {c}! Paalala mula sa {s}:\nBalanse mo: {v} (as of {d})\n\nHuling tala:\n{lines}\n\nSalamat po! 🙏'],
+  share_restock: ['To buy — {s} ({d})\n{lines}\n\nEstimated cost: {v}', 'Paliton — {s} ({d})\n{lines}\n\nGibanabanang gasto: {v}', 'Bibilhin — {s} ({d})\n{lines}\n\nTantiyang gastos: {v}'],
+  t_backed:      ['💾 Backed up!', '💾 Na-backup!', '💾 Na-backup!'],
+  a_restore:     ['This will replace ALL current data. Continue?', 'Ilisan niini ang TANANG data karon. Padayon?', 'Papalitan nito ang LAHAT ng kasalukuyang data. Ituloy?'],
+  t_restored:    ['Backup restored ✓', 'Na-restore ang backup ✓', 'Na-restore ang backup ✓'],
+  t_bad_file:    ['Can’t read this file.', 'Dili mabasa kini nga file.', 'Hindi mabasa ang file na ito.'],
+  t_cap_set:     ['Capital set ✓', 'Na-set ang puhunan ✓', 'Naitakda ang puhunan ✓'],
+  t_sample:      ['Sample store — try everything!', 'Sample nga tindahan — sulayi tanan!', 'Sample na tindahan — subukan lahat!'],
+  a_wipe1:       ['This deletes ALL data on this phone. Did you back up?', 'Papason niini ang TANANG data niini nga cellphone. Nakabackup na ka?', 'Buburahin ang LAHAT ng data sa phone na ito. Nag-backup ka na ba?'],
+  a_wipe2:       ['Are you sure? This can’t be undone.', 'Sigurado ka? Dili na kini mabalik.', 'Sigurado ka? Hindi na ito maibabalik.'],
+  sample_store:  ['Aling Rosa’s Store (sample)', 'Tindahan ni Manang Rosa (sample)', 'Tindahan ni Aling Rosa (sample)']
+};
+let lang = 'en';
+function t(key, v) {
+  const row = STR[key]; let s = row ? (row[LI[lang]] ?? row[0]) : key;
+  return v ? s.replace(/\{(\w+)\}/g, (_, k) => (v[k] ?? '')) : s;
+}
+function guessLang() {
+  const l = (navigator.language || '').toLowerCase();
+  return l.startsWith('ceb') ? 'ceb' : (l.startsWith('fil') || l.startsWith('tl')) ? 'tl' : 'en';
+}
+function langPicker() {
+  return `<div class="langs" role="group" aria-label="${t('language')}">${LANGS.map(([k, n]) =>
+    `<button type="button" data-act="lang" data-id="${k}" class="${lang === k ? 'on' : ''}">${n}</button>`).join('')}</div>`;
+}
+
+// ---------- Storage adapter (the only place that touches storage) ----------
+// Beta testers and the official app keep SEPARATE data, even on the same phone.
+const APP_VERSION = '1.2.0';
+const CHANNEL = /(^|[\/.])(beta|test|staging)([\/.-]|$)/i.test(location.hostname + location.pathname) ? 'beta' : 'prod';
+const KEY = CHANNEL === 'beta' ? 'pinpro.beta.v1' : 'pinpro.v1', LANG_KEY = 'pinpro.lang';
+const Store = {
+  load() { try { const raw = localStorage.getItem(KEY); return raw ? JSON.parse(raw) : null; } catch (e) { return null; } },
+  save(data) {
+    try { localStorage.setItem(KEY, JSON.stringify(data)); return true; }
+    catch (e) { toast(t('t_cant_save')); return false; }
+  },
+  clear() { try { localStorage.removeItem(KEY); } catch (e) {} },
+  size() { try { return (localStorage.getItem(KEY) || '').length; } catch (e) { return 0; } },
+  getLang() { try { return localStorage.getItem(LANG_KEY); } catch (e) { return null; } },
+  setLang(l) { try { localStorage.setItem(LANG_KEY, l); } catch (e) {} }
+};
+if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+
+// ---------- Brand assets (embedded so the app stays one file) ----------
+const LOGO_PATH = 'M3420 16749 c-254 -5 -413 -12 -493 -23 -195 -26 -405 -102 -548 -198 -103 -69 -227 -179 -309 -275 -41 -48 -93 -108 -116 -133 -106 -118 -192 -281 -231 -435 -8 -33 -24 -94 -34 -136 -11 -44 -23 -148 -29 -250 -13 -203 -32 -3446 -34 -5494 -1 -1542 2 -1617 58 -1789 14 -43 26 -84 26 -90 0 -21 77 -200 119 -275 23 -40 66 -109 97 -152 66 -91 234 -267 314 -328 30 -23 78 -59 105 -81 118 -93 335 -179 565 -222 l125 -23 3440 -3 c2375 -2 3475 0 3552 8 321 30 576 130 777 304 198 171 284 279 453 569 79 136 148 356 166 536 16 152 14 6814 -2 7081 -10 158 -24 248 -49 305 -5 11 -17 47 -28 80 -31 102 -134 282 -217 380 -112 133 -342 346 -447 415 -62 40 -190 101 -295 140 -27 10 -63 25 -80 33 -31 16 -134 41 -240 58 -66 10 -6013 8 -6645 -2z m6619 -880 c137 -24 282 -108 341 -196 67 -103 94 -221 80 -360 -10 -98 -19 -133 -51 -201 -90 -189 -226 -287 -419 -302 -196 -15 -332 32 -451 156 -141 149 -184 319 -132 529 33 135 127 247 278 330 93 52 219 67 354 44z m-3214 -339 c556 -7 752 -12 822 -23 50 -8 95 -17 101 -21 5 -3 54 -15 108 -27 122 -26 242 -61 357 -105 96 -37 393 -178 417 -199 8 -7 35 -24 60 -37 223 -124 506 -340 738 -563 72 -69 233 -260 282 -335 14 -21 50 -73 80 -115 30 -43 59 -85 65 -94 5 -9 18 -29 29 -45 33 -51 150 -267 203 -376 56 -114 141 -352 177 -495 13 -49 31 -115 40 -145 8 -30 25 -109 36 -175 12 -66 25 -145 31 -175 33 -187 27 -854 -9 -1050 -11 -58 -25 -145 -32 -195 -7 -49 -21 -117 -30 -150 -10 -33 -26 -91 -35 -130 -78 -333 -319 -808 -572 -1129 -93 -117 -314 -333 -522 -510 -115 -97 -322 -227 -506 -318 -55 -27 -109 -54 -120 -60 -64 -36 -363 -130 -515 -163 -197 -42 -399 -47 -1512 -39 l-986 6 -13 -23 c-9 -16 -15 -91 -19 -229 -6 -194 -8 -208 -35 -270 -55 -130 -142 -213 -279 -264 -175 -66 -392 -7 -511 138 -67 82 -67 85 -76 471 -11 505 5 2538 21 2590 24 79 100 221 139 261 51 52 140 100 222 118 133 30 353 38 1319 47 536 4 1012 12 1057 17 62 6 91 15 122 35 22 15 45 27 50 27 5 0 39 29 76 65 52 51 75 84 106 151 36 80 39 92 39 176 0 185 -94 330 -280 428 l-85 45 -1195 5 -1195 6 -65 23 c-164 57 -277 181 -311 341 -7 31 -9 92 -6 143 4 80 9 98 47 172 47 94 122 177 197 217 33 18 84 32 163 44 105 16 213 18 1220 18 1018 1 1115 0 1235 -17 213 -30 381 -104 590 -260 160 -119 289 -266 394 -449 78 -135 95 -176 138 -323 l36 -120 1 -270 c0 -263 -1 -273 -27 -380 -33 -129 -82 -269 -108 -307 -11 -14 -19 -29 -19 -32 0 -12 -66 -114 -122 -189 -196 -260 -454 -440 -702 -489 -96 -19 -149 -21 -1076 -25 -1054 -5 -1020 -3 -1057 -59 -17 -26 -18 -54 -16 -389 2 -390 6 -422 55 -458 39 -29 144 -33 339 -13 139 14 309 17 1104 19 l940 2 100 34 c148 49 255 92 295 118 19 13 39 23 45 23 20 0 164 96 267 176 245 193 444 450 612 789 48 97 69 151 142 360 103 297 134 653 93 1090 -17 186 -82 446 -164 660 -65 171 -257 502 -354 611 -20 22 -51 58 -70 80 -88 103 -242 250 -346 330 -156 120 -375 242 -533 297 -53 19 -114 42 -134 50 -21 9 -104 33 -185 54 l-148 38 -1855 0 -1855 0 -36 -23 c-49 -30 -58 -42 -76 -104 -14 -47 -16 -368 -19 -2923 -3 -2866 -5 -3080 -37 -3173 -38 -111 -144 -219 -253 -258 -128 -47 -325 -25 -423 47 -108 78 -179 183 -201 299 -12 62 -17 6555 -5 6625 31 182 125 319 277 405 77 43 143 60 268 69 141 11 2565 11 3475 1z';
+const logo = () => `<svg class="mark" viewBox="150 188 1005 1015" aria-hidden="true"><g transform="translate(0,1875) scale(0.1,-0.1)" fill="currentColor"><path d="${LOGO_PATH}"/></g></svg>`;
+const HERO_IMG = 'data:image/webp;base64,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';
+(function setFavicon() {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="150 188 1005 1015"><g transform="translate(0,1875) scale(0.1,-0.1)" fill="#2563eb"><path d="${LOGO_PATH}"/></g></svg>`;
+  const l = document.createElement('link'); l.rel = 'icon'; l.href = 'data:image/svg+xml,' + encodeURIComponent(svg); document.head.appendChild(l);
+})();
+
+// ---------- Data model ----------
+// items:     {id, name, cost, price, stock, low, packSize}
+// customers: {id, name, phone, limit}
+// ledger:    {id, customerId, type:'utang'|'bayad', amount, note, date, at, itemId?, stockDelta?, cashId?}
+// cash:      {id, cat, amount, note, date, at, itemId?, stockDelta?, linkId?}
+const CATS = {
+  benta: 'in', bayad: 'in', dagdag: 'in',
+  paninda: 'out', bills: 'out', upa: 'out', pamasahe: 'out', gastos: 'out', kinuha: 'out'
+};
+const catLabel = k => CATS[k] ? t('cat_' + k) : k;
+const SPEND_CATS = ['bills', 'upa', 'pamasahe', 'gastos']; // counted against monthly budget
+
+function blankData() {
+  return { version: 1, store: { name: '', openingCash: 0, capital: 0, budget: 0, lastBackup: '', createdAt: today() },
+           items: [], customers: [], ledger: [], cash: [] };
+}
+function migrate(d) {
+  if (!d || typeof d !== 'object') return null;
+  const b = blankData();
+  const arr = k => Array.isArray(d[k]) ? d[k] : [];
+  return { ...b, ...d, store: { ...b.store, ...(d.store || {}) },
+           items: arr('items'), customers: arr('customers'), ledger: arr('ledger'), cash: arr('cash') };
+}
+
+let D = null; // loaded at startup (bottom of file), after all helpers exist
+const state = { tab: 'home', cust: null, q: '', invFilter: 'all', period: 'month' };
+
+// ---------- Helpers ----------
+const $ = (s, el = document) => el.querySelector(s);
+const pad = n => String(n).padStart(2, '0');
+const ymd = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+function today() { return ymd(new Date()); }
+function addDays(s, n) { const d = new Date(s + 'T00:00:00'); d.setDate(d.getDate() + n); return ymd(d); }
+function daysBetween(a, b) { return Math.round((new Date(b + 'T00:00:00') - new Date(a + 'T00:00:00')) / 86400000); }
+function fmtDate(s) { return new Date(s + 'T00:00:00').toLocaleDateString('en-PH', { month: 'short', day: 'numeric' }); }
+const r2 = n => Math.round((Number(n) || 0) * 100) / 100;
+const num = v => { const n = parseFloat(String(v ?? '').replace(/,/g, '')); return isFinite(n) ? n : 0; };
+function peso(n) { n = r2(n); const a = Math.abs(n), d = Number.isInteger(a) ? 0 : 2; return (n < 0 ? '−' : '') + '₱' + a.toLocaleString('en-PH', { minimumFractionDigits: d, maximumFractionDigits: d }); }
+const fmtQty = n => String(r2(n));
+function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+const getItem = id => D.items.find(i => i.id === id);
+const getCust = id => D.customers.find(c => c.id === id);
+const byNewest = (a, b) => b.date.localeCompare(a.date) || (b.at || 0) - (a.at || 0);
+
+let toastT;
+function toast(m) { const el = $('#toast'); el.textContent = m; el.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('show'), 2600); }
+function ask(msg) {
+  return new Promise(res => {
+    const el = document.createElement('div'); el.className = 'ask';
+    el.innerHTML = `<div class="ask-card" role="alertdialog" aria-modal="true"><p>${esc(msg).replace(/\n/g, '<br>')}</p>
+      <div class="grid2"><button class="btn ghost" data-r="0">${t('ask_no')}</button><button class="btn primary" data-r="1">${t('ask_yes')}</button></div></div>`;
+    el.addEventListener('click', e => {
+      const b = e.target.closest('[data-r]'); if (!b && e.target !== el) return;
+      e.stopPropagation(); el.remove(); res(!!b && b.dataset.r === '1');
+    });
+    document.body.appendChild(el); el.querySelector('[data-r="1"]').focus();
+  });
+}
+function commit() { Store.save(D); closeSheet(); render(); }
+
+// ---------- Derived numbers (always computed) ----------
+function balanceOf(cid) { return r2(D.ledger.filter(e => e.customerId === cid).reduce((s, e) => s + (e.type === 'utang' ? e.amount : -e.amount), 0)); }
+function owingSince(cid) {
+  const es = D.ledger.filter(e => e.customerId === cid);
+  const pays = es.filter(e => e.type === 'bayad').map(e => e.date).sort();
+  if (pays.length) return { date: pays[pays.length - 1], key: 'days_pay' };
+  const ut = es.filter(e => e.type === 'utang').map(e => e.date).sort();
+  return ut.length ? { date: ut[0], key: 'days_first' } : null;
+}
+const dirOf = c => CATS[c.cat];
+function cashOnHand() { return r2(D.store.openingCash + D.cash.reduce((s, c) => s + (dirOf(c) === 'in' ? c.amount : dirOf(c) === 'out' ? -c.amount : 0), 0)); }
+function stockValue() { return r2(D.items.reduce((s, i) => s + Math.max(0, i.stock) * i.cost, 0)); }
+function utangOut() { return r2(D.customers.reduce((s, c) => s + Math.max(0, balanceOf(c.id)), 0)); }
+function totalNow() { return r2(cashOnHand() + stockValue() + utangOut()); }
+function sumCash(from, to, dir) { return r2(D.cash.filter(c => c.date >= from && c.date <= to && dirOf(c) === dir).reduce((s, c) => s + c.amount, 0)); }
+const isLow = i => i.low > 0 && i.stock <= i.low;
+function suggestQty(i) { const pack = i.packSize || 1; const need = Math.max(i.low * 2 - i.stock, 1); return Math.ceil(need / pack) * pack; }
+function sinceLine(cid) {
+  const s = owingSince(cid); if (!s) return '';
+  const d = daysBetween(s.date, today());
+  return `<span class="${d >= 30 ? 'badtxt' : d >= 14 ? 'warntxt' : ''}">${t(s.key, { n: d })}</span>`;
+}
+
+// ---------- Rendering ----------
+function render() {
+  document.documentElement.lang = lang === 'tl' ? 'fil' : lang;
+  const top = $('#top'), tabs = $('#tabs'), app = $('#app');
+  if (!D) {
+    top.innerHTML = `<div class="brand">${logo()}<span>Pin.Pro</span>${betaTag()}</div>`;
+    tabs.hidden = true; app.innerHTML = viewSetup(); return;
+  }
+  tabs.hidden = false;
+  top.innerHTML = `<div class="brand">${logo()}<span>${esc(D.store.name || 'Pin.Pro')}</span>${betaTag()}</div><button class="icon-btn" data-act="settings" aria-label="Settings">⚙️</button>`;
+  tabs.innerHTML = [['home', '🏠', 'tab_home'], ['paninda', '📦', 'tab_stock'], ['listahan', '📒', 'tab_utang'], ['pera', '💰', 'tab_money']]
+    .map(([id, ic, k]) => `<button data-act="tab" data-id="${id}" class="${state.tab === id ? 'on' : ''}"><span>${ic}</span>${t(k)}</button>`).join('');
+  const v = { home: viewHome, paninda: viewPaninda, pera: viewPera,
+              listahan: () => state.cust ? viewCustomer(state.cust) : viewListahan() }[state.tab];
+  app.innerHTML = v();
+}
+
+const betaTag = () => CHANNEL === 'beta' ? '<b class="beta">BETA</b>' : '';
+function viewSetup() {
+  return `<div class="setup">${langPicker()}<img class="hero-img" src="${HERO_IMG}" alt="">
+  <h1>${logo()}Pin.Pro</h1>
+  <p class="muted">${t('setup_tagline')}</p>
+  <form data-form="setup" class="card">
+    ${field(t('setup_name'), 'name', '', 'text', `required placeholder="${esc(t('setup_name_ph'))}"`)}
+    ${field(t('setup_cash'), 'openingCash', '')}
+    <button class="btn primary">${t('start')}</button>
+  </form>
+  <button class="btn ghost" data-act="sample">${t('try_sample')}</button>
+  <button class="btn ghost" data-act="restore">${t('have_backup')}</button></div>`;
+}
+
+// ----- Overview -----
+function viewHome() {
+  const cash = cashOnHand(), stock = stockValue(), ut = utangOut(), total = r2(cash + stock + ut);
+  const cap = D.store.capital, td = today();
+  const pos = Math.max(0, cash) + stock + ut;
+  const pct = x => pos > 0 ? Math.max(0, x) / pos * 100 : 0;
+
+  let status;
+  if (!cap) {
+    status = `<p class="hint">${t('set_cap_hint')}</p><button class="btn" data-act="setCapital">${t('set_cap_btn', { v: peso(total) })}</button>`;
+  } else {
+    const diff = r2(total - cap), ratio = diff / cap;
+    const cls = diff >= 0 ? 'good' : ratio > -0.05 ? 'warn' : 'bad';
+    const msg = diff >= 0 ? t('cap_ok') + (diff > 0 ? t('cap_grew', { v: peso(diff) }) : '') + '.' : t('cap_short', { v: peso(-diff) });
+    status = `<div class="status ${cls}">${msg}</div>`;
+  }
+  const hints = [];
+  if (pos > 0 && ut / pos > 0.3) hints.push(t('hint_utang', { p: Math.round(ut / pos * 100) }));
+  if (cash < 0) hints.push(t('hint_neg_cash'));
+
+  const low = D.items.filter(isLow);
+  const topC = D.customers.map(c => ({ c, b: balanceOf(c.id) })).filter(x => x.b > 0).sort((a, b) => b.b - a.b).slice(0, 3);
+  const needBackup = !D.store.lastBackup || daysBetween(D.store.lastBackup, td) >= 7;
+
+  return `
+  <section class="card hero">
+    <div class="row-between"><span class="label">${t('cap_now')}</span>${cap ? `<span class="muted small">${t('watch', { v: peso(cap) })}</span>` : ''}</div>
+    <div class="big">${peso(total)}</div>
+    <div class="bar3"><i class="c1" style="width:${pct(cash)}%"></i><i class="c2" style="width:${pct(stock)}%"></i><i class="c3" style="width:${pct(ut)}%"></i></div>
+    <ul class="legend">
+      <li><i class="c1"></i>${t('cash_drawer')}<b>${peso(cash)}</b></li>
+      <li><i class="c2"></i>${t('stock_at_cost')}<b>${peso(stock)}</b></li>
+      <li><i class="c3"></i>${t('utang_owed')}<b>${peso(ut)}</b></li>
+    </ul>
+    ${status}${hints.map(h => `<p class="hint">💡 ${h}</p>`).join('')}
+  </section>
+
+  <div class="grid2" style="margin-bottom:12px">
+    <section class="card mini" style="margin:0"><span class="label">${t('in_today')}</span><b class="goodtxt">${peso(sumCash(td, td, 'in'))}</b></section>
+    <section class="card mini" style="margin:0"><span class="label">${t('out_today')}</span><b>${peso(sumCash(td, td, 'out'))}</b></section>
+  </div>
+
+  <div class="grid4 actions">
+    <button class="btn" data-act="newIn"><span>🧾</span>${t('q_sale')}</button>
+    <button class="btn" data-act="newOut"><span>💸</span>${t('q_expense')}</button>
+    <button class="btn" data-act="newUtang"><span>📝</span>${t('q_utang')}</button>
+    <button class="btn" data-act="newBayad"><span>✅</span>${t('q_payment')}</button>
+  </div>
+
+  <section class="card">
+    <div class="row-between"><h3>${t('tab_stock')}</h3>${low.length ? `<span class="badge">${t('low_badge', { n: low.length })}</span>` : ''}</div>
+    ${!D.items.length ? `<p class="muted">${t('no_items')}</p><button class="btn" data-act="addItem">${t('add_item_btn')}</button>`
+      : low.length ? `<ul class="plain">${low.slice(0, 5).map(i => `<li>${esc(i.name)} — <b class="badtxt">${t('n_left', { n: fmtQty(i.stock) })}</b></li>`).join('')}</ul>
+                      <button class="btn" data-act="tab" data-id="paninda">${t('see_buy')}</button>`
+      : `<p class="goodtxt">${t('stock_ok')}</p>`}
+  </section>
+
+  <section class="card">
+    <div class="row-between"><h3>${t('top_utang')}</h3><span class="muted small">${t('all_total', { v: peso(ut) })}</span></div>
+    ${topC.length ? topC.map(({ c, b }) => `<button class="row" style="box-shadow:none;background:#f7f8f6" data-act="openCust" data-id="${c.id}">
+        <div><div class="name">${esc(c.name)}</div><div class="sub">${sinceLine(c.id)}</div></div>
+        <div class="amt">${peso(b)}</div></button>`).join('')
+      : `<p class="muted">${t('no_one_owes')}</p>`}
+  </section>
+
+  ${needBackup ? `<section class="card"><h3>${t('backup_title')}</h3><p class="muted small" style="margin:0 0 4px">${t('backup_why')}</p>
+    <button class="btn" data-act="backup">${t('backup_now')}</button></section>` : ''}`;
+}
+
+// ----- Stock -----
+function viewPaninda() {
+  const low = D.items.filter(isLow);
+  const need = low.map(i => ({ i, q: suggestQty(i) }));
+  const est = r2(need.reduce((s, n) => s + n.q * n.i.cost, 0));
+  return `
+  ${low.length ? `<section class="card">
+    <div class="row-between"><h3>${t('to_buy', { n: low.length })}</h3><span class="muted">~${peso(est)}</span></div>
+    <ul class="plain">${need.slice(0, 6).map(n => `<li>${esc(n.i.name)} — <b>${fmtQty(n.q)}</b> ${t('pcs')} <span class="muted small">${t('only_left', { n: fmtQty(n.i.stock) })}</span></li>`).join('')}
+      ${need.length > 6 ? `<li class="muted">${t('more_n', { n: need.length - 6 })}</li>` : ''}</ul>
+    <button class="btn ghost" data-act="shareRestock">${t('send_list')}</button></section>` : ''}
+  <div class="toolbar">
+    <input id="q" type="search" placeholder="${esc(t('search_items'))}" value="${esc(state.q)}" autocomplete="off">
+    <div class="seg">
+      <button data-act="invFilter" data-id="all" class="${state.invFilter === 'all' ? 'on' : ''}">${t('f_all')}</button>
+      <button data-act="invFilter" data-id="low" class="${state.invFilter === 'low' ? 'on' : ''}">${t('f_low')}</button>
+    </div>
+  </div>
+  <div id="list">${itemRows()}</div><div class="pad-fab"></div>
+  <button class="fab" data-act="addItem">${t('fab_item')}</button>`;
+}
+function itemRows() {
+  if (!D.items.length) return `<div class="empty">${t('empty_items')}</div>`;
+  const q = state.q.trim().toLowerCase();
+  let list = D.items.filter(i => !q || i.name.toLowerCase().includes(q));
+  if (state.invFilter === 'low') list = list.filter(isLow);
+  list.sort((a, b) => (isLow(b) - isLow(a)) || a.name.localeCompare(b.name));
+  if (!list.length) return `<div class="empty">${t('no_match')}</div>`;
+  return list.map(i => { const lo = isLow(i); return `
+    <button class="row" data-act="item" data-id="${i.id}">
+      <div><div class="name">${esc(i.name)}</div><div class="sub">${t('price_profit', { p: peso(i.price), g: peso(i.price - i.cost) })}</div></div>
+      <div class="qty ${lo ? 'low' : ''}">${fmtQty(i.stock)}<small>${lo ? t('lbl_low') : t('lbl_left')}</small></div>
+    </button>`; }).join('');
+}
+
+// ----- Utang list -----
+function viewListahan() {
+  const owing = D.customers.filter(c => balanceOf(c.id) > 0).length;
+  return `
+  <section class="card hero"><span class="label">${t('total_utang')}</span>
+    <div class="big">${peso(utangOut())}</div><span class="muted">${t('n_owe', { n: owing })}</span></section>
+  <div class="toolbar"><input id="q" type="search" placeholder="${esc(t('search_cust'))}" value="${esc(state.q)}" autocomplete="off"></div>
+  <div id="list">${custRows()}</div><div class="pad-fab"></div>
+  <button class="fab" data-act="addCust">${t('fab_cust')}</button>`;
+}
+function custRows() {
+  if (!D.customers.length) return `<div class="empty">${t('empty_cust')}</div>`;
+  const q = state.q.trim().toLowerCase();
+  const list = D.customers.filter(c => !q || c.name.toLowerCase().includes(q))
+    .map(c => ({ c, b: balanceOf(c.id) })).sort((a, b) => (b.b - a.b) || a.c.name.localeCompare(b.c.name));
+  if (!list.length) return `<div class="empty">${t('no_match')}</div>`;
+  return list.map(({ c, b }) => {
+    const sub = b > 0 ? sinceLine(c.id) : b < 0 ? t('overpaid', { v: peso(-b) }) : t('paid_up');
+    const over = c.limit && b > c.limit;
+    return `<button class="row" data-act="cust" data-id="${c.id}">
+      <div><div class="name">${esc(c.name)}${over ? `<span class="badge">${t('over_limit')}</span>` : ''}</div><div class="sub">${sub}</div></div>
+      <div class="amt ${b > 0 ? 'utang' : ''}">${peso(Math.max(0, b))}</div></button>`;
+  }).join('');
+}
+function viewCustomer(id) {
+  const c = getCust(id);
+  if (!c) { state.cust = null; return viewListahan(); }
+  const bal = balanceOf(id);
+  const asc = D.ledger.filter(e => e.customerId === id).sort((a, b) => a.date.localeCompare(b.date) || (a.at || 0) - (b.at || 0));
+  let run = 0;
+  const rows = asc.map(e => { run = r2(run + (e.type === 'utang' ? e.amount : -e.amount)); return { e, run }; }).reverse();
+  return `
+  <button class="back" data-act="back">${t('back_list')}</button>
+  <section class="card hero">
+    <div class="row-between"><h2 style="margin:0">${esc(c.name)}</h2><button class="icon-btn" data-act="editCust" data-id="${id}" aria-label="${t('a_edit')}">✏️</button></div>
+    ${c.phone || c.email ? `<div class="contact small">${c.phone ? `<a href="tel:${esc(c.phone)}">📞 ${esc(c.phone)}</a>` : ''}${c.email ? `<a href="mailto:${esc(c.email)}">✉️ ${esc(c.email)}</a>` : ''}</div>` : ''}
+    <div class="big ${bal > 0 ? 'badtxt' : 'goodtxt'}">${peso(Math.max(0, bal))}</div>
+    <span class="muted">${bal > 0 ? t('balance') : bal < 0 ? t('overpaid', { v: peso(-bal) }) : t('no_utang')}${c.limit ? t('limit_v', { v: peso(c.limit) }) : ''}</span>
+    ${c.limit && bal > c.limit ? `<div class="status bad">${t('over_limit_by', { v: peso(bal - c.limit) })}</div>` : ''}
+  </section>
+  <div class="grid3">
+    <button class="btn" data-act="newUtang" data-id="${id}">${t('add_utang')}</button>
+    <button class="btn primary" data-act="newBayad" data-id="${id}">${t('add_pay')}</button>
+    <button class="btn ghost" data-act="shareCust" data-id="${id}">${t('send')}</button>
+  </div>
+  ${c.email ? `<a class="btn ghost" style="margin:-2px 0 8px" href="${emailLink(id)}">${t('email_bal')}</a>` : ''}
+  <h3>${t('history')}</h3>
+  <ul class="ledger">${rows.length ? rows.map(({ e, run }) => `
+    <li><div><div><b>${e.type === 'utang' ? t('e_utang') : t('e_bayad')}</b> <span class="muted small">${fmtDate(e.date)}</span></div>
+      ${e.note ? `<div class="sub">${esc(e.note)}</div>` : ''}</div>
+      <div class="amt ${e.type}">${e.type === 'utang' ? '+' : '−'}${peso(e.amount)}<small>${t('bal_v', { v: peso(run) })}</small></div>
+      <button class="x" data-act="delEntry" data-id="${e.id}" aria-label="${t('del')}">×</button></li>`).join('')
+    : `<li class="muted">${t('nothing_yet')}</li>`}</ul>`;
+}
+
+// ----- Money -----
+function periodRange() {
+  const td = today();
+  if (state.period === 'today') return [td, td, t('lbl_today')];
+  if (state.period === 'week') return [addDays(td, -6), td, t('lbl_week')];
+  return [td.slice(0, 8) + '01', td, t('lbl_month')];
+}
+function viewPera() {
+  const [from, to, label] = periodRange();
+  const list = D.cash.filter(c => c.date >= from && c.date <= to).sort(byNewest);
+  let tin = 0, tout = 0; const byCat = {};
+  list.forEach(c => { if (dirOf(c) === 'in') tin += c.amount; else if (dirOf(c) === 'out') tout += c.amount; byCat[c.cat] = r2((byCat[c.cat] || 0) + c.amount); });
+  tin = r2(tin); tout = r2(tout);
+  const cats = Object.keys(byCat).filter(k => CATS[k]).sort((a, b) => byCat[b] - byCat[a]);
+  const maxV = Math.max(1, ...cats.map(k => byCat[k]));
+
+  let budgetCard = '';
+  const B = D.store.budget;
+  if (B && state.period === 'month') {
+    const spend = r2(SPEND_CATS.reduce((s, k) => s + (byCat[k] || 0), 0));
+    const now = new Date(), dim = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    const pace = B * now.getDate() / dim, over = spend > B, ahead = !over && spend > pace;
+    budgetCard = `<section class="card"><div class="row-between"><h3>${t('budget_title')}</h3><b>${peso(spend)} / ${peso(B)}</b></div>
+      <div class="track"><div class="fill ${over ? 'over' : 'out'}" style="width:${Math.min(100, spend / B * 100)}%"></div></div>
+      <p class="hint">${over ? t('b_over', { v: peso(spend - B) }) : ahead ? t('b_fast', { v: peso(pace) }) : t('b_ok', { v: peso(B - spend) })}
+      <br><span class="small">${t('b_note')}</span></p></section>`;
+  }
+
+  return `
+  <div class="seg wide">${[['today', 'p_today'], ['week', 'p_week'], ['month', 'p_month']].map(([k, l]) =>
+    `<button data-act="period" data-id="${k}" class="${state.period === k ? 'on' : ''}">${t(l)}</button>`).join('')}</div>
+  <div class="grid3 totals">
+    <section class="card mini"><span class="label">${t('m_in')}</span><b class="goodtxt">${peso(tin)}</b></section>
+    <section class="card mini"><span class="label">${t('m_out')}</span><b>${peso(tout)}</b></section>
+    <section class="card mini"><span class="label">${t('m_left')}</span><b class="${tin - tout < 0 ? 'badtxt' : ''}">${peso(tin - tout)}</b></section>
+  </div>
+  <section class="card"><div class="row-between"><span class="label">${t('cash_now')}</span><b>${peso(cashOnHand())}</b></div></section>
+  ${budgetCard}
+  ${cats.length ? `<section class="card"><h3>${t('where')}</h3>${cats.map(k => `
+    <div class="catbar"><div class="row-between"><span>${CATS[k] === 'in' ? '⬆️' : '⬇️'} ${catLabel(k)}</span><b>${peso(byCat[k])}</b></div>
+    <div class="track"><div class="fill ${k === 'kinuha' ? 'kinuha' : CATS[k] === 'out' ? 'out' : ''}" style="width:${byCat[k] / maxV * 100}%"></div></div></div>`).join('')}
+    ${byCat.kinuha ? `<p class="hint">${t('kinuha_hint')}</p>` : ''}
+  </section>` : ''}
+  <div class="grid2"><button class="btn primary" data-act="newIn">${t('btn_in')}</button><button class="btn" data-act="newOut">${t('btn_out')}</button></div>
+  <h3>${t('records', { p: label })}</h3>
+  <ul class="ledger">${list.length ? list.map(c => `
+    <li><div><div><b>${esc(catLabel(c.cat))}</b> <span class="muted small">${fmtDate(c.date)}</span></div>${c.note ? `<div class="sub">${esc(c.note)}</div>` : ''}</div>
+      <div class="amt ${dirOf(c)}">${dirOf(c) === 'in' ? '+' : '−'}${peso(c.amount)}</div>
+      <button class="x" data-act="delCash" data-id="${c.id}" aria-label="${t('del')}">×</button></li>`).join('')
+    : `<li class="muted">${t('no_records')}</li>`}</ul>`;
+}
+
+// ---------- Sheets (bottom pop-up forms) ----------
+function field(label, name, val = '', type = 'number', extra = '') {
+  const numAttrs = type === 'number' ? 'inputmode="decimal" step="any" min="0"' : '';
+  return `<label class="f"><span>${label}</span><input name="${name}" type="${type}" value="${esc(val)}" ${numAttrs} ${extra}></label>`;
+}
+function openSheet(html) {
+  const s = $('#sheet');
+  s.innerHTML = `<div class="sheet-bg" data-act="close"></div><div class="sheet-card" role="dialog" aria-modal="true">
+    <button class="x close" data-act="close" aria-label="${t('close')}">×</button>${html}</div>`;
+  s.classList.add('show'); document.body.classList.add('locked');
+  const f = s.querySelector('input:not([type=hidden]):not([type=checkbox]),select');
+  if (f && !f.value) setTimeout(() => f.focus(), 60);
+}
+function closeSheet() { const s = $('#sheet'); s.classList.remove('show'); s.innerHTML = ''; document.body.classList.remove('locked'); }
+
+function sheetItem(id) {
+  const i = getItem(id); if (!i) return;
+  const m = i.price ? Math.round((i.price - i.cost) / i.price * 100) : 0;
+  openSheet(`<h2>${esc(i.name)}</h2>
+  <div class="stats"><div><b class="${isLow(i) ? 'badtxt' : ''}">${fmtQty(i.stock)}</b><span>${t('st_left')}</span></div><div><b>${peso(i.cost)}</b><span>${t('st_cost')}</span></div>
+    <div><b>${peso(i.price)}</b><span>${t('st_price')}</span></div><div><b>${m}%</b><span>${t('st_profit')}</span></div></div>
+  <div class="grid2">
+    <button class="btn primary" data-act="sold" data-id="${id}">${t('a_sold')}</button>
+    <button class="btn" data-act="restock" data-id="${id}">${t('a_restock')}</button>
+    <button class="btn ghost" data-act="count" data-id="${id}">${t('a_count')}</button>
+    <button class="btn ghost" data-act="editItem" data-id="${id}">${t('a_edit')}</button>
+  </div>
+  <p class="hint small">${t('item_help')}</p>`);
+}
+function sheetItemForm(id) {
+  const i = id ? getItem(id) : { name: '', cost: '', price: '', stock: '', low: 5, packSize: 1 };
+  openSheet(`<h2>${id ? t('edit_item') : t('new_item')}</h2><form data-form="item" data-id="${id || ''}">
+    ${field(t('f_name'), 'name', i.name, 'text', `required autocomplete="off" placeholder="${esc(t('f_item_ph'))}"`)}
+    <div class="grid2">${field(t('f_cost'), 'cost', i.cost, 'number', 'required')}${field(t('f_price'), 'price', i.price, 'number', 'required')}</div>
+    <div class="grid2">${id ? '' : field(t('f_stock_now'), 'stock', i.stock, 'number', 'required')}${field(t('f_low'), 'low', i.low)}</div>
+    ${field(t('f_pack'), 'packSize', i.packSize || 1)}
+    <button class="btn primary">${t('save')}</button>
+    ${id ? `<button type="button" class="btn ghost danger" data-act="delItem" data-id="${id}">${t('del_item_btn')}</button>` : ''}
+  </form>`);
+}
+function sheetSold(id) {
+  const i = getItem(id);
+  openSheet(`<h2>${t('sold_title', { n: esc(i.name) })}</h2><form data-form="sold" data-id="${id}">
+    <div class="grid2">${field(t('f_qty'), 'qty', 1, 'number', 'required')}${field(t('f_price_pc'), 'price', i.price, 'number', 'required')}</div>
+    <p class="muted small">${t('sold_help')}</p>
+    <button class="btn primary">${t('save')}</button></form>`);
+}
+function sheetRestock(id) {
+  const i = getItem(id), pcs = i.packSize || 1;
+  openSheet(`<h2>${t('restock_title', { n: esc(i.name) })}</h2><form data-form="restock" data-id="${id}">
+    <div class="grid2">${field(t('f_packs'), 'packs', 1, 'number', 'required data-preview')}${field(t('f_pcs'), 'pcs', pcs, 'number', 'required data-preview')}</div>
+    ${field(t('f_packcost'), 'packCost', r2(i.cost * pcs), 'number', 'data-preview')}
+    <p class="hint" id="pv"></p>
+    <label class="check"><input type="checkbox" name="fromCash" checked> ${t('from_cash')}</label>
+    <button class="btn primary">${t('save')}</button></form>`);
+  PREVIEW.restock($('#sheet form'));
+}
+function sheetCount(id) {
+  const i = getItem(id);
+  openSheet(`<h2>${t('count_title', { n: esc(i.name) })}</h2><form data-form="count" data-id="${id}">
+    ${field(t('f_count', { n: fmtQty(i.stock) }), 'count', '', 'number', 'required')}
+    <p class="muted small">${t('count_help')}</p>
+    <button class="btn primary">${t('save')}</button></form>`);
+}
+function sheetCustForm(id) {
+  const c = id ? getCust(id) : { name: '', phone: '', email: '', limit: '' };
+  openSheet(`<h2>${id ? t('edit_cust') : t('new_cust')}</h2><form data-form="cust" data-id="${id || ''}">
+    ${field(t('f_cname'), 'name', c.name, 'text', `required autocomplete="off" placeholder="${esc(t('f_cname_ph'))}"`)}
+    ${field(t('f_phone'), 'phone', c.phone, 'tel', 'autocomplete="off"')}
+    ${field(t('f_email'), 'email', c.email || '', 'email', 'autocomplete="off" inputmode="email" placeholder="name@email.com"')}
+    ${field(t('f_limit'), 'limit', c.limit || '')}
+    <button class="btn primary">${t('save')}</button>
+    ${id ? `<button type="button" class="btn ghost danger" data-act="delCust" data-id="${id}">${t('del_cust_btn')}</button>` : ''}
+  </form>`);
+}
+function custPicker(owingOnly) {
+  let cs = D.customers.map(c => ({ c, b: balanceOf(c.id) }));
+  if (owingOnly) cs = cs.filter(x => x.b > 0);
+  cs.sort((a, b) => a.c.name.localeCompare(b.c.name));
+  return `<label class="f"><span>${t('f_cust')}</span><select name="cid"><option value="">${t('pick')}</option>
+    ${cs.map(({ c, b }) => `<option value="${c.id}">${esc(c.name)}${b > 0 ? ` (${peso(b)})` : ''}</option>`).join('')}</select></label>`;
+}
+function sheetUtang(cid) {
+  const c = cid && getCust(cid);
+  const who = c ? `<input type="hidden" name="cid" value="${c.id}"><p><b>${esc(c.name)}</b> · ${t('bal_inline', { v: peso(balanceOf(c.id)) })}</p>`
+                : custPicker(false) + field(t('f_newcust'), 'newName', '', 'text', 'autocomplete="off"');
+  const itemOpts = D.items.slice().sort((a, b) => a.name.localeCompare(b.name))
+    .map(i => `<option value="${i.id}">${esc(i.name)} (${peso(i.price)})</option>`).join('');
+  openSheet(`<h2>${t('new_utang')}</h2><form data-form="utang">${who}
+    ${D.items.length ? `<div class="grid2"><label class="f"><span>${t('f_item_opt')}</span><select name="itemId" data-preview><option value="">${t('none_opt')}</option>${itemOpts}</select></label>
+      ${field(t('f_qty'), 'qty', 1, 'number', 'data-preview')}</div>` : ''}
+    ${field(t('f_amount'), 'amount', '', 'number', 'required')}
+    ${field(t('f_note'), 'note', '', 'text', `autocomplete="off" placeholder="${esc(t('f_note_ph'))}"`)}
+    <button class="btn primary">${t('record_btn')}</button></form>`);
+}
+function sheetBayad(cid) {
+  const c = cid && getCust(cid);
+  if (!c && !D.customers.some(x => balanceOf(x.id) > 0)) { openSheet(`<h2>${t('pay_title')}</h2><p class="muted">${t('no_owing')}</p>`); return; }
+  const bal = c ? balanceOf(c.id) : 0;
+  const who = c ? `<input type="hidden" name="cid" value="${c.id}"><p><b>${esc(c.name)}</b> · ${t('bal_inline', { v: peso(bal) })}</p>` : custPicker(true);
+  openSheet(`<h2>${t('pay_title')}</h2><form data-form="bayad">${who}
+    ${field(t('f_amount'), 'amount', '', 'number', 'required')}
+    ${c && bal > 0 ? `<button type="button" class="btn ghost" data-act="fillFull" data-v="${bal}" style="margin:-4px 0 12px">${t('full_bal', { v: peso(bal) })}</button>` : ''}
+    ${field(t('f_note'), 'note', '', 'text', 'autocomplete="off"')}
+    <label class="check"><input type="checkbox" name="toCash" checked> ${t('to_cash')}</label>
+    <button class="btn primary">${t('save')}</button></form>`);
+}
+function sheetCash(dir, cat) {
+  const cats = Object.keys(CATS).filter(k => CATS[k] === dir && k !== 'bayad');
+  openSheet(`<h2>${dir === 'in' ? t('cash_in_title') : t('cash_out_title')}</h2><form data-form="cash">
+    <label class="f"><span>${t('f_type')}</span><select name="cat">${cats.map(k => `<option value="${k}" ${k === cat ? 'selected' : ''}>${catLabel(k)}</option>`).join('')}</select></label>
+    ${field(t('f_amount'), 'amount', '', 'number', 'required')}
+    ${field(t('f_note'), 'note', '', 'text', 'autocomplete="off"')}
+    ${field(t('f_date'), 'date', today(), 'date')}
+    <p class="hint small">${dir === 'in' ? t('in_tip') : t('out_tip')}</p>
+    <button class="btn primary">${t('save')}</button></form>`);
+}
+function sheetSettings() {
+  const s = D.store;
+  openSheet(`<h2>⚙️ Settings</h2>
+  <span class="label">${t('language')}</span>${langPicker()}
+  <form data-form="settings">
+    ${field(t('setup_name'), 'name', s.name, 'text')}
+    ${field(t('s_open'), 'openingCash', s.openingCash)}
+    ${field(t('s_cap'), 'capital', s.capital || '')}
+    ${field(t('s_budget'), 'budget', s.budget || '')}
+    <button class="btn primary">${t('save')}</button></form>
+  <h3>${t('backup_title')}</h3>
+  <p class="muted small">${t('backup_info')}${s.lastBackup ? t('last_backup', { d: fmtDate(s.lastBackup) }) : t('no_backup')}</p>
+  <div class="grid2"><button class="btn" data-act="backup">${t('do_backup')}</button><button class="btn ghost" data-act="restore">${t('do_restore')}</button></div>
+  ${CHANNEL === 'beta' ? `<p class="hint">${t('beta_note')}</p>` : ''}
+  <h3>${t('other')}</h3>
+  <button class="btn ghost danger" data-act="wipe">${t('wipe_btn')}</button>
+  <p class="muted small" style="text-align:center">${t('kb_used', { v: APP_VERSION + (CHANNEL === 'beta' ? '-beta' : ''), k: (Store.size() / 1024).toFixed(1) })}</p>`);
+}
+
+// ---------- Live previews inside forms ----------
+const PREVIEW = {
+  restock(f) {
+    if (!f) return;
+    const packs = num(f.packs.value), pcs = Math.max(1, num(f.pcs.value)), pc = num(f.packCost.value);
+    $('#pv').textContent = t('restock_pv', { q: fmtQty(packs * pcs), pc: peso(pc / pcs), tot: peso(packs * pc) });
+  },
+  utang(f) {
+    const i = f.itemId && getItem(f.itemId.value);
+    if (i) f.amount.value = r2(i.price * (num(f.qty.value) || 1));
+  }
+};
+
+// ---------- Form handlers ----------
+const FORM = {
+  setup(fd) {
+    D = blankData(); D.store.name = (fd.name || '').trim(); D.store.openingCash = r2(num(fd.openingCash));
+    Store.save(D); render(); toast(t('t_ready'));
+  },
+  async item(fd, id) {
+    const name = (fd.name || '').trim(); if (!name) return toast(t('t_need_name'));
+    const cost = r2(num(fd.cost)), price = r2(num(fd.price));
+    if (price < cost && !(await ask(t('a_price_below')))) return;
+    const low = r2(num(fd.low)), packSize = Math.max(1, Math.round(num(fd.packSize)) || 1);
+    if (id) Object.assign(getItem(id), { name, cost, price, low, packSize });
+    else D.items.push({ id: uid(), name, cost, price, stock: r2(num(fd.stock)), low, packSize });
+    commit(); toast(t('t_saved'));
+  },
+  async sold(fd, id) {
+    const i = getItem(id), qty = r2(num(fd.qty)), price = r2(num(fd.price));
+    if (qty <= 0) return toast(t('t_need_qty'));
+    if (qty > i.stock && !(await ask(t('a_qty_over', { n: fmtQty(i.stock) })))) return;
+    i.stock = r2(i.stock - qty);
+    D.cash.push({ id: uid(), cat: 'benta', amount: r2(qty * price), note: `${i.name} ×${fmtQty(qty)}`, date: today(), at: Date.now(), itemId: i.id, stockDelta: -qty });
+    commit(); toast(t('t_plus_cash', { v: peso(qty * price) }));
+  },
+  restock(fd, id) {
+    const i = getItem(id), packs = r2(num(fd.packs)), pcs = Math.max(1, Math.round(num(fd.pcs)) || 1), packCost = r2(num(fd.packCost));
+    if (packs <= 0) return toast(t('t_need_packs'));
+    const qty = r2(packs * pcs);
+    i.stock = r2(i.stock + qty); i.packSize = pcs;
+    if (packCost > 0) i.cost = r2(packCost / pcs);
+    if (fd.fromCash === 'on' && packCost > 0)
+      D.cash.push({ id: uid(), cat: 'paninda', amount: r2(packs * packCost), note: `${i.name} +${fmtQty(qty)}`, date: today(), at: Date.now(), itemId: i.id, stockDelta: qty });
+    commit(); toast(`+${fmtQty(qty)} ${i.name}`);
+  },
+  count(fd, id) {
+    const i = getItem(id), n = r2(num(fd.count)), diff = r2(n - i.stock);
+    i.stock = n; commit();
+    toast(diff === 0 ? t('c_ok') : diff < 0 ? t('c_short', { n: fmtQty(-diff) }) : t('c_over', { n: fmtQty(diff) }));
+  },
+  cust(fd, id) {
+    const name = (fd.name || '').trim(); if (!name) return toast(t('t_need_name'));
+    const email = (fd.email || '').trim();
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return toast(t('t_bad_email'));
+    const data = { name, phone: (fd.phone || '').trim(), email, limit: r2(num(fd.limit)) };
+    if (id) Object.assign(getCust(id), data);
+    else { const c = { id: uid(), ...data }; D.customers.push(c); state.tab = 'listahan'; state.cust = c.id; }
+    commit();
+  },
+  async utang(fd) {
+    const amount = r2(num(fd.amount)); if (amount <= 0) return toast(t('t_need_amount'));
+    const newName = (fd.newName || '').trim();
+    if (!fd.cid && !newName) return toast(t('t_need_cust'));
+    let c = fd.cid ? getCust(fd.cid) : null;
+    if (c) {
+      const bal = balanceOf(c.id);
+      if (c.limit && bal + amount > c.limit && !(await ask(t('a_over_limit', { c: c.name, l: peso(c.limit), b: peso(bal + amount) })))) return;
+    } else { c = { id: uid(), name: newName, phone: '', email: '', limit: 0 }; D.customers.push(c); }
+    const e = { id: uid(), customerId: c.id, type: 'utang', amount, note: (fd.note || '').trim(), date: today(), at: Date.now() };
+    if (fd.itemId) {
+      const i = getItem(fd.itemId), q = r2(num(fd.qty)) || 1;
+      if (i) { i.stock = r2(i.stock - q); e.itemId = i.id; e.stockDelta = -q; if (!e.note) e.note = `${i.name} ×${fmtQty(q)}`; }
+    }
+    D.ledger.push(e); commit(); toast(t('t_recorded', { c: c.name, v: peso(amount) }));
+  },
+  async bayad(fd) {
+    if (!fd.cid) return toast(t('t_pick_cust'));
+    const c = getCust(fd.cid), amount = r2(num(fd.amount));
+    if (amount <= 0) return toast(t('t_need_amount'));
+    const bal = balanceOf(c.id);
+    if (amount > bal && !(await ask(t('a_overpay', { v: peso(bal) })))) return;
+    const e = { id: uid(), customerId: c.id, type: 'bayad', amount, note: (fd.note || '').trim(), date: today(), at: Date.now() };
+    if (fd.toCash === 'on') {
+      const cash = { id: uid(), cat: 'bayad', amount, note: t('note_pay', { c: c.name }), date: e.date, at: e.at, linkId: e.id };
+      e.cashId = cash.id; D.cash.push(cash);
+    }
+    D.ledger.push(e); commit();
+    toast(bal - amount <= 0 ? t('t_paid_full', { c: c.name }) : t('t_received', { v: peso(bal - amount) }));
+  },
+  cash(fd) {
+    const amount = r2(num(fd.amount)); if (amount <= 0) return toast(t('t_need_amount'));
+    if (!CATS[fd.cat]) return;
+    D.cash.push({ id: uid(), cat: fd.cat, amount, note: (fd.note || '').trim(), date: fd.date || today(), at: Date.now() });
+    commit(); toast(t('t_saved'));
+  },
+  settings(fd) {
+    Object.assign(D.store, { name: (fd.name || '').trim() || D.store.name, openingCash: r2(num(fd.openingCash)),
+                             capital: r2(num(fd.capital)), budget: r2(num(fd.budget)) });
+    commit(); toast(t('t_saved'));
+  }
+};
+
+// ---------- Deletes (always undo side effects) ----------
+function revertStock(rec) { if (rec.itemId && rec.stockDelta) { const i = getItem(rec.itemId); if (i) i.stock = r2(i.stock - rec.stockDelta); } }
+async function delEntry(id) {
+  const e = D.ledger.find(x => x.id === id); if (!e) return;
+  const msg = t('a_del_entry', { type: t('type_' + e.type), v: peso(e.amount), d: fmtDate(e.date) }) + (e.cashId ? t('a_also_cash') : '');
+  if (!(await ask(msg))) return;
+  revertStock(e);
+  if (e.cashId) D.cash = D.cash.filter(c => c.id !== e.cashId);
+  D.ledger = D.ledger.filter(x => x.id !== id); commit();
+}
+async function delCash(id) {
+  const c = D.cash.find(x => x.id === id); if (!c) return;
+  const linked = c.linkId && D.ledger.find(e => e.id === c.linkId);
+  const msg = t('a_del_cash', { c: catLabel(c.cat), v: peso(c.amount) }) + (linked ? t('a_also_ledger') : '') + (c.stockDelta ? t('a_also_stock') : '');
+  if (!(await ask(msg))) return;
+  revertStock(c);
+  if (linked) D.ledger = D.ledger.filter(e => e.id !== c.linkId);
+  D.cash = D.cash.filter(x => x.id !== id); commit();
+}
+async function delCust(id) {
+  const c = getCust(id), bal = balanceOf(id);
+  if (!(await ask(bal > 0 ? t('a_del_cust_owes', { c: c.name, v: peso(bal) }) : t('a_del_cust', { c: c.name })))) return;
+  D.ledger = D.ledger.filter(e => e.customerId !== id);
+  D.customers = D.customers.filter(x => x.id !== id);
+  state.cust = null; commit();
+}
+
+// ---------- Sharing, backup, restore ----------
+async function shareText(text) {
+  try { if (navigator.share) { await navigator.share({ text }); return; } } catch (e) { if (e.name === 'AbortError') return; }
+  try { await navigator.clipboard.writeText(text); toast(t('t_copied')); }
+  catch (e) { openSheet(`<h2>${t('copy')}</h2><textarea class="copy" readonly>${esc(text)}</textarea>`); }
+}
+function custMsg(id) {
+  const c = getCust(id), bal = balanceOf(id);
+  const recent = D.ledger.filter(e => e.customerId === id).sort(byNewest).slice(0, 5).reverse();
+  const lines = recent.map(e => `${fmtDate(e.date)}  ${e.type === 'utang' ? t('e_utang').replace('📝 ', '') : t('e_bayad').replace('✅ ', '')} ${peso(e.amount)}${e.note ? ' – ' + e.note : ''}`).join('\n');
+  return t('share_cust', { c: c.name, s: D.store.name, v: peso(Math.max(0, bal)), d: fmtDate(today()), lines });
+}
+function shareCust(id) { shareText(custMsg(id)); }
+function emailLink(id) {
+  const c = getCust(id);
+  return `mailto:${encodeURIComponent(c.email)}?subject=${encodeURIComponent(t('email_subj', { s: D.store.name }))}&body=${encodeURIComponent(custMsg(id))}`;
+}
+function shareRestock() {
+  const need = D.items.filter(isLow).map(i => ({ i, q: suggestQty(i) }));
+  const est = r2(need.reduce((s, n) => s + n.q * n.i.cost, 0));
+  const lines = need.map(({ i, q }) => `• ${i.name} — ${fmtQty(q)} ${t('pcs')}${(i.packSize || 1) > 1 ? ` (${fmtQty(q / i.packSize)} pack)` : ''}`).join('\n');
+  shareText(t('share_restock', { s: D.store.name, d: fmtDate(today()), lines, v: peso(est) }));
+}
+async function doBackup() {
+  const name = `pinpro-backup-${today()}.json`;
+  const file = new File([JSON.stringify({ ...D, store: { ...D.store, lastBackup: today() } })], name, { type: 'application/json' });
+  let ok = false;
+  try { if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: name }); ok = true; } }
+  catch (e) { if (e.name === 'AbortError') return; }
+  if (!ok) {
+    const a = document.createElement('a'); a.href = URL.createObjectURL(file); a.download = name;
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  }
+  D.store.lastBackup = today(); Store.save(D); closeSheet(); render(); toast(t('t_backed'));
+}
+$('#file').addEventListener('change', async e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  try {
+    const obj = JSON.parse(await f.text());
+    if (!obj || !Array.isArray(obj.items) || !Array.isArray(obj.customers)) throw new Error('bad');
+    if (D && !(await ask(t('a_restore')))) return;
+    D = migrate(obj); Store.save(D); closeSheet(); state.tab = 'home'; state.cust = null; render(); toast(t('t_restored'));
+  } catch (err) { toast(t('t_bad_file')); }
+});
+
+// ---------- Sample store (for trying the app) ----------
+function sampleData() {
+  const d = blankData(), td = today(); let n = 0;
+  Object.assign(d.store, { name: t('sample_store'), openingCash: 3000, budget: 2500 });
+  const it = (name, cost, price, stock, low, packSize) => { const o = { id: uid() + n++, name, cost, price, stock, low, packSize }; d.items.push(o); return o; };
+  it('Kape 3-in-1', 8.5, 12, 24, 10, 30); it('Pancit Canton', 14, 18, 6, 10, 24); it('Coke Mismo', 17, 20, 12, 6, 12);
+  it('Itlog', 8, 9, 30, 12, 30); it('Sigarilyo (per stick)', 7.5, 9, 15, 20, 20); it('Shampoo sachet', 6, 8, 20, 12, 12);
+  it('Bugas / Bigas (kilo)', 48, 55, 10, 5, 25); it('Mantika (sachet)', 20, 25, 3, 5, 12); it('Sardinas', 22, 27, 8, 6, 24); it('Yelo', 3, 5, 20, 10, 1);
+  const cu = (name, limit) => { const o = { id: uid() + n++, name, phone: '', limit }; d.customers.push(o); return o; };
+  const nena = cu('Nena', 1000), jun = cu('Jun (tricycle)', 500), mar = cu('Marites', 0), bong = cu('Bong', 300);
+  const at = ago => Date.now() - ago * 86400000 + n++;
+  const C = (cat, amount, note, ago, extra = {}) => { const o = { id: uid() + n++, cat, amount, note, date: addDays(td, -ago), at: at(ago), ...extra }; d.cash.push(o); return o; };
+  const L = (c, type, amount, note, ago) => {
+    const e = { id: uid() + n++, customerId: c.id, type, amount, note, date: addDays(td, -ago), at: at(ago) };
+    if (type === 'bayad') { const k = C('bayad', amount, t('note_pay', { c: c.name }), ago, { linkId: e.id }); e.cashId = k.id; }
+    d.ledger.push(e);
+  };
+  L(nena, 'utang', 156, 'Bugas 2kg, mantika', 20); L(nena, 'utang', 84, 'Kape, itlog', 15); L(nena, 'bayad', 100, '', 10); L(nena, 'utang', 230, 'Sardinas, canton, bugas', 4);
+  L(jun, 'utang', 45, 'Sigarilyo ×5', 25); L(jun, 'utang', 60, 'Coke, sigarilyo', 18); L(jun, 'utang', 90, 'Sigarilyo, kape', 9);
+  L(mar, 'utang', 120, 'Shampoo, kape', 12); L(mar, 'bayad', 120, '', 3);
+  L(bong, 'utang', 350, 'Bugas 5kg, itlog', 6);
+  for (let i = 20; i >= 0; i--) C('benta', 850 + (i * 137) % 450, '', i);
+  [19, 14, 9, 4].forEach(a => C('paninda', 2400 + a * 10, '', a));
+  C('bills', 650, '', 14); C('pamasahe', 120, '', 9);
+  [17, 12, 7, 2].forEach(a => C('kinuha', 300, '', a));
+  return d;
+}
+
+// ---------- Actions (all taps go through here) ----------
+const ACT = {
+  tab: id => { state.tab = id; state.cust = null; state.q = ''; render(); scrollTo(0, 0); },
+  lang: id => {
+    if (!LI.hasOwnProperty(id)) return;
+    lang = id; Store.setLang(id);
+    const settingsOpen = !!$('#sheet .sheet-card') && !!D;
+    render(); if (settingsOpen) sheetSettings();
+  },
+  close: closeSheet,
+  settings: sheetSettings,
+  item: sheetItem, addItem: () => sheetItemForm(), editItem: id => sheetItemForm(id),
+  sold: sheetSold, restock: sheetRestock, count: sheetCount,
+  delItem: async id => { if (!(await ask(t('a_del_item')))) return; D.items = D.items.filter(i => i.id !== id); commit(); },
+  invFilter: id => { state.invFilter = id; render(); },
+  shareRestock,
+  cust: id => { state.cust = id; render(); scrollTo(0, 0); },
+  openCust: id => { state.tab = 'listahan'; state.cust = id; state.q = ''; render(); scrollTo(0, 0); },
+  back: () => { state.cust = null; render(); },
+  addCust: () => sheetCustForm(), editCust: id => sheetCustForm(id), delCust,
+  newUtang: id => sheetUtang(id), newBayad: id => sheetBayad(id), shareCust, delEntry,
+  fillFull: (id, el) => { el.closest('form').amount.value = el.dataset.v; },
+  newIn: () => sheetCash('in', 'benta'), newOut: () => sheetCash('out', 'gastos'),
+  period: id => { state.period = id; render(); }, delCash,
+  setCapital: () => { D.store.capital = totalNow(); commit(); toast(t('t_cap_set')); },
+  backup: doBackup, restore: () => $('#file').click(),
+  sample: () => { D = sampleData(); D.store.capital = Math.floor(totalNow() / 1000) * 1000; Store.save(D); render(); toast(t('t_sample')); },
+  wipe: async () => {
+    if (!(await ask(t('a_wipe1')))) return;
+    if (!(await ask(t('a_wipe2')))) return;
+    Store.clear(); D = null; Object.assign(state, { tab: 'home', cust: null, q: '' }); closeSheet(); render();
+  }
+};
+
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-act]'); if (!el) return;
+  const fn = ACT[el.dataset.act]; if (fn) { e.preventDefault(); fn(el.dataset.id, el); }
+});
+document.addEventListener('submit', e => {
+  e.preventDefault();
+  const f = e.target, fn = FORM[f.dataset.form];
+  if (fn) fn(Object.fromEntries(new FormData(f)), f.dataset.id || null);
+});
+function onEdit(e) {
+  const el = e.target;
+  if (el.id === 'q') { state.q = el.value; $('#list').innerHTML = state.tab === 'paninda' ? itemRows() : custRows(); return; }
+  if (el.hasAttribute('data-preview')) { const f = el.closest('form'); PREVIEW[f.dataset.form] && PREVIEW[f.dataset.form](f); }
+}
+document.addEventListener('input', onEdit);
+document.addEventListener('change', e => { if (e.target.tagName === 'SELECT') onEdit(e); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
+
+// ---------- Start ----------
+lang = (s => LI.hasOwnProperty(s) ? s : guessLang())(Store.getLang());
+D = migrate(Store.load());
+render();
+// Offline support: only when served from a real website (GitHub Pages, etc.)
+if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+}
+</script>
+</body>
+</html>
