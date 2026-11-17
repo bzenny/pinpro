@@ -1,7 +1,7 @@
 {
-  "name": "Pin.Pro Beta",
+  "name": "Pin.Pro Beta v1.3",
   "short_name": "Pin.Pro β",
-  "description": "Stock, utang list and money for sari-sari stores — all on your phone.",
+  "description": "Offline sari-sari store money, stock and utang — beta with local backup and finance rules.",
   "id": "./",
   "start_url": "./",
   "scope": "./",
@@ -11,8 +11,21 @@
   "theme_color": "#d97706",
   "lang": "en",
   "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }
