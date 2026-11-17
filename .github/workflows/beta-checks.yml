@@ -1,0 +1,25 @@
+name: Pin.Pro beta validation
+on:
+  push:
+    branches: [main, 'beta/**']
+    paths:
+      - 'beta/**'
+      - 'tests/**'
+      - '.github/workflows/beta-checks.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'beta/**'
+      - 'tests/**'
+      - '.github/workflows/beta-checks.yml'
+permissions:
+  contents: read
+jobs:
+  beta-smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Run offline and accounting smoke checks
+        run: node tests/beta-smoke.cjs
