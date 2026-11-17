@@ -434,7 +434,7 @@ function langPicker() {
 
 // ---------- Storage adapter (the only place that touches storage) ----------
 // Beta testers and the official app keep SEPARATE data, even on the same phone.
-const APP_VERSION = '1.2.0';
+const APP_VERSION = '1.3.0';
 const CHANNEL = /(^|[\/.])(beta|test|staging)([\/.-]|$)/i.test(location.hostname + location.pathname) ? 'beta' : 'prod';
 const KEY = CHANNEL === 'beta' ? 'pinpro.beta.v1' : 'pinpro.v1', LANG_KEY = 'pinpro.lang';
 const Store = {
@@ -1185,5 +1185,6 @@ if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
   window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 }
 </script>
+<script src="upgrade-v1.3.js"></script>
 </body>
 </html>
