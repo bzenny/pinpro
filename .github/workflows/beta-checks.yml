@@ -20,6 +20,6 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Run offline and accounting smoke checks
         run: node tests/beta-smoke.cjs
