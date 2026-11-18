@@ -999,7 +999,7 @@ function sheetBayad(cid) {
     ${field(t('f_amount'), 'amount', '', 'number', 'required')}
     ${c && bal > 0 ? `<button type="button" class="btn ghost" data-act="fillFull" data-v="${bal}" style="margin:-4px 0 12px">${t('full_bal', { v: peso(bal) })}</button>` : ''}
     ${field(t('f_note'), 'note', '', 'text', 'autocomplete="off"')}
-    <label class="check"><input type="checkbox" name="toCash" checked> ${t('to_cash')}</label>
+    <p class="hint small">${t('money_only')}</p>
     <button class="btn primary">${t('save')}</button></form>`);
 }
 function sheetCash(dir, cat) {
@@ -1417,35 +1417,66 @@ function sampleData() {
 
 // ---------- Actions (all taps go through here) ----------
 const ACT = {
-  tab: id => { state.tab = id; state.cust = null; state.q = ''; render(); scrollTo(0, 0); },
+  tab: id => { state.tab=id;state.cust=null;state.q='';render();scrollTo(0,0); },
   lang: id => {
-    if (!LI.hasOwnProperty(id)) return;
-    lang = id; Store.setLang(id);
-    const settingsOpen = !!$('#sheet .sheet-card') && !!D;
-    render(); if (settingsOpen) sheetSettings();
+    if(!Object.prototype.hasOwnProperty.call(LI,id))return;
+    lang=id;Store.setLang(id);
+    const open=!!$('#sheet .sheet-card');
+    render();
+    if(open && D){
+      if(state.settingsPage==='storage')sheetStorage();
+      else if(state.settingsPage==='rules')sheetRules();
+      else sheetSettings();
+    }
   },
   close: closeSheet,
   settings: sheetSettings,
-  item: sheetItem, addItem: () => sheetItemForm(), editItem: id => sheetItemForm(id),
-  sold: sheetSold, restock: sheetRestock, count: sheetCount,
-  delItem: async id => { if (!(await ask(t('a_del_item')))) return; D.items = D.items.filter(i => i.id !== id); commit(); },
-  invFilter: id => { state.invFilter = id; render(); },
+  storage: sheetStorage,
+  rules: sheetRules,
+  item: sheetItem,
+  addItem: () => sheetItemForm(),
+  editItem: id => sheetItemForm(id),
+  sold: sheetSold,
+  restock: sheetRestock,
+  count: sheetCount,
+  delItem,
+  unarchiveItem,
+  archiveItems: () => {state.archivedItems=!state.archivedItems;render();},
+  archiveCustomers: () => {state.archivedCustomers=!state.archivedCustomers;render();},
+  invFilter: id => {state.invFilter=id;render();},
   shareRestock,
-  cust: id => { state.cust = id; render(); scrollTo(0, 0); },
-  openCust: id => { state.tab = 'listahan'; state.cust = id; state.q = ''; render(); scrollTo(0, 0); },
-  back: () => { state.cust = null; render(); },
-  addCust: () => sheetCustForm(), editCust: id => sheetCustForm(id), delCust,
-  newUtang: id => sheetUtang(id), newBayad: id => sheetBayad(id), shareCust, delEntry,
-  fillFull: (id, el) => { el.closest('form').amount.value = el.dataset.v; },
-  newIn: () => sheetCash('in', 'benta'), newOut: () => sheetCash('out', 'gastos'),
-  period: id => { state.period = id; render(); }, delCash,
-  setCapital: () => { D.store.capital = totalNow(); commit(); toast(t('t_cap_set')); },
-  backup: doBackup, restore: () => $('#file').click(),
-  sample: () => { D = sampleData(); D.store.capital = Math.floor(totalNow() / 1000) * 1000; Store.save(D); render(); toast(t('t_sample')); },
+  cust: id => {state.cust=id;render();scrollTo(0,0);},
+  openCust: id => {state.tab='listahan';state.cust=id;state.q='';render();scrollTo(0,0);},
+  back: () => {state.cust=null;render();},
+  addCust: () => sheetCustForm(),
+  editCust: id => sheetCustForm(id),
+  delCust,
+  unarchiveCust,
+  newUtang: id => sheetUtang(id),
+  newBayad: id => sheetBayad(id),
+  shareCust,delEntry,
+  fillFull: (id,el) => {el.closest('form').amount.value=el.dataset.v;},
+  newIn: () => sheetCash('in','benta'),
+  newOut: () => sheetCash('out','gastos'),
+  period: id => {state.period=id;render();},
+  delCash,
+  setCapital: () => {D.store.capital=totalNow();if(commit())toast(t('t_cap_set'));},
+  backup: doBackup,
+  shareBackup,
+  restore: () => selectBackup('restore'),
+  verify: () => selectBackup('verify'),
+  sample: () => {
+    if(storageProblem)return toast(t('storage_corrupt'));
+    D=sampleData();D.store.capital=Math.floor(totalNow()/1000)*1000;
+    if(commit())toast(t('t_sample'));
+  },
   wipe: async () => {
-    if (!(await ask(t('a_wipe1')))) return;
-    if (!(await ask(t('a_wipe2')))) return;
-    Store.clear(); D = null; Object.assign(state, { tab: 'home', cust: null, q: '' }); closeSheet(); render();
+    if(!(await ask(t('a_wipe1'))))return;
+    if(!(await ask(t('a_wipe2'))))return;
+    if(!Store.clear())return toast(t('storage_fail'));
+    D=null;lastRaw=null;lastSnapshot=null;storageProblem=false;
+    Object.assign(state,{tab:'home',cust:null,q:'',archivedItems:false,archivedCustomers:false});
+    closeSheet();render();
   }
 };
 
@@ -1464,12 +1495,16 @@ function onEdit(e) {
   if (el.hasAttribute('data-preview')) { const f = el.closest('form'); PREVIEW[f.dataset.form] && PREVIEW[f.dataset.form](f); }
 }
 document.addEventListener('input', onEdit);
-document.addEventListener('change', e => { if (e.target.tagName === 'SELECT') onEdit(e); });
+document.addEventListener('change', e => { if(e.target.id==='ruleTopic')showRule(); else if(e.target.tagName==='SELECT')onEdit(e); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
 
 // ---------- Start ----------
 lang = (s => LI.hasOwnProperty(s) ? s : guessLang())(Store.getLang());
-D = migrate(Store.load());
+const saved=Store.load();
+try { if(saved)validateData(saved);D=migrate(saved); }
+catch(_) {storageProblem=true;D=null;}
+try {lastRaw=localStorage.getItem(KEY);}catch(_) {storageProblem=true;}
+lastSnapshot=D?JSON.stringify(D):null;
 render();
 // Offline support: only when served from a real website (GitHub Pages, etc.)
 if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
