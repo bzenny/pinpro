@@ -1014,24 +1014,53 @@ function sheetCash(dir, cat) {
     <button class="btn primary">${t('save')}</button></form>`);
 }
 function sheetSettings() {
-  const s = D.store;
-  openSheet(`<h2>⚙️ Settings</h2>
-  <span class="label">${t('language')}</span>${langPicker()}
+  if(!D)return sheetStorage();
+  const s=D.store;
+  state.settingsPage='settings';
+  openSheet(`<h2>⚙️ ${t('other')}</h2><span class="label">${t('language')}</span>${langPicker()}
   <form data-form="settings">
-    ${field(t('setup_name'), 'name', s.name, 'text')}
-    ${field(t('s_open'), 'openingCash', s.openingCash)}
-    ${field(t('s_cap'), 'capital', s.capital || '')}
-    ${field(t('s_budget'), 'budget', s.budget || '')}
-    <button class="btn primary">${t('save')}</button></form>
-  <h3>${t('backup_title')}</h3>
-  <p class="muted small">${t('backup_info')}${s.lastBackup ? t('last_backup', { d: fmtDate(s.lastBackup) }) : t('no_backup')}</p>
-  <div class="grid2"><button class="btn" data-act="backup">${t('do_backup')}</button><button class="btn ghost" data-act="restore">${t('do_restore')}</button></div>
-  ${CHANNEL === 'beta' ? `<p class="hint">${t('beta_note')}</p>` : ''}
-  <h3>${t('other')}</h3>
-  <button class="btn ghost danger" data-act="wipe">${t('wipe_btn')}</button>
-  <p class="muted small" style="text-align:center">${t('kb_used', { v: APP_VERSION + (CHANNEL === 'beta' ? '-beta' : ''), k: (Store.size() / 1024).toFixed(1) })}</p>`);
+    ${field(t('setup_name'),'name',s.name,'text')}
+    ${field(t('s_open'),'openingCash',s.openingCash)}
+    ${field(t('s_cap'),'capital',s.capital||'')}
+    ${field(t('s_budget'),'budget',s.budget||'')}
+    <button class="btn primary">${t('save')}</button>
+  </form>
+  <h3>${t('storage_title')}</h3>
+  <button class="btn" data-act="storage">📁 ${t('storage_title')}</button>
+  <button class="btn ghost" data-act="rules">📘 ${t('rules_title')}</button>
+  ${CHANNEL==='beta'?`<p class="hint">${t('beta_note')}</p>`:''}
+  <h3>${t('other')}</h3><button class="btn ghost danger" data-act="wipe">${t('wipe_btn')}</button>
+  <p class="muted small" style="text-align:center">${t('kb_used',{v:APP_VERSION+'-beta',k:(Store.size()/1024).toFixed(1)})}</p>`);
 }
 
+function sheetStorage() {
+  state.settingsPage='storage';
+  const last=D&&D.store.lastBackup?D.store.lastBackup:t('backup_none');
+  const checked=D&&D.store.lastBackupChecked?D.store.lastBackupChecked:t('backup_none');
+  openSheet(`<h2>📁 ${t('storage_title')}</h2><p class="hint">${t('backup_route')}</p>
+    <p class="hint">${t('backup_location')}</p><p class="hint">${t('backup_private')}</p>
+    <section class="card"><b>${t('backup_last')}: ${esc(last)}</b>
+      <p class="muted small">${t('backup_verified')}: ${esc(checked)}</p>
+      <p class="muted small">${esc(KEY)} · ${(Store.size()/1024).toFixed(1)} KB</p>
+    </section>
+    <button class="btn primary" data-act="backup">${t('backup_save')}</button>
+    <button class="btn" data-act="restore">${t('do_restore')}</button>
+    <button class="btn ghost" data-act="verify">${t('backup_check')}</button>
+    <button class="btn ghost" data-act="shareBackup">${t('backup_share')}</button>`);
+}
+
+function sheetRules() {
+  state.settingsPage='rules';
+  openSheet(`<h2>📘 ${t('rules_title')}</h2><p class="hint">${t('money_only')}</p>
+    <label class="f"><span>${t('rule_pick')}</span><select id="ruleTopic">
+      ${[1,2,3,4,5,6].map(i=>`<option value="${i}">${t('rule_'+i)}</option>`).join('')}
+    </select></label><section class="card"><p id="ruleDetail">${t('rule_1_desc')}</p></section>`);
+}
+
+function showRule() {
+  const picker=$('#ruleTopic'), el=$('#ruleDetail');
+  if(picker&&el)el.textContent=t('rule_'+picker.value+'_desc');
+}
 // ---------- Live previews inside forms ----------
 const PREVIEW = {
   restock(f) {
