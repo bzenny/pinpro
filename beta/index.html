@@ -1179,33 +1179,82 @@ settings(fd) {
 };
 
 
-// ---------- Deletes (always undo side effects) ----------
-function revertStock(rec) { if (rec.itemId && rec.stockDelta) { const i = getItem(rec.itemId); if (i) i.stock = r2(i.stock - rec.stockDelta); } }
-async function delEntry(id) {
-  const e = D.ledger.find(x => x.id === id); if (!e) return;
-  const msg = t('a_del_entry', { type: t('type_' + e.type), v: peso(e.amount), d: fmtDate(e.date) }) + (e.cashId ? t('a_also_cash') : '');
-  if (!(await ask(msg))) return;
-  revertStock(e);
-  if (e.cashId) D.cash = D.cash.filter(c => c.id !== e.cashId);
-  D.ledger = D.ledger.filter(x => x.id !== id); commit();
-}
-async function delCash(id) {
-  const c = D.cash.find(x => x.id === id); if (!c) return;
-  const linked = c.linkId && D.ledger.find(e => e.id === c.linkId);
-  const msg = t('a_del_cash', { c: catLabel(c.cat), v: peso(c.amount) }) + (linked ? t('a_also_ledger') : '') + (c.stockDelta ? t('a_also_stock') : '');
-  if (!(await ask(msg))) return;
-  revertStock(c);
-  if (linked) D.ledger = D.ledger.filter(e => e.id !== c.linkId);
-  D.cash = D.cash.filter(x => x.id !== id); commit();
-}
-async function delCust(id) {
-  const c = getCust(id), bal = balanceOf(id);
-  if (!(await ask(bal > 0 ? t('a_del_cust_owes', { c: c.name, v: peso(bal) }) : t('a_del_cust', { c: c.name })))) return;
-  D.ledger = D.ledger.filter(e => e.customerId !== id);
-  D.customers = D.customers.filter(x => x.id !== id);
-  state.cust = null; commit();
+// ---------- Deletes (preserve customer/item histories, reverse linked funding) ----------
+function revertStock(rec) {
+  if(rec.itemId&&rec.stockDelta){const i=getItem(rec.itemId);if(i)i.stock=r2(i.stock-rec.stockDelta);}
 }
 
+async function delEntry(id) {
+  const e=D.ledger.find(x=>x.id===id);if(!e)return;
+  const msg=t('a_del_entry',{type:t('type_'+e.type),v:peso(e.amount),d:fmtDate(e.date)})+(e.cashId?t('a_also_cash'):'');
+  if(!(await ask(msg)))return;
+  revertStock(e);
+  if(e.cashId)D.cash=D.cash.filter(x=>x.id!==e.cashId);
+  D.ledger=D.ledger.filter(x=>x.id!==id);
+  commit();
+}
+
+async function delCash(id) {
+  const selected=D.cash.find(x=>x.id===id);if(!selected)return;
+  const c=selected.fundingFor?D.cash.find(x=>x.id===selected.fundingFor):selected;
+  if(!c)return toast(t('backup_invalid'));
+  const linked=c.linkId&&D.ledger.find(e=>e.id===c.linkId);
+  const funding=c.fundedBy?D.cash.find(x=>x.id===c.fundedBy):null;
+  if(c.cat==='paninda'&&c.itemId&&c.stockDelta>0){
+    const later=D.cash.some(x=>x.id!==c.id&&x.itemId===c.itemId&&x.at>=c.at) ||
+      D.ledger.some(x=>x.itemId===c.itemId&&x.at>=c.at) ||
+      D.adjustments.some(x=>x.itemId===c.itemId&&x.at>=c.at);
+    if(later)return toast(t('restock_later'));
+    const item=getItem(c.itemId);
+    if(!item)return toast(t('restock_changed'));
+    if(!(await ask(t('restock_undo'))))return;
+    revertStock(c);
+    if(typeof c.priorCost==='number')item.cost=c.priorCost;
+    if(typeof c.priorPackSize==='number')item.packSize=c.priorPackSize;
+  } else {
+    const msg=t('a_del_cash',{c:catLabel(c.cat),v:peso(c.amount)})+
+      (linked?t('a_also_ledger'):'')+(c.stockDelta?t('a_also_stock'):'');
+    if(!(await ask(msg)))return;
+    revertStock(c);
+  }
+  if(linked)D.ledger=D.ledger.filter(x=>x.id!==linked.id);
+  D.cash=D.cash.filter(x=>x.id!==c.id&&(!funding||x.id!==funding.id));
+  commit();
+}
+
+async function delCust(id) {
+  const c=getCust(id);if(!c)return;
+  if(balanceOf(id)>0)return toast(t('archive_owing'));
+  const hasHistory=D.ledger.some(e=>e.customerId===id);
+  if(!(await ask(hasHistory?t('archive_customer',{n:c.name}):t('a_del_cust',{c:c.name}))))return;
+  if(hasHistory)c.archived=true;else D.customers=D.customers.filter(x=>x.id!==id);
+  state.cust=null;
+  if(commit())toast(hasHistory?t('archive_success'):t('t_saved'));
+}
+
+async function delItem(id) {
+  const i=getItem(id);if(!i)return;
+  const history=D.ledger.some(x=>x.itemId===id)||D.cash.some(x=>x.itemId===id)||
+    D.adjustments.some(x=>x.itemId===id);
+  if(history&&i.stock!==0)return toast(t('archive_stock'));
+  if(!(await ask(history?t('archive_item',{n:i.name}):t('a_del_item'))))return;
+  if(history){i.archived=true;i.savedLow=i.low;i.low=0;}
+  else D.items=D.items.filter(x=>x.id!==id);
+  if(commit())toast(history?t('archive_success'):t('t_saved'));
+}
+
+function unarchiveItem(id) {
+  const i=getItem(id);if(!i)return;
+  i.archived=false;
+  if(typeof i.savedLow==='number'){i.low=i.savedLow;delete i.savedLow;}
+  if(commit())toast(t('t_saved'));
+}
+
+function unarchiveCust(id) {
+  const c=getCust(id);if(!c)return;
+  c.archived=false;
+  if(commit())toast(t('t_saved'));
+}
 // ---------- Sharing, backup, restore ----------
 async function shareText(text) {
   try { if (navigator.share) { await navigator.share({ text }); return; } } catch (e) { if (e.name === 'AbortError') return; }
