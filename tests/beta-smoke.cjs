@@ -63,6 +63,8 @@
   await exec("FORM.bayad({cid:D.customers[0].id,amount:'15',note:''})");
   assert.equal(exec('balanceOf(D.customers[0].id)'),0);
   assert.equal(exec('cashOnHand()'),1120);
+  await exec("FORM.bayad({cid:D.customers[0].id,amount:'1',note:''})");
+  assert.equal(exec('balanceOf(D.customers[0].id)'),0,'overpayment refused');
   const beforeExternal=exec('cashOnHand()');
   await exec("FORM.restock({packs:'1',pcs:'10',packCost:'100',fromOwn:'on'},D.items[0].id)");
   assert.equal(exec('D.items[0].stock'),7);
@@ -83,6 +85,18 @@
   await exec("ACT.delCash(D.cash.findLast(x=>x.cat==='gastos').fundedBy)");
   assert.equal(exec('cashOnHand()'),beforeExternal,'deleting funding removes the linked expense');
   assert.equal(exec("D.cash.filter(x=>x.cat==='dagdag').length"),1);
+  // A second personally funded restock can be reversed as one linked transaction.
+  await exec("FORM.restock({packs:'1',pcs:'1',packCost:'30',fromOwn:'on'},D.items[0].id)");
+  assert.equal(exec('D.items[0].stock'),8);
+  assert.equal(exec('cashOnHand()'),beforeExternal);
+  await exec("ACT.delCash(D.cash.findLast(x=>x.cat==='paninda').fundedBy)");
+  assert.equal(exec('D.items[0].stock'),7,'personal restock undo reverses stock');
+  assert.equal(exec('cashOnHand()'),beforeExternal,'personal restock undo reverses paired funding');
+  await exec("FORM.restock({packs:'1',pcs:'3',packCost:'5000'},D.items[0].id)");
+  assert.equal(exec('D.items[0].stock'),10,'insufficient drawer cash offers own-money route');
+  assert.equal(exec('cashOnHand()'),beforeExternal,'auto own-funds route leaves drawer unchanged');
+  await exec("ACT.delCash(D.cash.findLast(x=>x.cat==='paninda').id)");
+  assert.equal(exec('D.items[0].stock'),7);
   // Failed write rolls the entire in-memory sale back.
   failing=true;
   await exec("FORM.sold({qty:'1',price:'15'},D.items[0].id)");
@@ -119,6 +133,15 @@
   assert.match(node('#sheet').innerHTML,/Mga lagda sa kwarta/);
   exec('ACT.storage()');
   assert.match(node('#sheet').innerHTML,/Pagtipig ug pagbawi/);
+  await exec("FORM.item({name:'Sardines',cost:'2',price:'4',stock:'0',low:'1',packSize:'1'},null)");
+  const spare=exec('D.items[1].id');
+  await exec("FORM.sold({qty:'1',price:'4'},D.items[1].id)");
+  exec("FORM.count({count:'0'},D.items[1].id)");
+  await exec("ACT.delItem(D.items[1].id)");
+  assert.equal(exec('D.items[1].archived'),true,'used item archived with history retained');
+  assert.equal(exec("D.cash.some(x=>x.itemId===D.items[1].id)"),true);
+  exec("ACT.unarchiveItem(D.items[1].id)");
+  assert.equal(exec('D.items[1].archived'),false);
   exec("ACT.lang('tl')");
   exec('ACT.rules()');
   assert.match(node('#sheet').innerHTML,/Mga tuntunin sa pera/);
