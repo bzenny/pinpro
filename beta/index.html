@@ -1045,95 +1045,139 @@ const PREVIEW = {
   }
 };
 
+function recordPaymentFromOwner(amount, expense, date, note) {
+  const funding = { id: uid(), cat:'dagdag', amount, date, at:Date.now(),
+    note:t('funding_note',{n:note}), fundingFor:expense.id };
+  expense.fundedBy = funding.id;
+  D.cash.push(funding);
+}
+
 // ---------- Form handlers ----------
 const FORM = {
-  setup(fd) {
-    D = blankData(); D.store.name = (fd.name || '').trim(); D.store.openingCash = r2(num(fd.openingCash));
-    Store.save(D); render(); toast(t('t_ready'));
-  },
-  async item(fd, id) {
-    const name = (fd.name || '').trim(); if (!name) return toast(t('t_need_name'));
-    const cost = r2(num(fd.cost)), price = r2(num(fd.price));
-    if (price < cost && !(await ask(t('a_price_below')))) return;
-    const low = r2(num(fd.low)), packSize = Math.max(1, Math.round(num(fd.packSize)) || 1);
-    if (id) Object.assign(getItem(id), { name, cost, price, low, packSize });
-    else D.items.push({ id: uid(), name, cost, price, stock: r2(num(fd.stock)), low, packSize });
-    commit(); toast(t('t_saved'));
-  },
-  async sold(fd, id) {
-    const i = getItem(id), qty = r2(num(fd.qty)), price = r2(num(fd.price));
-    if (qty <= 0) return toast(t('t_need_qty'));
-    if (qty > i.stock && !(await ask(t('a_qty_over', { n: fmtQty(i.stock) })))) return;
-    i.stock = r2(i.stock - qty);
-    D.cash.push({ id: uid(), cat: 'benta', amount: r2(qty * price), note: `${i.name} ×${fmtQty(qty)}`, date: today(), at: Date.now(), itemId: i.id, stockDelta: -qty });
-    commit(); toast(t('t_plus_cash', { v: peso(qty * price) }));
-  },
-  restock(fd, id) {
-    const i = getItem(id), packs = r2(num(fd.packs)), pcs = Math.max(1, Math.round(num(fd.pcs)) || 1), packCost = r2(num(fd.packCost));
-    if (packs <= 0) return toast(t('t_need_packs'));
-    const qty = r2(packs * pcs);
-    i.stock = r2(i.stock + qty); i.packSize = pcs;
-    if (packCost > 0) i.cost = r2(packCost / pcs);
-    if (fd.fromCash === 'on' && packCost > 0)
-      D.cash.push({ id: uid(), cat: 'paninda', amount: r2(packs * packCost), note: `${i.name} +${fmtQty(qty)}`, date: today(), at: Date.now(), itemId: i.id, stockDelta: qty });
-    commit(); toast(`+${fmtQty(qty)} ${i.name}`);
-  },
-  count(fd, id) {
-    const i = getItem(id), n = r2(num(fd.count)), diff = r2(n - i.stock);
-    i.stock = n; commit();
-    toast(diff === 0 ? t('c_ok') : diff < 0 ? t('c_short', { n: fmtQty(-diff) }) : t('c_over', { n: fmtQty(diff) }));
-  },
-  cust(fd, id) {
-    const name = (fd.name || '').trim(); if (!name) return toast(t('t_need_name'));
-    const email = (fd.email || '').trim();
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return toast(t('t_bad_email'));
-    const data = { name, phone: (fd.phone || '').trim(), email, limit: r2(num(fd.limit)) };
-    if (id) Object.assign(getCust(id), data);
-    else { const c = { id: uid(), ...data }; D.customers.push(c); state.tab = 'listahan'; state.cust = c.id; }
-    commit();
-  },
-  async utang(fd) {
-    const amount = r2(num(fd.amount)); if (amount <= 0) return toast(t('t_need_amount'));
-    const newName = (fd.newName || '').trim();
-    if (!fd.cid && !newName) return toast(t('t_need_cust'));
-    let c = fd.cid ? getCust(fd.cid) : null;
-    if (c) {
-      const bal = balanceOf(c.id);
-      if (c.limit && bal + amount > c.limit && !(await ask(t('a_over_limit', { c: c.name, l: peso(c.limit), b: peso(bal + amount) })))) return;
-    } else { c = { id: uid(), name: newName, phone: '', email: '', limit: 0 }; D.customers.push(c); }
-    const e = { id: uid(), customerId: c.id, type: 'utang', amount, note: (fd.note || '').trim(), date: today(), at: Date.now() };
-    if (fd.itemId) {
-      const i = getItem(fd.itemId), q = r2(num(fd.qty)) || 1;
-      if (i) { i.stock = r2(i.stock - q); e.itemId = i.id; e.stockDelta = -q; if (!e.note) e.note = `${i.name} ×${fmtQty(q)}`; }
-    }
-    D.ledger.push(e); commit(); toast(t('t_recorded', { c: c.name, v: peso(amount) }));
-  },
-  async bayad(fd) {
-    if (!fd.cid) return toast(t('t_pick_cust'));
-    const c = getCust(fd.cid), amount = r2(num(fd.amount));
-    if (amount <= 0) return toast(t('t_need_amount'));
-    const bal = balanceOf(c.id);
-    if (amount > bal && !(await ask(t('a_overpay', { v: peso(bal) })))) return;
-    const e = { id: uid(), customerId: c.id, type: 'bayad', amount, note: (fd.note || '').trim(), date: today(), at: Date.now() };
-    if (fd.toCash === 'on') {
-      const cash = { id: uid(), cat: 'bayad', amount, note: t('note_pay', { c: c.name }), date: e.date, at: e.at, linkId: e.id };
-      e.cashId = cash.id; D.cash.push(cash);
-    }
-    D.ledger.push(e); commit();
-    toast(bal - amount <= 0 ? t('t_paid_full', { c: c.name }) : t('t_received', { v: peso(bal - amount) }));
-  },
-  cash(fd) {
-    const amount = r2(num(fd.amount)); if (amount <= 0) return toast(t('t_need_amount'));
-    if (!CATS[fd.cat]) return;
-    D.cash.push({ id: uid(), cat: fd.cat, amount, note: (fd.note || '').trim(), date: fd.date || today(), at: Date.now() });
-    commit(); toast(t('t_saved'));
-  },
-  settings(fd) {
-    Object.assign(D.store, { name: (fd.name || '').trim() || D.store.name, openingCash: r2(num(fd.openingCash)),
-                             capital: r2(num(fd.capital)), budget: r2(num(fd.budget)) });
-    commit(); toast(t('t_saved'));
+setup(fd) {
+  if (storageProblem) return toast(t('storage_corrupt'));
+  D=blankData(); D.store.name=(fd.name||'').trim(); D.store.openingCash=r2(num(fd.openingCash));
+  if(!D.store.name || D.store.openingCash<0) {D=null;return toast(t('invalid_value'));}
+  if(commit()) toast(t('t_ready'));
+},
+async item(fd,id) {
+  const name=(fd.name||'').trim(); if(!name) return toast(t('t_need_name'));
+  const cost=r2(num(fd.cost)),price=r2(num(fd.price)),low=r2(num(fd.low));
+  if(cost<0||price<0||low<0||num(fd.stock)<0)return toast(t('invalid_value'));
+  if(price<cost && !(await ask(t('a_price_below'))))return;
+  const packSize=Math.max(1,Math.round(num(fd.packSize))||1);
+  if(id){const i=getItem(id);if(!i)return;Object.assign(i,{name,cost,price,low,packSize});}
+  else D.items.push({id:uid(),name,cost,price,stock:r2(num(fd.stock)),low,packSize});
+  if(commit())toast(t('t_saved'));
+},
+async sold(fd,id) {
+  const i=getItem(id),qty=r2(num(fd.qty)),price=r2(num(fd.price));
+  if(!i||i.archived)return toast(t('archived_no_entry'));
+  if(qty<=0||price<=0)return toast(t('invalid_value'));
+  if(qty>i.stock && !(await ask(t('a_qty_over',{n:fmtQty(i.stock)}))))return;
+  i.stock=r2(i.stock-qty);
+  D.cash.push({id:uid(),cat:'benta',amount:r2(qty*price),note:`${i.name} ×${fmtQty(qty)}`,
+    date:today(),at:Date.now(),itemId:i.id,stockDelta:-qty});
+  if(commit())toast(t('t_plus_cash',{v:peso(qty*price)}));
+},
+async restock(fd,id) {
+  const i=getItem(id),packs=r2(num(fd.packs)),pcs=Math.round(num(fd.pcs)),packCost=r2(num(fd.packCost));
+  if(!i||i.archived)return toast(t('archived_no_entry'));
+  if(packs<=0||pcs<1||packCost<=0)return toast(t('invalid_value'));
+  const qty=r2(packs*pcs),spent=r2(packs*packCost);
+  let own=fd.fromOwn==='on';
+  if(!own && spent>cashOnHand()){if(!(await ask(t('funding_confirm'))))return;own=true;}
+  const oldCost=i.cost,oldPack=i.packSize,oldStock=i.stock;
+  i.stock=r2(i.stock+qty);i.packSize=pcs;
+  i.cost=r2((Math.max(0,oldStock)*oldCost+spent)/(Math.max(0,oldStock)+qty));
+  const out={id:uid(),cat:'paninda',amount:spent,note:`${i.name} +${fmtQty(qty)}`,
+    date:today(),at:Date.now(),itemId:id,stockDelta:qty,priorCost:oldCost,priorPackSize:oldPack};
+  if(own)recordPaymentFromOwner(spent,out,out.date,i.name);
+  D.cash.push(out);
+  if(commit())toast(t('done_restock',{n:fmtQty(qty)+' '+i.name,v:peso(spent)}));
+},
+count(fd,id) {
+  const i=getItem(id),n=r2(num(fd.count));
+  if(!i||n<0)return toast(t('invalid_value'));
+  const before=i.stock;
+  i.stock=n;
+  D.adjustments.push({id:uid(),itemId:id,from:before,to:n,date:today(),at:Date.now()});
+  if(commit())toast(t('correct_count',{n:fmtQty(n)}));
+},
+cust(fd,id) {
+  const name=(fd.name||'').trim();if(!name)return toast(t('t_need_name'));
+  const email=(fd.email||'').trim();
+  if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return toast(t('t_bad_email'));
+  const data={name,phone:(fd.phone||'').trim(),email,limit:r2(num(fd.limit))};
+  if(id){const c=getCust(id);if(!c)return;Object.assign(c,data);}
+  else{const c={id:uid(),...data};D.customers.push(c);state.tab='listahan';state.cust=c.id;}
+  if(commit())toast(t('t_saved'));
+},
+async utang(fd) {
+  const amount=r2(num(fd.amount));
+  if(amount<=0)return toast(t('t_need_amount'));
+  const newName=(fd.newName||'').trim();
+  if(!fd.cid&&!newName)return toast(t('t_need_cust'));
+  let selected=null,q=0;
+  if(fd.itemId){
+    selected=getItem(fd.itemId);q=r2(num(fd.qty));
+    if(!selected||selected.archived||q<=0)return toast(t('invalid_value'));
+    if(q>selected.stock&&!(await ask(t('a_qty_over',{n:fmtQty(selected.stock)}))))return;
   }
+  let customer=fd.cid?getCust(fd.cid):null;
+  if(fd.cid&&(!customer||customer.archived))return toast(t('archived_no_entry'));
+  if(customer){
+    const bal=balanceOf(customer.id);
+    if(customer.limit&&bal+amount>customer.limit&&
+      !(await ask(t('a_over_limit',{c:customer.name,l:peso(customer.limit),b:peso(bal+amount)}))))return;
+  } else {
+    customer={id:uid(),name:newName,phone:'',email:'',limit:0};
+    D.customers.push(customer);
+  }
+  const e={id:uid(),customerId:customer.id,type:'utang',amount,
+    note:(fd.note||'').trim(),date:today(),at:Date.now()};
+  if(selected){
+    selected.stock=r2(selected.stock-q);e.itemId=selected.id;e.stockDelta=-q;
+    if(!e.note)e.note=`${selected.name} ×${fmtQty(q)}`;
+  }
+  D.ledger.push(e);
+  if(commit())toast(t('t_recorded',{c:customer.name,v:peso(amount)}));
+},
+async bayad(fd) {
+  if(!fd.cid)return toast(t('t_pick_cust'));
+  const customer=getCust(fd.cid),amount=r2(num(fd.amount));
+  if(!customer||customer.archived)return toast(t('archived_no_entry'));
+  if(amount<=0)return toast(t('t_need_amount'));
+  const bal=balanceOf(customer.id);
+  if(amount>bal&&!(await ask(t('a_overpay',{v:peso(bal)}))))return;
+  const e={id:uid(),customerId:customer.id,type:'bayad',amount,
+    note:(fd.note||'').trim(),date:today(),at:Date.now()};
+  const entry={id:uid(),cat:'bayad',amount,note:t('note_pay',{c:customer.name}),
+    date:e.date,at:e.at,linkId:e.id};
+  e.cashId=entry.id;D.cash.push(entry);D.ledger.push(e);
+  if(commit())toast(bal-amount<=0?t('t_paid_full',{c:customer.name}):t('t_received',{v:peso(bal-amount)}));
+},
+async cash(fd) {
+  const amount=r2(num(fd.amount));
+  if(amount<=0||!Object.prototype.hasOwnProperty.call(CATS,fd.cat))return toast(t('invalid_value'));
+  let own=fd.fromOwn==='on'&&CATS[fd.cat]==='out';
+  if(CATS[fd.cat]==='out'&&!own&&amount>cashOnHand()){
+    if(!(await ask(t('funding_confirm'))))return;
+    own=true;
+  }
+  const entry={id:uid(),cat:fd.cat,amount,note:(fd.note||'').trim(),
+    date:fd.date||today(),at:Date.now()};
+  if(own)recordPaymentFromOwner(amount,entry,entry.date,catLabel(entry.cat));
+  D.cash.push(entry);
+  if(commit())toast(t('money_saved'));
+},
+settings(fd) {
+  Object.assign(D.store,{name:(fd.name||'').trim()||D.store.name,
+    openingCash:r2(num(fd.openingCash)),capital:r2(num(fd.capital)),budget:r2(num(fd.budget))});
+  if(commit())toast(t('t_saved'));
+},
 };
+
 
 // ---------- Deletes (always undo side effects) ----------
 function revertStock(rec) { if (rec.itemId && rec.stockDelta) { const i = getItem(rec.itemId); if (i) i.stock = r2(i.stock - rec.stockDelta); } }
