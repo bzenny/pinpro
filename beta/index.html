@@ -414,7 +414,7 @@ const STR = {
   rule_2: ["Utang sale","Utang nga baligya","Bentang utang"],
   rule_2_desc: ["Utang raises customer debt but not cash. An item reduces stock. Low stock shows a warning; the owner can proceed and count later.","Ang utang modugang sa balanse sa suki, dili cash. Mokuha kini sa stock. Kon kulang, magpasidaan ug mahimong ipadayon.","Ang utang ay dagdag sa balanse, hindi cash. Bawas-stock ito. Kung kulang, may babala at puwedeng ituloy."],
   rule_3: ["Customer payment","Bayad sa utang","Bayad sa utang"],
-  rule_3_desc: ["A payment reduces utang and adds to drawer cash. An overpayment needs confirmation and creates a customer credit.","Ang bayad mopaubos sa utang ug modugang sa kaha. Ang sobrang bayad kinahanglan kumpirmasyon ug mahimong credit.","Binabawasan ng bayad ang utang at dinadagdagan ang cash. Kailangan ng kumpirmasyon para sa sobrang bayad."],
+  rule_3_desc: ["A payment reduces utang and adds to drawer cash. Overpayments are blocked to avoid untracked customer credits.","Ang bayad mopaubos sa utang ug modugang sa kaha. Dili tugotan ang sobra nga bayad aron walay credit nga dili masubay.","Ang bayad ay bawas-utang at dagdag-cash. Hindi pinapayagan ang sobrang bayad upang maiwasan ang hindi nakatalang credit."],
   rule_4: ["Restock and average cost","Restock ug average cost","Restock at average cost"],
   rule_4_desc: ["Restock adds stock at weighted-average cost. Choose drawer cash or own money/GCash. Own-money payments create a capital-in and purchase-out pair, leaving drawer cash unchanged. Undo is allowed before later stock movements.","Ang restock modugang sa stock sa average cost. Pilia ang kaha o kaugalingong kwarta/GCash. Magpares ang puhunan ug gasto, wala mausab ang cash. Bawi-a sa dili pa adunay laing lihok sa stock.","Ang restock ay dagdag stock sa average cost. Piliin ang kaha o sariling pera/GCash. Magkapantay ang puhunan at bayad, hindi mababago ang kaha. Puwedeng bawiin bago ang susunod na galaw."],
   rule_5: ["Expenses and funding","Gasto ug puhunan","Gastos at puhunan"],
@@ -424,6 +424,7 @@ const STR = {
   done_restock: ["Restocked {n} for {v}","Nadugangan ang {n} sa {v}","Nadagdagan ang {n} sa {v}"],
   money_saved: ["Transaction recorded.","Narekord ang transaksyon.","Naitala ang transaksyon."],
   invalid_value: ["Enter a valid amount or quantity.","Ibutang ang balidong kantidad o ihap.","Maglagay ng wastong halaga o bilang."],
+  payment_exceeds: ["Payment is more than the balance ({v}).", "Sobra ang bayad kaysa balanse ({v}).", "Mas malaki ang bayad kaysa balanse ({v})."],
   // messages
   t_cant_save:   ['Couldn’t save! Storage may be full. Back up now.', 'Dili ma-save! Basin puno na ang storage. Pag-backup karon.', 'Hindi ma-save! Baka puno ang storage. Mag-backup.'],
   t_ready:       ['Ready! Add your items.', 'Andam na! Pagdugang og baligya.', 'Handa na! Magdagdag ng paninda.'],
@@ -1178,7 +1179,7 @@ async bayad(fd) {
   if(!customer||customer.archived)return toast(t('archived_no_entry'));
   if(amount<=0)return toast(t('t_need_amount'));
   const bal=balanceOf(customer.id);
-  if(amount>bal&&!(await ask(t('a_overpay',{v:peso(bal)}))))return;
+  if(amount>bal)return toast(t('payment_exceeds',{v:peso(bal)}));
   const e={id:uid(),customerId:customer.id,type:'bayad',amount,
     note:(fd.note||'').trim(),date:today(),at:Date.now()};
   const entry={id:uid(),cat:'bayad',amount,note:t('note_pay',{c:customer.name}),
