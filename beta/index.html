@@ -1307,27 +1307,85 @@ function shareRestock() {
   const lines = need.map(({ i, q }) => `• ${i.name} — ${fmtQty(q)} ${t('pcs')}${(i.packSize || 1) > 1 ? ` (${fmtQty(q / i.packSize)} pack)` : ''}`).join('\n');
   shareText(t('share_restock', { s: D.store.name, d: fmtDate(today()), lines, v: peso(est) }));
 }
-async function doBackup() {
-  const name = `pinpro-backup-${today()}.json`;
-  const file = new File([JSON.stringify({ ...D, store: { ...D.store, lastBackup: today() } })], name, { type: 'application/json' });
-  let ok = false;
-  try { if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: name }); ok = true; } }
-  catch (e) { if (e.name === 'AbortError') return; }
-  if (!ok) {
-    const a = document.createElement('a'); a.href = URL.createObjectURL(file); a.download = name;
-    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
-  }
-  D.store.lastBackup = today(); Store.save(D); closeSheet(); render(); toast(t('t_backed'));
+function backupFile() {
+  const name=`pinpro-beta-${today()}.json`;
+  return {name,file:new File([JSON.stringify(D,null,2)],name,{type:'application/json'})};
 }
-$('#file').addEventListener('change', async e => {
-  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+
+async function doBackup() {
+  if(!D)return;
+  const {name,file}=backupFile();
   try {
-    const obj = JSON.parse(await f.text());
-    if (!obj || !Array.isArray(obj.items) || !Array.isArray(obj.customers)) throw new Error('bad');
-    if (D && !(await ask(t('a_restore')))) return;
-    D = migrate(obj); Store.save(D); closeSheet(); state.tab = 'home'; state.cust = null; render(); toast(t('t_restored'));
-  } catch (err) { toast(t('t_bad_file')); }
-});
+    if(typeof window.showSaveFilePicker==='function'){
+      const handle=await window.showSaveFilePicker({
+        suggestedName:name,types:[{description:'Pin.Pro JSON backup',accept:{'application/json':['.json']}}]});
+      const writable=await handle.createWritable();
+      await writable.write(file);
+      await writable.close();
+    } else {
+      const url=URL.createObjectURL(file);
+      const a=document.createElement('a');a.href=url;a.download=name;
+      document.body.appendChild(a);a.click();a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),30000);
+    }
+    D.store.lastBackup=today();
+    if(commit())toast(t('backup_started'));
+  } catch(err) {
+    if(err.name!=='AbortError')toast(t('t_cant_save'));
+  }
+}
+
+async function shareBackup() {
+  if(!D)return;
+  try {
+    const {name,file}=backupFile();
+    if(!navigator.canShare||!navigator.canShare({files:[file]}))return toast(t('backup_save'));
+    await navigator.share({files:[file],title:name});
+    D.store.lastBackup=today();
+    if(commit())toast(t('backup_started'));
+  } catch(err) {if(err.name!=='AbortError')toast(t('t_cant_save'));}
+}
+
+function selectBackup(mode) {
+  state.fileMode=mode;
+  $('#file').click();
+}
+
+function comparableBackup(data) {
+  const {lastBackup,lastBackupChecked,...store}=data.store||{};
+  return JSON.stringify({store,items:data.items,customers:data.customers,
+    ledger:data.ledger,cash:data.cash,adjustments:data.adjustments||[]});
+}
+
+async function handleBackupFile(e) {
+  const f=e.target.files&&e.target.files[0];
+  e.target.value='';
+  if(!f)return;
+  try {
+    if(f.size>10*1024*1024)throw Error('too large');
+    const candidate=JSON.parse(await f.text());
+    validateData(candidate);
+    if(state.fileMode==='verify'){
+      if(!D||comparableBackup(candidate)!==comparableBackup(D)){
+        toast(t('backup_mismatch'));return;
+      }
+      D.store.lastBackupChecked=today();
+      if(commit())toast(t('backup_ok'));
+      return;
+    }
+    if(D&&!(await ask(t('a_restore'))))return;
+    D=migrate(candidate);
+    if(commit()) {
+      storageProblem=false;
+      state.tab='home';state.cust=null;
+      render();toast(t('t_restored'));
+    }
+  } catch(err){toast(t('backup_invalid'));}
+}
+
+// One authoritative import handler, shared by restore and optional verification.
+$('#file').addEventListener('change', handleBackupFile);
+
 
 // ---------- Sample store (for trying the app) ----------
 function sampleData() {
