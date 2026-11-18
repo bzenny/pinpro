@@ -537,6 +537,39 @@ function migrate(d) {
            items: arr('items'), customers: arr('customers'), ledger: arr('ledger'), cash: arr('cash'), adjustments: arr('adjustments') };
 }
 
+function validateData(data) {
+  if (!data || typeof data !== 'object' || Array.isArray(data) ||
+      !data.store || typeof data.store !== 'object' || Array.isArray(data.store) ||
+      typeof data.store.name !== 'string') throw Error('invalid store');
+  if (data.version && data.version > 1) throw Error('unsupported backup version');
+  const allowedId = s => typeof s === 'string' && /^[A-Za-z0-9_-]{1,96}$/.test(s);
+  for (const type of ['items', 'customers', 'ledger', 'cash']) {
+    const entries = data[type];
+    if (!Array.isArray(entries) || entries.length > 150000) throw Error('invalid records');
+    const ids = new Set();
+    for (const r of entries) {
+      if (!r || typeof r !== 'object' || Array.isArray(r) ||
+          !allowedId(r.id) || ids.has(r.id)) throw Error('invalid record ID');
+      ids.add(r.id);
+    }
+  }
+  const goodAmount = x => typeof x === 'number' && Number.isFinite(x);
+  const goodDate = x => typeof x === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(x);
+  for (const it of data.items) if (typeof it.name !== 'string' ||
+       !goodAmount(it.cost) || it.cost < 0 || !goodAmount(it.price) ||
+       it.price < 0 || !goodAmount(it.stock)) throw Error('bad item');
+  for (const cu of data.customers) if (typeof cu.name !== 'string') throw Error('bad customer');
+  const custIds = new Set(data.customers.map(x => x.id));
+  for (const e of data.ledger) if (!custIds.has(e.customerId) ||
+       !['utang','bayad'].includes(e.type) || !goodAmount(e.amount) ||
+       e.amount <= 0 || !goodDate(e.date)) throw Error('bad ledger');
+  for (const e of data.cash) if (!Object.prototype.hasOwnProperty.call(CATS,e.cat) ||
+       !goodAmount(e.amount) || e.amount < 0 || !goodDate(e.date)) throw Error('bad cash');
+  if (data.adjustments !== undefined &&
+      (!Array.isArray(data.adjustments) || data.adjustments.length > 150000)) throw Error('bad adjustments');
+  return true;
+}
+
 let D = null; // loaded at startup (bottom of file), after all helpers exist
 const state = { tab: 'home', cust: null, q: '', invFilter: 'all', period: 'month', archivedItems: false, archivedCustomers: false, fileMode: 'restore', settingsPage: 'settings' };
 let lastRaw = null, lastSnapshot = null;
@@ -573,8 +606,25 @@ function ask(msg) {
     document.body.appendChild(el); el.querySelector('[data-r="1"]').focus();
   });
 }
-function commit() { Store.save(D); closeSheet(); render(); }
-
+function commit() {
+  try {
+    if (localStorage.getItem(KEY) !== lastRaw) {
+      D = lastSnapshot ? JSON.parse(lastSnapshot) : null;
+      render(); toast(t('storage_conflict')); return false;
+    }
+  } catch (_) {
+    D = lastSnapshot ? JSON.parse(lastSnapshot) : null;
+    render(); toast(t('storage_fail')); return false;
+  }
+  if (!Store.save(D)) {
+    D = lastSnapshot ? JSON.parse(lastSnapshot) : null;
+    render(); toast(t('storage_fail')); return false;
+  }
+  lastRaw = localStorage.getItem(KEY);
+  lastSnapshot = JSON.stringify(D);
+  closeSheet(); render();
+  return true;
+}
 // ---------- Derived numbers (always computed) ----------
 function balanceOf(cid) { return r2(D.ledger.filter(e => e.customerId === cid).reduce((s, e) => s + (e.type === 'utang' ? e.amount : -e.amount), 0)); }
 function owingSince(cid) {
@@ -590,7 +640,7 @@ function stockValue() { return r2(D.items.reduce((s, i) => s + Math.max(0, i.sto
 function utangOut() { return r2(D.customers.reduce((s, c) => s + Math.max(0, balanceOf(c.id)), 0)); }
 function totalNow() { return r2(cashOnHand() + stockValue() + utangOut()); }
 function sumCash(from, to, dir) { return r2(D.cash.filter(c => c.date >= from && c.date <= to && dirOf(c) === dir).reduce((s, c) => s + c.amount, 0)); }
-const isLow = i => i.low > 0 && i.stock <= i.low;
+const isLow = i => !i.archived && i.low > 0 && i.stock <= i.low;
 function suggestQty(i) { const pack = i.packSize || 1; const need = Math.max(i.low * 2 - i.stock, 1); return Math.ceil(need / pack) * pack; }
 function sinceLine(cid) {
   const s = owingSince(cid); if (!s) return '';
@@ -617,6 +667,7 @@ function render() {
 
 const betaTag = () => CHANNEL === 'beta' ? '<b class="beta">BETA</b>' : '';
 function viewSetup() {
+  if (storageProblem) return `<section class="card"><h2>⚠️ ${t('storage_title')}</h2><p>${t('storage_corrupt')}</p><button class="btn primary" data-act="restore">${t('do_restore')}</button><button class="btn ghost danger" data-act="wipe">${t('wipe_btn')}</button></section>`;
   return `<div class="setup">${langPicker()}<img class="hero-img" src="${HERO_IMG}" alt="">
   <h1>${logo()}Pin.Pro</h1>
   <p class="muted">${t('setup_tagline')}</p>
@@ -716,13 +767,14 @@ function viewPaninda() {
       <button data-act="invFilter" data-id="low" class="${state.invFilter === 'low' ? 'on' : ''}">${t('f_low')}</button>
     </div>
   </div>
+  <button class="btn ghost" data-act="archiveItems">${t(state.archivedItems ? 'archived_active' : 'archived_show')}</button>
   <div id="list">${itemRows()}</div><div class="pad-fab"></div>
   <button class="fab" data-act="addItem">${t('fab_item')}</button>`;
 }
 function itemRows() {
   if (!D.items.length) return `<div class="empty">${t('empty_items')}</div>`;
   const q = state.q.trim().toLowerCase();
-  let list = D.items.filter(i => !q || i.name.toLowerCase().includes(q));
+  let list = D.items.filter(i => !!i.archived === state.archivedItems && (!q || i.name.toLowerCase().includes(q)));
   if (state.invFilter === 'low') list = list.filter(isLow);
   list.sort((a, b) => (isLow(b) - isLow(a)) || a.name.localeCompare(b.name));
   if (!list.length) return `<div class="empty">${t('no_match')}</div>`;
@@ -740,13 +792,14 @@ function viewListahan() {
   <section class="card hero"><span class="label">${t('total_utang')}</span>
     <div class="big">${peso(utangOut())}</div><span class="muted">${t('n_owe', { n: owing })}</span></section>
   <div class="toolbar"><input id="q" type="search" placeholder="${esc(t('search_cust'))}" value="${esc(state.q)}" autocomplete="off"></div>
+  <button class="btn ghost" data-act="archiveCustomers">${t(state.archivedCustomers ? 'archived_active' : 'archived_show')}</button>
   <div id="list">${custRows()}</div><div class="pad-fab"></div>
   <button class="fab" data-act="addCust">${t('fab_cust')}</button>`;
 }
 function custRows() {
   if (!D.customers.length) return `<div class="empty">${t('empty_cust')}</div>`;
   const q = state.q.trim().toLowerCase();
-  const list = D.customers.filter(c => !q || c.name.toLowerCase().includes(q))
+  const list = D.customers.filter(c => !!c.archived === state.archivedCustomers && (!q || c.name.toLowerCase().includes(q)))
     .map(c => ({ c, b: balanceOf(c.id) })).sort((a, b) => (b.b - a.b) || a.c.name.localeCompare(b.c.name));
   if (!list.length) return `<div class="empty">${t('no_match')}</div>`;
   return list.map(({ c, b }) => {
@@ -768,14 +821,15 @@ function viewCustomer(id) {
   <button class="back" data-act="back">${t('back_list')}</button>
   <section class="card hero">
     <div class="row-between"><h2 style="margin:0">${esc(c.name)}</h2><button class="icon-btn" data-act="editCust" data-id="${id}" aria-label="${t('a_edit')}">✏️</button></div>
+    ${c.archived ? `<button class="btn" data-act="unarchiveCust" data-id="${esc(id)}">${t('archived_restore')}</button>` : ''}
     ${c.phone || c.email ? `<div class="contact small">${c.phone ? `<a href="tel:${esc(c.phone)}">📞 ${esc(c.phone)}</a>` : ''}${c.email ? `<a href="mailto:${esc(c.email)}">✉️ ${esc(c.email)}</a>` : ''}</div>` : ''}
     <div class="big ${bal > 0 ? 'badtxt' : 'goodtxt'}">${peso(Math.max(0, bal))}</div>
     <span class="muted">${bal > 0 ? t('balance') : bal < 0 ? t('overpaid', { v: peso(-bal) }) : t('no_utang')}${c.limit ? t('limit_v', { v: peso(c.limit) }) : ''}</span>
     ${c.limit && bal > c.limit ? `<div class="status bad">${t('over_limit_by', { v: peso(bal - c.limit) })}</div>` : ''}
   </section>
   <div class="grid3">
-    <button class="btn" data-act="newUtang" data-id="${id}">${t('add_utang')}</button>
-    <button class="btn primary" data-act="newBayad" data-id="${id}">${t('add_pay')}</button>
+    <button class="btn" data-act="newUtang" data-id="${id}" ${c.archived ? 'disabled' : ''}>${t('add_utang')}</button>
+    <button class="btn primary" data-act="newBayad" data-id="${id}" ${c.archived ? 'disabled' : ''}>${t('add_pay')}</button>
     <button class="btn ghost" data-act="shareCust" data-id="${id}">${t('send')}</button>
   </div>
   ${c.email ? `<a class="btn ghost" style="margin:-2px 0 8px" href="${emailLink(id)}">${t('email_bal')}</a>` : ''}
@@ -862,11 +916,12 @@ function sheetItem(id) {
   <div class="stats"><div><b class="${isLow(i) ? 'badtxt' : ''}">${fmtQty(i.stock)}</b><span>${t('st_left')}</span></div><div><b>${peso(i.cost)}</b><span>${t('st_cost')}</span></div>
     <div><b>${peso(i.price)}</b><span>${t('st_price')}</span></div><div><b>${m}%</b><span>${t('st_profit')}</span></div></div>
   <div class="grid2">
-    <button class="btn primary" data-act="sold" data-id="${id}">${t('a_sold')}</button>
-    <button class="btn" data-act="restock" data-id="${id}">${t('a_restock')}</button>
+    <button class="btn primary" data-act="sold" data-id="${id}" ${i.archived ? 'disabled' : ''}>${t('a_sold')}</button>
+    <button class="btn" data-act="restock" data-id="${id}" ${i.archived ? 'disabled' : ''}>${t('a_restock')}</button>
     <button class="btn ghost" data-act="count" data-id="${id}">${t('a_count')}</button>
     <button class="btn ghost" data-act="editItem" data-id="${id}">${t('a_edit')}</button>
   </div>
+  ${i.archived ? `<button class="btn" data-act="unarchiveItem" data-id="${esc(id)}">${t('archived_restore')}</button>` : ''}
   <p class="hint small">${t('item_help')}</p>`);
 }
 function sheetItemForm(id) {
@@ -893,7 +948,7 @@ function sheetRestock(id) {
     <div class="grid2">${field(t('f_packs'), 'packs', 1, 'number', 'required data-preview')}${field(t('f_pcs'), 'pcs', pcs, 'number', 'required data-preview')}</div>
     ${field(t('f_packcost'), 'packCost', r2(i.cost * pcs), 'number', 'data-preview')}
     <p class="hint" id="pv"></p>
-    <label class="check"><input type="checkbox" name="fromCash" checked> ${t('from_cash')}</label>
+    <label class="check"><input type="checkbox" name="fromOwn"> ${t('funding_own')}</label><p class="hint small">${t('funding_explain')}</p>
     <button class="btn primary">${t('save')}</button></form>`);
   PREVIEW.restock($('#sheet form'));
 }
@@ -916,7 +971,7 @@ function sheetCustForm(id) {
   </form>`);
 }
 function custPicker(owingOnly) {
-  let cs = D.customers.map(c => ({ c, b: balanceOf(c.id) }));
+  let cs = D.customers.filter(c => !c.archived).map(c => ({ c, b: balanceOf(c.id) }));
   if (owingOnly) cs = cs.filter(x => x.b > 0);
   cs.sort((a, b) => a.c.name.localeCompare(b.c.name));
   return `<label class="f"><span>${t('f_cust')}</span><select name="cid"><option value="">${t('pick')}</option>
@@ -926,7 +981,7 @@ function sheetUtang(cid) {
   const c = cid && getCust(cid);
   const who = c ? `<input type="hidden" name="cid" value="${c.id}"><p><b>${esc(c.name)}</b> · ${t('bal_inline', { v: peso(balanceOf(c.id)) })}</p>`
                 : custPicker(false) + field(t('f_newcust'), 'newName', '', 'text', 'autocomplete="off"');
-  const itemOpts = D.items.slice().sort((a, b) => a.name.localeCompare(b.name))
+  const itemOpts = D.items.filter(i => !i.archived).sort((a, b) => a.name.localeCompare(b.name))
     .map(i => `<option value="${i.id}">${esc(i.name)} (${peso(i.price)})</option>`).join('');
   openSheet(`<h2>${t('new_utang')}</h2><form data-form="utang">${who}
     ${D.items.length ? `<div class="grid2"><label class="f"><span>${t('f_item_opt')}</span><select name="itemId" data-preview><option value="">${t('none_opt')}</option>${itemOpts}</select></label>
@@ -954,6 +1009,7 @@ function sheetCash(dir, cat) {
     ${field(t('f_amount'), 'amount', '', 'number', 'required')}
     ${field(t('f_note'), 'note', '', 'text', 'autocomplete="off"')}
     ${field(t('f_date'), 'date', today(), 'date')}
+    ${dir === 'out' ? `<label class="check"><input type="checkbox" name="fromOwn"> ${t('funding_own')}</label><p class="hint small">${t('funding_explain')}</p>` : ''}
     <p class="hint small">${dir === 'in' ? t('in_tip') : t('out_tip')}</p>
     <button class="btn primary">${t('save')}</button></form>`);
 }
