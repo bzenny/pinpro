@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- File: index.html  (Pin.Pro v1.2 — single-file, local-first, English / Cebuano / Tagalog) -->
+<!-- File: index.html  (Pin.Pro v1.4 — single-file, local-first, English / Cebuano / Tagalog) -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -371,6 +371,60 @@ const STR = {
   kb_used:       ['Pin.Pro v{v} · {k} KB used', 'Pin.Pro v{v} · {k} KB ang gamit', 'Pin.Pro v{v} · {k} KB ang gamit'],
   beta_note:     ['🧪 Test version. Your data here is separate from the official app.', '🧪 Test nga bersyon. Lahi ang imong data dinhi sa opisyal nga app.', '🧪 Test na bersyon. Hiwalay ang data mo dito sa opisyal na app.'],
 
+  // v1.4 device backup, finance and archive messages
+  storage_title: ["Device storage & recovery","Pagtipig ug pagbawi sa datos","Storage at pagbawi ng datos"],
+  rules_title: ["Explore Finance Rules","Mga lagda sa kwarta","Mga tuntunin sa pera"],
+  backup_save: ["Save backup file","I-save ang backup file","I-save ang backup file"],
+  backup_check: ["Check saved file (optional)","Susiha ang na-save nga file (opsyonal)","Suriin ang na-save na file (opsyonal)"],
+  backup_share: ["Share backup file","Ipaambit ang backup file","Ibahagi ang backup file"],
+  backup_started: ["Download started. Find your backup in Files/Downloads or your chosen folder.","Gisugdan ang download. Pangitaa ang backup sa Files/Downloads o napiling folder.","Sinimulan ang download. Hanapin ang backup sa Files/Downloads o napiling folder."],
+  backup_route: ["Working records stay in this browser on this device, not in a visible folder. Clearing browser data may erase them. No automatic cloud sync.","Ang aktibong datos ania sa browser sa device, dili sa folder. Mahimong mawala kon papason ang browser data. Walay awtomatikong cloud sync.","Nasa browser ng device ang aktibong datos, hindi sa folder. Mawawala kapag binura ang browser data. Walang awtomatikong cloud sync."],
+  backup_location: ["Android: Files > Downloads. iPhone/iPad: Files > Downloads. Computer: Downloads or a folder you choose.","Android: Files > Downloads. iPhone/iPad: Files > Downloads. Computer: Downloads o napiling folder.","Android: Files > Downloads. iPhone/iPad: Files > Downloads. Computer: Downloads o napiling folder."],
+  backup_private: ["JSON backups can contain names and phone numbers. Keep a second copy somewhere safe. File verification is optional.","Ang JSON backup may ngalan ug numero sa suki. Pagtipig ug ikaduhang kopya. Opsyonal ang pagsusi sa file.","Ang JSON backup ay may pangalan at telepono ng customer. Magtago ng ikalawang kopya. Opsyonal ang pagsusuri."],
+  backup_last: ["Last backup requested","Kataposang backup nga gihangyo","Huling hiniling na backup"],
+  backup_verified: ["Last file check","Kataposang pagsusi sa file","Huling pagsusuri sa file"],
+  backup_none: ["None yet","Wala pa","Wala pa"],
+  backup_mismatch: ["File is different from current data; save a new copy if needed.","Lahi ang file sa datos karon; paghimo og bag-ong kopya kon kinahanglan.","Iba ang file sa datos ngayon; gumawa ng bagong kopya kung kailangan."],
+  backup_ok: ["Backup file checked.","Nasusi ang backup file.","Nasuri ang backup file."],
+  backup_invalid: ["Invalid Pin.Pro backup. Current data was not replaced.","Dili balidong Pin.Pro backup. Wala giilisan ang datos.","Hindi wastong Pin.Pro backup. Hindi napalitan ang datos."],
+  storage_fail: ["Save failed. Your previous records were kept.","Napakyas ang pag-save. Gitipigan ang daang datos.","Bigo ang pag-save. Napanatili ang dating datos."],
+  storage_conflict: ["Another tab changed the store. Reopen the app before editing.","Nausab ang datos sa laing tab. Ablihi pag-usab ang app.","Binago ng ibang tab ang tindahan. Buksan muli ang app."],
+  storage_corrupt: ["Records could not be read. Restore a backup or reset; data has not been overwritten.","Dili mabasa ang datos. Ibalik ang backup o i-reset; wala kini giilisan.","Hindi mabasa ang datos. Ibalik ang backup o i-reset; hindi ito napalitan."],
+  funding_own: ["Paid with my own money / GCash","Gibayran sa akong kaugalingong kwarta / GCash","Binayaran gamit ang sarili kong pera / GCash"],
+  funding_explain: ["Creates linked owner capital and payment records. Drawer cash does not change.","Mugama og konektadong puhunan ug bayad. Dili mausab ang cash sa kaha.","Gagawa ng magkaugnay na puhunan at bayad. Hindi magbabago ang cash sa kaha."],
+  funding_confirm: ["Not enough drawer cash. Use your own money for this payment?","Kulang ang cash sa kaha. Gamiton ang kaugalingong kwarta?","Kulang ang cash sa kaha. Gamitin ang sariling pera?"],
+  funding_note: ["Owner funding for {n}","Kaugalingong puhunan para sa {n}","Sariling puhunan para sa {n}"],
+  restock_undo: ["Undo this restock and any linked funding?","Bawi-on kining restock ug kalakip nga puhunan?","Bawiin ang restock at kasamang puhunan?"],
+  restock_later: ["Later stock changes exist. Use new correction entries.","Adunay mas bag-ong lihok sa stock. Himo og bag-ong pag-ayo.","May sumunod na galaw sa stock. Gumamit ng bagong tala."],
+  restock_changed: ["Stock changed. Correct it with a stock count.","Nausab ang stock. Itul-id gamit ang Bilangin.","Nagbago ang stock. Itama gamit ang Bilangin."],
+  archive_owing: ["Settle the balance before archiving.","Bayri una ang utang sa dili pa i-archive.","Bayaran muna ang utang bago i-archive."],
+  archive_stock: ["Count stock to zero before archiving.","I-Bilangin ngadto sa zero una sa pag-archive.","I-Bilangin muna sa zero bago i-archive."],
+  archive_customer: ["Archive {n} and keep their records?","I-archive si {n} ug tipigi ang datos?","I-archive si {n} at panatilihin ang tala?"],
+  archive_item: ["Archive {n} and keep their records?","I-archive ang {n} ug tipigi ang datos?","I-archive ang {n} at panatilihin ang tala?"],
+  archive_success: ["Archived. History kept.","Na-archive. Gitipigan ang kasaysayan.","Na-archive. Nanatili ang tala."],
+  archived_show: ["Show archived","Ipakita ang gi-archive","Ipakita ang naka-archive"],
+  archived_active: ["Show active","Ipakita ang aktibo","Ipakita ang aktibo"],
+  archived_restore: ["Restore to active","Ibalik sa aktibo","Ibalik sa aktibo"],
+  archived_no_entry: ["Restore this archived record before making a transaction.","Ibalik una ang gi-archive nga rekord aron makalista.","Ibalik muna ang naka-archive bago magtala."],
+  correct_count: ["Stock count saved: {n}","Natipig ang ihap sa stock: {n}","Naitala ang bilang ng stock: {n}"],
+  money_only: ["Tracks physical drawer cash. Payments from personal funds are linked bookkeeping entries, not real cash put in the drawer. A separate GCash/bank account is not supported yet.","Pisikal nga cash sa kaha ang gisubay. Ang kaugalingong pondo magkapares nga rekord, dili tinuod nga deposito. Wala pay laing GCash/bank account.","Aktuwal na pera sa kaha ang sinusubaybayan. Ang sariling pondo ay magkapares na tala, hindi aktuwal na deposito. Wala pang hiwalay na GCash/bank account."],
+  rule_pick: ["Choose a topic","Pagpili og hilisgutan","Pumili ng paksa"],
+  rule_1: ["Cash sale","Cash nga baligya","Bentang cash"],
+  rule_1_desc: ["A stock-item sale reduces quantity and adds cash. A quick cash entry adds cash only. Never record the same sale twice.","Ang baligya sa item mokuha sa stock ug modugang sa cash. Ang quick cash entry cash ra. Ayaw dobleha ang baligya.","Ang benta ng item ay bawas-stock at dagdag-cash. Ang quick cash entry ay cash lang. Huwag doblehin ang benta."],
+  rule_2: ["Utang sale","Utang nga baligya","Bentang utang"],
+  rule_2_desc: ["Utang raises customer debt but not cash. An item reduces stock. Low stock shows a warning; the owner can proceed and count later.","Ang utang modugang sa balanse sa suki, dili cash. Mokuha kini sa stock. Kon kulang, magpasidaan ug mahimong ipadayon.","Ang utang ay dagdag sa balanse, hindi cash. Bawas-stock ito. Kung kulang, may babala at puwedeng ituloy."],
+  rule_3: ["Customer payment","Bayad sa utang","Bayad sa utang"],
+  rule_3_desc: ["A payment reduces utang and adds to drawer cash. Overpayments are blocked to avoid untracked customer credits.","Ang bayad mopaubos sa utang ug modugang sa kaha. Dili tugotan ang sobra nga bayad aron walay credit nga dili masubay.","Ang bayad ay bawas-utang at dagdag-cash. Hindi pinapayagan ang sobrang bayad upang maiwasan ang hindi nakatalang credit."],
+  rule_4: ["Restock and average cost","Restock ug average cost","Restock at average cost"],
+  rule_4_desc: ["Restock adds stock at weighted-average cost. Choose drawer cash or own money/GCash. Own-money payments create a capital-in and purchase-out pair, leaving drawer cash unchanged. Undo is allowed before later stock movements.","Ang restock modugang sa stock sa average cost. Pilia ang kaha o kaugalingong kwarta/GCash. Magpares ang puhunan ug gasto, wala mausab ang cash. Bawi-a sa dili pa adunay laing lihok sa stock.","Ang restock ay dagdag stock sa average cost. Piliin ang kaha o sariling pera/GCash. Magkapantay ang puhunan at bayad, hindi mababago ang kaha. Puwedeng bawiin bago ang susunod na galaw."],
+  rule_5: ["Expenses and funding","Gasto ug puhunan","Gastos at puhunan"],
+  rule_5_desc: ["An expense from the drawer reduces cash. An expense paid personally records matching owner funding and expense without changing drawer cash. Store value is cash + stock at cost + utang; it is not profit.","Ang gasto sa kaha mokuha sa cash. Ang personal nga bayad mahimong pares nga puhunan ug gasto. Ang total sa tindahan dili profit.","Ang gastos sa kaha ay bawas-cash. Ang sariling bayad ay magkaparehong puhunan at gastos. Hindi tubo ang total ng tindahan."],
+  rule_6: ["Corrections and weekly backups","Pag-ayo ug senemanang backup","Pagwawasto at lingguhang backup"],
+  rule_6_desc: ["Failed saves are rolled back. Stock counts change inventory, not cash. Archived history remains. Back up around once a week; finding and checking the downloaded file is recommended, but optional.","Ang napakyas nga save ibalik. Ang Bilangin stock ra. Ang kasaysayan sa archive magpabilin. Paghimo og backup kada semana; opsyonal ang pagsusi.","Kapag bigo ang save, ibabalik ang dating tala. Stock lang ang Bilangin. Nananatili ang archive. Mag-backup linggu-linggo; opsyonal ang pag-check."],
+  done_restock: ["Restocked {n} for {v}","Nadugangan ang {n} sa {v}","Nadagdagan ang {n} sa {v}"],
+  money_saved: ["Transaction recorded.","Narekord ang transaksyon.","Naitala ang transaksyon."],
+  invalid_value: ["Enter a valid amount or quantity.","Ibutang ang balidong kantidad o ihap.","Maglagay ng wastong halaga o bilang."],
+  payment_exceeds: ["Payment is more than the balance ({v}).", "Sobra ang bayad kaysa balanse ({v}).", "Mas malaki ang bayad kaysa balanse ({v})."],
   // messages
   t_cant_save:   ['Couldn’t save! Storage may be full. Back up now.', 'Dili ma-save! Basin puno na ang storage. Pag-backup karon.', 'Hindi ma-save! Baka puno ang storage. Mag-backup.'],
   t_ready:       ['Ready! Add your items.', 'Andam na! Pagdugang og baligya.', 'Handa na! Magdagdag ng paninda.'],
@@ -434,16 +488,17 @@ function langPicker() {
 
 // ---------- Storage adapter (the only place that touches storage) ----------
 // Beta testers and the official app keep SEPARATE data, even on the same phone.
-const APP_VERSION = '1.3.0';
+const APP_VERSION = '1.4.0';
 const CHANNEL = /(^|[\/.])(beta|test|staging)([\/.-]|$)/i.test(location.hostname + location.pathname) ? 'beta' : 'prod';
 const KEY = CHANNEL === 'beta' ? 'pinpro.beta.v1' : 'pinpro.v1', LANG_KEY = 'pinpro.lang';
+let storageProblem = false;
 const Store = {
-  load() { try { const raw = localStorage.getItem(KEY); return raw ? JSON.parse(raw) : null; } catch (e) { return null; } },
+  load() { try { const raw = localStorage.getItem(KEY); return raw ? JSON.parse(raw) : null; } catch (e) { storageProblem = true; return null; } },
   save(data) {
     try { localStorage.setItem(KEY, JSON.stringify(data)); return true; }
     catch (e) { toast(t('t_cant_save')); return false; }
   },
-  clear() { try { localStorage.removeItem(KEY); } catch (e) {} },
+  clear() { try { localStorage.removeItem(KEY); return localStorage.getItem(KEY) === null; } catch (e) { return false; } },
   size() { try { return (localStorage.getItem(KEY) || '').length; } catch (e) { return 0; } },
   getLang() { try { return localStorage.getItem(LANG_KEY); } catch (e) { return null; } },
   setLang(l) { try { localStorage.setItem(LANG_KEY, l); } catch (e) {} }
@@ -472,19 +527,53 @@ const catLabel = k => CATS[k] ? t('cat_' + k) : k;
 const SPEND_CATS = ['bills', 'upa', 'pamasahe', 'gastos']; // counted against monthly budget
 
 function blankData() {
-  return { version: 1, store: { name: '', openingCash: 0, capital: 0, budget: 0, lastBackup: '', createdAt: today() },
-           items: [], customers: [], ledger: [], cash: [] };
+  return { version: 1, store: { name: '', openingCash: 0, capital: 0, budget: 0, lastBackup: '', lastBackupChecked: '', createdAt: today() },
+           items: [], customers: [], ledger: [], cash: [], adjustments: [] };
 }
 function migrate(d) {
   if (!d || typeof d !== 'object') return null;
   const b = blankData();
   const arr = k => Array.isArray(d[k]) ? d[k] : [];
   return { ...b, ...d, store: { ...b.store, ...(d.store || {}) },
-           items: arr('items'), customers: arr('customers'), ledger: arr('ledger'), cash: arr('cash') };
+           items: arr('items'), customers: arr('customers'), ledger: arr('ledger'), cash: arr('cash'), adjustments: arr('adjustments') };
+}
+
+function validateData(data) {
+  if (!data || typeof data !== 'object' || Array.isArray(data) ||
+      !data.store || typeof data.store !== 'object' || Array.isArray(data.store) ||
+      typeof data.store.name !== 'string') throw Error('invalid store');
+  if (data.version && data.version > 1) throw Error('unsupported backup version');
+  const allowedId = s => typeof s === 'string' && /^[A-Za-z0-9_-]{1,96}$/.test(s);
+  for (const type of ['items', 'customers', 'ledger', 'cash']) {
+    const entries = data[type];
+    if (!Array.isArray(entries) || entries.length > 150000) throw Error('invalid records');
+    const ids = new Set();
+    for (const r of entries) {
+      if (!r || typeof r !== 'object' || Array.isArray(r) ||
+          !allowedId(r.id) || ids.has(r.id)) throw Error('invalid record ID');
+      ids.add(r.id);
+    }
+  }
+  const goodAmount = x => typeof x === 'number' && Number.isFinite(x);
+  const goodDate = x => typeof x === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(x);
+  for (const it of data.items) if (typeof it.name !== 'string' ||
+       !goodAmount(it.cost) || it.cost < 0 || !goodAmount(it.price) ||
+       it.price < 0 || !goodAmount(it.stock)) throw Error('bad item');
+  for (const cu of data.customers) if (typeof cu.name !== 'string') throw Error('bad customer');
+  const custIds = new Set(data.customers.map(x => x.id));
+  for (const e of data.ledger) if (!custIds.has(e.customerId) ||
+       !['utang','bayad'].includes(e.type) || !goodAmount(e.amount) ||
+       e.amount <= 0 || !goodDate(e.date)) throw Error('bad ledger');
+  for (const e of data.cash) if (!Object.prototype.hasOwnProperty.call(CATS,e.cat) ||
+       !goodAmount(e.amount) || e.amount < 0 || !goodDate(e.date)) throw Error('bad cash');
+  if (data.adjustments !== undefined &&
+      (!Array.isArray(data.adjustments) || data.adjustments.length > 150000)) throw Error('bad adjustments');
+  return true;
 }
 
 let D = null; // loaded at startup (bottom of file), after all helpers exist
-const state = { tab: 'home', cust: null, q: '', invFilter: 'all', period: 'month' };
+const state = { tab: 'home', cust: null, q: '', invFilter: 'all', period: 'month', archivedItems: false, archivedCustomers: false, fileMode: 'restore', settingsPage: 'settings' };
+let lastRaw = null, lastSnapshot = null;
 
 // ---------- Helpers ----------
 const $ = (s, el = document) => el.querySelector(s);
@@ -518,8 +607,25 @@ function ask(msg) {
     document.body.appendChild(el); el.querySelector('[data-r="1"]').focus();
   });
 }
-function commit() { Store.save(D); closeSheet(); render(); }
-
+function commit() {
+  try {
+    if (localStorage.getItem(KEY) !== lastRaw) {
+      D = lastSnapshot ? JSON.parse(lastSnapshot) : null;
+      render(); toast(t('storage_conflict')); return false;
+    }
+  } catch (_) {
+    D = lastSnapshot ? JSON.parse(lastSnapshot) : null;
+    render(); toast(t('storage_fail')); return false;
+  }
+  if (!Store.save(D)) {
+    D = lastSnapshot ? JSON.parse(lastSnapshot) : null;
+    render(); toast(t('storage_fail')); return false;
+  }
+  lastRaw = localStorage.getItem(KEY);
+  lastSnapshot = JSON.stringify(D);
+  closeSheet(); render();
+  return true;
+}
 // ---------- Derived numbers (always computed) ----------
 function balanceOf(cid) { return r2(D.ledger.filter(e => e.customerId === cid).reduce((s, e) => s + (e.type === 'utang' ? e.amount : -e.amount), 0)); }
 function owingSince(cid) {
@@ -535,7 +641,7 @@ function stockValue() { return r2(D.items.reduce((s, i) => s + Math.max(0, i.sto
 function utangOut() { return r2(D.customers.reduce((s, c) => s + Math.max(0, balanceOf(c.id)), 0)); }
 function totalNow() { return r2(cashOnHand() + stockValue() + utangOut()); }
 function sumCash(from, to, dir) { return r2(D.cash.filter(c => c.date >= from && c.date <= to && dirOf(c) === dir).reduce((s, c) => s + c.amount, 0)); }
-const isLow = i => i.low > 0 && i.stock <= i.low;
+const isLow = i => !i.archived && i.low > 0 && i.stock <= i.low;
 function suggestQty(i) { const pack = i.packSize || 1; const need = Math.max(i.low * 2 - i.stock, 1); return Math.ceil(need / pack) * pack; }
 function sinceLine(cid) {
   const s = owingSince(cid); if (!s) return '';
@@ -562,6 +668,7 @@ function render() {
 
 const betaTag = () => CHANNEL === 'beta' ? '<b class="beta">BETA</b>' : '';
 function viewSetup() {
+  if (storageProblem) return `<section class="card"><h2>⚠️ ${t('storage_title')}</h2><p>${t('storage_corrupt')}</p><button class="btn primary" data-act="restore">${t('do_restore')}</button><button class="btn ghost danger" data-act="wipe">${t('wipe_btn')}</button></section>`;
   return `<div class="setup">${langPicker()}<img class="hero-img" src="${HERO_IMG}" alt="">
   <h1>${logo()}Pin.Pro</h1>
   <p class="muted">${t('setup_tagline')}</p>
@@ -661,13 +768,14 @@ function viewPaninda() {
       <button data-act="invFilter" data-id="low" class="${state.invFilter === 'low' ? 'on' : ''}">${t('f_low')}</button>
     </div>
   </div>
+  <button class="btn ghost" data-act="archiveItems">${t(state.archivedItems ? 'archived_active' : 'archived_show')}</button>
   <div id="list">${itemRows()}</div><div class="pad-fab"></div>
   <button class="fab" data-act="addItem">${t('fab_item')}</button>`;
 }
 function itemRows() {
   if (!D.items.length) return `<div class="empty">${t('empty_items')}</div>`;
   const q = state.q.trim().toLowerCase();
-  let list = D.items.filter(i => !q || i.name.toLowerCase().includes(q));
+  let list = D.items.filter(i => !!i.archived === state.archivedItems && (!q || i.name.toLowerCase().includes(q)));
   if (state.invFilter === 'low') list = list.filter(isLow);
   list.sort((a, b) => (isLow(b) - isLow(a)) || a.name.localeCompare(b.name));
   if (!list.length) return `<div class="empty">${t('no_match')}</div>`;
@@ -685,13 +793,14 @@ function viewListahan() {
   <section class="card hero"><span class="label">${t('total_utang')}</span>
     <div class="big">${peso(utangOut())}</div><span class="muted">${t('n_owe', { n: owing })}</span></section>
   <div class="toolbar"><input id="q" type="search" placeholder="${esc(t('search_cust'))}" value="${esc(state.q)}" autocomplete="off"></div>
+  <button class="btn ghost" data-act="archiveCustomers">${t(state.archivedCustomers ? 'archived_active' : 'archived_show')}</button>
   <div id="list">${custRows()}</div><div class="pad-fab"></div>
   <button class="fab" data-act="addCust">${t('fab_cust')}</button>`;
 }
 function custRows() {
   if (!D.customers.length) return `<div class="empty">${t('empty_cust')}</div>`;
   const q = state.q.trim().toLowerCase();
-  const list = D.customers.filter(c => !q || c.name.toLowerCase().includes(q))
+  const list = D.customers.filter(c => !!c.archived === state.archivedCustomers && (!q || c.name.toLowerCase().includes(q)))
     .map(c => ({ c, b: balanceOf(c.id) })).sort((a, b) => (b.b - a.b) || a.c.name.localeCompare(b.c.name));
   if (!list.length) return `<div class="empty">${t('no_match')}</div>`;
   return list.map(({ c, b }) => {
@@ -713,14 +822,15 @@ function viewCustomer(id) {
   <button class="back" data-act="back">${t('back_list')}</button>
   <section class="card hero">
     <div class="row-between"><h2 style="margin:0">${esc(c.name)}</h2><button class="icon-btn" data-act="editCust" data-id="${id}" aria-label="${t('a_edit')}">✏️</button></div>
+    ${c.archived ? `<button class="btn" data-act="unarchiveCust" data-id="${esc(id)}">${t('archived_restore')}</button>` : ''}
     ${c.phone || c.email ? `<div class="contact small">${c.phone ? `<a href="tel:${esc(c.phone)}">📞 ${esc(c.phone)}</a>` : ''}${c.email ? `<a href="mailto:${esc(c.email)}">✉️ ${esc(c.email)}</a>` : ''}</div>` : ''}
     <div class="big ${bal > 0 ? 'badtxt' : 'goodtxt'}">${peso(Math.max(0, bal))}</div>
     <span class="muted">${bal > 0 ? t('balance') : bal < 0 ? t('overpaid', { v: peso(-bal) }) : t('no_utang')}${c.limit ? t('limit_v', { v: peso(c.limit) }) : ''}</span>
     ${c.limit && bal > c.limit ? `<div class="status bad">${t('over_limit_by', { v: peso(bal - c.limit) })}</div>` : ''}
   </section>
   <div class="grid3">
-    <button class="btn" data-act="newUtang" data-id="${id}">${t('add_utang')}</button>
-    <button class="btn primary" data-act="newBayad" data-id="${id}">${t('add_pay')}</button>
+    <button class="btn" data-act="newUtang" data-id="${id}" ${c.archived ? 'disabled' : ''}>${t('add_utang')}</button>
+    <button class="btn primary" data-act="newBayad" data-id="${id}" ${c.archived ? 'disabled' : ''}>${t('add_pay')}</button>
     <button class="btn ghost" data-act="shareCust" data-id="${id}">${t('send')}</button>
   </div>
   ${c.email ? `<a class="btn ghost" style="margin:-2px 0 8px" href="${emailLink(id)}">${t('email_bal')}</a>` : ''}
@@ -807,11 +917,12 @@ function sheetItem(id) {
   <div class="stats"><div><b class="${isLow(i) ? 'badtxt' : ''}">${fmtQty(i.stock)}</b><span>${t('st_left')}</span></div><div><b>${peso(i.cost)}</b><span>${t('st_cost')}</span></div>
     <div><b>${peso(i.price)}</b><span>${t('st_price')}</span></div><div><b>${m}%</b><span>${t('st_profit')}</span></div></div>
   <div class="grid2">
-    <button class="btn primary" data-act="sold" data-id="${id}">${t('a_sold')}</button>
-    <button class="btn" data-act="restock" data-id="${id}">${t('a_restock')}</button>
+    <button class="btn primary" data-act="sold" data-id="${id}" ${i.archived ? 'disabled' : ''}>${t('a_sold')}</button>
+    <button class="btn" data-act="restock" data-id="${id}" ${i.archived ? 'disabled' : ''}>${t('a_restock')}</button>
     <button class="btn ghost" data-act="count" data-id="${id}">${t('a_count')}</button>
     <button class="btn ghost" data-act="editItem" data-id="${id}">${t('a_edit')}</button>
   </div>
+  ${i.archived ? `<button class="btn" data-act="unarchiveItem" data-id="${esc(id)}">${t('archived_restore')}</button>` : ''}
   <p class="hint small">${t('item_help')}</p>`);
 }
 function sheetItemForm(id) {
@@ -838,7 +949,7 @@ function sheetRestock(id) {
     <div class="grid2">${field(t('f_packs'), 'packs', 1, 'number', 'required data-preview')}${field(t('f_pcs'), 'pcs', pcs, 'number', 'required data-preview')}</div>
     ${field(t('f_packcost'), 'packCost', r2(i.cost * pcs), 'number', 'data-preview')}
     <p class="hint" id="pv"></p>
-    <label class="check"><input type="checkbox" name="fromCash" checked> ${t('from_cash')}</label>
+    <label class="check"><input type="checkbox" name="fromOwn"> ${t('funding_own')}</label><p class="hint small">${t('funding_explain')}</p>
     <button class="btn primary">${t('save')}</button></form>`);
   PREVIEW.restock($('#sheet form'));
 }
@@ -861,7 +972,7 @@ function sheetCustForm(id) {
   </form>`);
 }
 function custPicker(owingOnly) {
-  let cs = D.customers.map(c => ({ c, b: balanceOf(c.id) }));
+  let cs = D.customers.filter(c => !c.archived).map(c => ({ c, b: balanceOf(c.id) }));
   if (owingOnly) cs = cs.filter(x => x.b > 0);
   cs.sort((a, b) => a.c.name.localeCompare(b.c.name));
   return `<label class="f"><span>${t('f_cust')}</span><select name="cid"><option value="">${t('pick')}</option>
@@ -871,7 +982,7 @@ function sheetUtang(cid) {
   const c = cid && getCust(cid);
   const who = c ? `<input type="hidden" name="cid" value="${c.id}"><p><b>${esc(c.name)}</b> · ${t('bal_inline', { v: peso(balanceOf(c.id)) })}</p>`
                 : custPicker(false) + field(t('f_newcust'), 'newName', '', 'text', 'autocomplete="off"');
-  const itemOpts = D.items.slice().sort((a, b) => a.name.localeCompare(b.name))
+  const itemOpts = D.items.filter(i => !i.archived).sort((a, b) => a.name.localeCompare(b.name))
     .map(i => `<option value="${i.id}">${esc(i.name)} (${peso(i.price)})</option>`).join('');
   openSheet(`<h2>${t('new_utang')}</h2><form data-form="utang">${who}
     ${D.items.length ? `<div class="grid2"><label class="f"><span>${t('f_item_opt')}</span><select name="itemId" data-preview><option value="">${t('none_opt')}</option>${itemOpts}</select></label>
@@ -889,7 +1000,7 @@ function sheetBayad(cid) {
     ${field(t('f_amount'), 'amount', '', 'number', 'required')}
     ${c && bal > 0 ? `<button type="button" class="btn ghost" data-act="fillFull" data-v="${bal}" style="margin:-4px 0 12px">${t('full_bal', { v: peso(bal) })}</button>` : ''}
     ${field(t('f_note'), 'note', '', 'text', 'autocomplete="off"')}
-    <label class="check"><input type="checkbox" name="toCash" checked> ${t('to_cash')}</label>
+    <p class="hint small">${t('money_only')}</p>
     <button class="btn primary">${t('save')}</button></form>`);
 }
 function sheetCash(dir, cat) {
@@ -899,28 +1010,58 @@ function sheetCash(dir, cat) {
     ${field(t('f_amount'), 'amount', '', 'number', 'required')}
     ${field(t('f_note'), 'note', '', 'text', 'autocomplete="off"')}
     ${field(t('f_date'), 'date', today(), 'date')}
+    ${dir === 'out' ? `<label class="check"><input type="checkbox" name="fromOwn"> ${t('funding_own')}</label><p class="hint small">${t('funding_explain')}</p>` : ''}
     <p class="hint small">${dir === 'in' ? t('in_tip') : t('out_tip')}</p>
     <button class="btn primary">${t('save')}</button></form>`);
 }
 function sheetSettings() {
-  const s = D.store;
-  openSheet(`<h2>⚙️ Settings</h2>
-  <span class="label">${t('language')}</span>${langPicker()}
+  if(!D)return sheetStorage();
+  const s=D.store;
+  state.settingsPage='settings';
+  openSheet(`<h2>⚙️ ${t('other')}</h2><span class="label">${t('language')}</span>${langPicker()}
   <form data-form="settings">
-    ${field(t('setup_name'), 'name', s.name, 'text')}
-    ${field(t('s_open'), 'openingCash', s.openingCash)}
-    ${field(t('s_cap'), 'capital', s.capital || '')}
-    ${field(t('s_budget'), 'budget', s.budget || '')}
-    <button class="btn primary">${t('save')}</button></form>
-  <h3>${t('backup_title')}</h3>
-  <p class="muted small">${t('backup_info')}${s.lastBackup ? t('last_backup', { d: fmtDate(s.lastBackup) }) : t('no_backup')}</p>
-  <div class="grid2"><button class="btn" data-act="backup">${t('do_backup')}</button><button class="btn ghost" data-act="restore">${t('do_restore')}</button></div>
-  ${CHANNEL === 'beta' ? `<p class="hint">${t('beta_note')}</p>` : ''}
-  <h3>${t('other')}</h3>
-  <button class="btn ghost danger" data-act="wipe">${t('wipe_btn')}</button>
-  <p class="muted small" style="text-align:center">${t('kb_used', { v: APP_VERSION + (CHANNEL === 'beta' ? '-beta' : ''), k: (Store.size() / 1024).toFixed(1) })}</p>`);
+    ${field(t('setup_name'),'name',s.name,'text')}
+    ${field(t('s_open'),'openingCash',s.openingCash)}
+    ${field(t('s_cap'),'capital',s.capital||'')}
+    ${field(t('s_budget'),'budget',s.budget||'')}
+    <button class="btn primary">${t('save')}</button>
+  </form>
+  <h3>${t('storage_title')}</h3>
+  <button class="btn" data-act="storage">📁 ${t('storage_title')}</button>
+  <button class="btn ghost" data-act="rules">📘 ${t('rules_title')}</button>
+  ${CHANNEL==='beta'?`<p class="hint">${t('beta_note')}</p>`:''}
+  <h3>${t('other')}</h3><button class="btn ghost danger" data-act="wipe">${t('wipe_btn')}</button>
+  <p class="muted small" style="text-align:center">${t('kb_used',{v:APP_VERSION+'-beta',k:(Store.size()/1024).toFixed(1)})}</p>`);
 }
 
+function sheetStorage() {
+  state.settingsPage='storage';
+  const last=D&&D.store.lastBackup?D.store.lastBackup:t('backup_none');
+  const checked=D&&D.store.lastBackupChecked?D.store.lastBackupChecked:t('backup_none');
+  openSheet(`<h2>📁 ${t('storage_title')}</h2><p class="hint">${t('backup_route')}</p>
+    <p class="hint">${t('backup_location')}</p><p class="hint">${t('backup_private')}</p>
+    <section class="card"><b>${t('backup_last')}: ${esc(last)}</b>
+      <p class="muted small">${t('backup_verified')}: ${esc(checked)}</p>
+      <p class="muted small">${esc(KEY)} · ${(Store.size()/1024).toFixed(1)} KB</p>
+    </section>
+    <button class="btn primary" data-act="backup">${t('backup_save')}</button>
+    <button class="btn" data-act="restore">${t('do_restore')}</button>
+    <button class="btn ghost" data-act="verify">${t('backup_check')}</button>
+    <button class="btn ghost" data-act="shareBackup">${t('backup_share')}</button>`);
+}
+
+function sheetRules() {
+  state.settingsPage='rules';
+  openSheet(`<h2>📘 ${t('rules_title')}</h2><p class="hint">${t('money_only')}</p>
+    <label class="f"><span>${t('rule_pick')}</span><select id="ruleTopic">
+      ${[1,2,3,4,5,6].map(i=>`<option value="${i}">${t('rule_'+i)}</option>`).join('')}
+    </select></label><section class="card"><p id="ruleDetail">${t('rule_1_desc')}</p></section>`);
+}
+
+function showRule() {
+  const picker=$('#ruleTopic'), el=$('#ruleDetail');
+  if(picker&&el)el.textContent=t('rule_'+picker.value+'_desc');
+}
 // ---------- Live previews inside forms ----------
 const PREVIEW = {
   restock(f) {
@@ -934,123 +1075,218 @@ const PREVIEW = {
   }
 };
 
+let lastTransactionStamp = 0;
+function transactionStamp() { lastTransactionStamp = Math.max(Date.now(), lastTransactionStamp + 1); return lastTransactionStamp; }
+function recordPaymentFromOwner(amount, expense, date, note) {
+  const funding = { id: uid(), cat:'dagdag', amount, date, at:expense.at,
+    note:t('funding_note',{n:note}), fundingFor:expense.id };
+  expense.fundedBy = funding.id;
+  D.cash.push(funding);
+}
+
 // ---------- Form handlers ----------
 const FORM = {
-  setup(fd) {
-    D = blankData(); D.store.name = (fd.name || '').trim(); D.store.openingCash = r2(num(fd.openingCash));
-    Store.save(D); render(); toast(t('t_ready'));
-  },
-  async item(fd, id) {
-    const name = (fd.name || '').trim(); if (!name) return toast(t('t_need_name'));
-    const cost = r2(num(fd.cost)), price = r2(num(fd.price));
-    if (price < cost && !(await ask(t('a_price_below')))) return;
-    const low = r2(num(fd.low)), packSize = Math.max(1, Math.round(num(fd.packSize)) || 1);
-    if (id) Object.assign(getItem(id), { name, cost, price, low, packSize });
-    else D.items.push({ id: uid(), name, cost, price, stock: r2(num(fd.stock)), low, packSize });
-    commit(); toast(t('t_saved'));
-  },
-  async sold(fd, id) {
-    const i = getItem(id), qty = r2(num(fd.qty)), price = r2(num(fd.price));
-    if (qty <= 0) return toast(t('t_need_qty'));
-    if (qty > i.stock && !(await ask(t('a_qty_over', { n: fmtQty(i.stock) })))) return;
-    i.stock = r2(i.stock - qty);
-    D.cash.push({ id: uid(), cat: 'benta', amount: r2(qty * price), note: `${i.name} ×${fmtQty(qty)}`, date: today(), at: Date.now(), itemId: i.id, stockDelta: -qty });
-    commit(); toast(t('t_plus_cash', { v: peso(qty * price) }));
-  },
-  restock(fd, id) {
-    const i = getItem(id), packs = r2(num(fd.packs)), pcs = Math.max(1, Math.round(num(fd.pcs)) || 1), packCost = r2(num(fd.packCost));
-    if (packs <= 0) return toast(t('t_need_packs'));
-    const qty = r2(packs * pcs);
-    i.stock = r2(i.stock + qty); i.packSize = pcs;
-    if (packCost > 0) i.cost = r2(packCost / pcs);
-    if (fd.fromCash === 'on' && packCost > 0)
-      D.cash.push({ id: uid(), cat: 'paninda', amount: r2(packs * packCost), note: `${i.name} +${fmtQty(qty)}`, date: today(), at: Date.now(), itemId: i.id, stockDelta: qty });
-    commit(); toast(`+${fmtQty(qty)} ${i.name}`);
-  },
-  count(fd, id) {
-    const i = getItem(id), n = r2(num(fd.count)), diff = r2(n - i.stock);
-    i.stock = n; commit();
-    toast(diff === 0 ? t('c_ok') : diff < 0 ? t('c_short', { n: fmtQty(-diff) }) : t('c_over', { n: fmtQty(diff) }));
-  },
-  cust(fd, id) {
-    const name = (fd.name || '').trim(); if (!name) return toast(t('t_need_name'));
-    const email = (fd.email || '').trim();
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return toast(t('t_bad_email'));
-    const data = { name, phone: (fd.phone || '').trim(), email, limit: r2(num(fd.limit)) };
-    if (id) Object.assign(getCust(id), data);
-    else { const c = { id: uid(), ...data }; D.customers.push(c); state.tab = 'listahan'; state.cust = c.id; }
-    commit();
-  },
-  async utang(fd) {
-    const amount = r2(num(fd.amount)); if (amount <= 0) return toast(t('t_need_amount'));
-    const newName = (fd.newName || '').trim();
-    if (!fd.cid && !newName) return toast(t('t_need_cust'));
-    let c = fd.cid ? getCust(fd.cid) : null;
-    if (c) {
-      const bal = balanceOf(c.id);
-      if (c.limit && bal + amount > c.limit && !(await ask(t('a_over_limit', { c: c.name, l: peso(c.limit), b: peso(bal + amount) })))) return;
-    } else { c = { id: uid(), name: newName, phone: '', email: '', limit: 0 }; D.customers.push(c); }
-    const e = { id: uid(), customerId: c.id, type: 'utang', amount, note: (fd.note || '').trim(), date: today(), at: Date.now() };
-    if (fd.itemId) {
-      const i = getItem(fd.itemId), q = r2(num(fd.qty)) || 1;
-      if (i) { i.stock = r2(i.stock - q); e.itemId = i.id; e.stockDelta = -q; if (!e.note) e.note = `${i.name} ×${fmtQty(q)}`; }
-    }
-    D.ledger.push(e); commit(); toast(t('t_recorded', { c: c.name, v: peso(amount) }));
-  },
-  async bayad(fd) {
-    if (!fd.cid) return toast(t('t_pick_cust'));
-    const c = getCust(fd.cid), amount = r2(num(fd.amount));
-    if (amount <= 0) return toast(t('t_need_amount'));
-    const bal = balanceOf(c.id);
-    if (amount > bal && !(await ask(t('a_overpay', { v: peso(bal) })))) return;
-    const e = { id: uid(), customerId: c.id, type: 'bayad', amount, note: (fd.note || '').trim(), date: today(), at: Date.now() };
-    if (fd.toCash === 'on') {
-      const cash = { id: uid(), cat: 'bayad', amount, note: t('note_pay', { c: c.name }), date: e.date, at: e.at, linkId: e.id };
-      e.cashId = cash.id; D.cash.push(cash);
-    }
-    D.ledger.push(e); commit();
-    toast(bal - amount <= 0 ? t('t_paid_full', { c: c.name }) : t('t_received', { v: peso(bal - amount) }));
-  },
-  cash(fd) {
-    const amount = r2(num(fd.amount)); if (amount <= 0) return toast(t('t_need_amount'));
-    if (!CATS[fd.cat]) return;
-    D.cash.push({ id: uid(), cat: fd.cat, amount, note: (fd.note || '').trim(), date: fd.date || today(), at: Date.now() });
-    commit(); toast(t('t_saved'));
-  },
-  settings(fd) {
-    Object.assign(D.store, { name: (fd.name || '').trim() || D.store.name, openingCash: r2(num(fd.openingCash)),
-                             capital: r2(num(fd.capital)), budget: r2(num(fd.budget)) });
-    commit(); toast(t('t_saved'));
+setup(fd) {
+  if (storageProblem) return toast(t('storage_corrupt'));
+  D=blankData(); D.store.name=(fd.name||'').trim(); D.store.openingCash=r2(num(fd.openingCash));
+  if(!D.store.name || D.store.openingCash<0) {D=null;return toast(t('invalid_value'));}
+  if(commit()) toast(t('t_ready'));
+},
+async item(fd,id) {
+  const name=(fd.name||'').trim(); if(!name) return toast(t('t_need_name'));
+  const cost=r2(num(fd.cost)),price=r2(num(fd.price)),low=r2(num(fd.low));
+  if(cost<0||price<0||low<0||num(fd.stock)<0)return toast(t('invalid_value'));
+  if(price<cost && !(await ask(t('a_price_below'))))return;
+  const packSize=Math.max(1,Math.round(num(fd.packSize))||1);
+  if(id){const i=getItem(id);if(!i)return;Object.assign(i,{name,cost,price,low,packSize});}
+  else D.items.push({id:uid(),name,cost,price,stock:r2(num(fd.stock)),low,packSize});
+  if(commit())toast(t('t_saved'));
+},
+async sold(fd,id) {
+  const i=getItem(id),qty=r2(num(fd.qty)),price=r2(num(fd.price));
+  if(!i||i.archived)return toast(t('archived_no_entry'));
+  if(qty<=0||price<=0)return toast(t('invalid_value'));
+  if(qty>i.stock && !(await ask(t('a_qty_over',{n:fmtQty(i.stock)}))))return;
+  i.stock=r2(i.stock-qty);
+  D.cash.push({id:uid(),cat:'benta',amount:r2(qty*price),note:`${i.name} ×${fmtQty(qty)}`,
+    date:today(),at:transactionStamp(),itemId:i.id,stockDelta:-qty});
+  if(commit())toast(t('t_plus_cash',{v:peso(qty*price)}));
+},
+async restock(fd,id) {
+  const i=getItem(id),packs=r2(num(fd.packs)),pcs=Math.round(num(fd.pcs)),packCost=r2(num(fd.packCost));
+  if(!i||i.archived)return toast(t('archived_no_entry'));
+  if(packs<=0||pcs<1||packCost<=0)return toast(t('invalid_value'));
+  const qty=r2(packs*pcs),spent=r2(packs*packCost);
+  let own=fd.fromOwn==='on';
+  if(!own && spent>cashOnHand()){if(!(await ask(t('funding_confirm'))))return;own=true;}
+  const oldCost=i.cost,oldPack=i.packSize,oldStock=i.stock;
+  i.stock=r2(i.stock+qty);i.packSize=pcs;
+  i.cost=r2((Math.max(0,oldStock)*oldCost+spent)/(Math.max(0,oldStock)+qty));
+  const out={id:uid(),cat:'paninda',amount:spent,note:`${i.name} +${fmtQty(qty)}`,
+    date:today(),at:transactionStamp(),itemId:id,stockDelta:qty,priorCost:oldCost,priorPackSize:oldPack};
+  if(own)recordPaymentFromOwner(spent,out,out.date,i.name);
+  D.cash.push(out);
+  if(commit())toast(t('done_restock',{n:fmtQty(qty)+' '+i.name,v:peso(spent)}));
+},
+count(fd,id) {
+  const i=getItem(id),n=r2(num(fd.count));
+  if(!i||n<0)return toast(t('invalid_value'));
+  const before=i.stock;
+  i.stock=n;
+  D.adjustments.push({id:uid(),itemId:id,from:before,to:n,date:today(),at:transactionStamp()});
+  if(commit())toast(t('correct_count',{n:fmtQty(n)}));
+},
+cust(fd,id) {
+  const name=(fd.name||'').trim();if(!name)return toast(t('t_need_name'));
+  const email=(fd.email||'').trim();
+  if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return toast(t('t_bad_email'));
+  const data={name,phone:(fd.phone||'').trim(),email,limit:r2(num(fd.limit))};
+  if(id){const c=getCust(id);if(!c)return;Object.assign(c,data);}
+  else{const c={id:uid(),...data};D.customers.push(c);state.tab='listahan';state.cust=c.id;}
+  if(commit())toast(t('t_saved'));
+},
+async utang(fd) {
+  const amount=r2(num(fd.amount));
+  if(amount<=0)return toast(t('t_need_amount'));
+  const newName=(fd.newName||'').trim();
+  if(!fd.cid&&!newName)return toast(t('t_need_cust'));
+  let selected=null,q=0;
+  if(fd.itemId){
+    selected=getItem(fd.itemId);q=r2(num(fd.qty));
+    if(!selected||selected.archived||q<=0)return toast(t('invalid_value'));
+    if(q>selected.stock&&!(await ask(t('a_qty_over',{n:fmtQty(selected.stock)}))))return;
   }
+  let customer=fd.cid?getCust(fd.cid):null;
+  if(fd.cid&&(!customer||customer.archived))return toast(t('archived_no_entry'));
+  if(customer){
+    const bal=balanceOf(customer.id);
+    if(customer.limit&&bal+amount>customer.limit&&
+      !(await ask(t('a_over_limit',{c:customer.name,l:peso(customer.limit),b:peso(bal+amount)}))))return;
+  } else {
+    customer={id:uid(),name:newName,phone:'',email:'',limit:0};
+    D.customers.push(customer);
+  }
+  const e={id:uid(),customerId:customer.id,type:'utang',amount,
+    note:(fd.note||'').trim(),date:today(),at:transactionStamp()};
+  if(selected){
+    selected.stock=r2(selected.stock-q);e.itemId=selected.id;e.stockDelta=-q;
+    if(!e.note)e.note=`${selected.name} ×${fmtQty(q)}`;
+  }
+  D.ledger.push(e);
+  if(commit())toast(t('t_recorded',{c:customer.name,v:peso(amount)}));
+},
+async bayad(fd) {
+  if(!fd.cid)return toast(t('t_pick_cust'));
+  const customer=getCust(fd.cid),amount=r2(num(fd.amount));
+  if(!customer||customer.archived)return toast(t('archived_no_entry'));
+  if(amount<=0)return toast(t('t_need_amount'));
+  const bal=balanceOf(customer.id);
+  if(amount>bal)return toast(t('payment_exceeds',{v:peso(bal)}));
+  const e={id:uid(),customerId:customer.id,type:'bayad',amount,
+    note:(fd.note||'').trim(),date:today(),at:transactionStamp()};
+  const entry={id:uid(),cat:'bayad',amount,note:t('note_pay',{c:customer.name}),
+    date:e.date,at:e.at,linkId:e.id};
+  e.cashId=entry.id;D.cash.push(entry);D.ledger.push(e);
+  if(commit())toast(bal-amount<=0?t('t_paid_full',{c:customer.name}):t('t_received',{v:peso(bal-amount)}));
+},
+async cash(fd) {
+  const amount=r2(num(fd.amount));
+  if(amount<=0||!Object.prototype.hasOwnProperty.call(CATS,fd.cat))return toast(t('invalid_value'));
+  let own=fd.fromOwn==='on'&&CATS[fd.cat]==='out';
+  if(CATS[fd.cat]==='out'&&!own&&amount>cashOnHand()){
+    if(!(await ask(t('funding_confirm'))))return;
+    own=true;
+  }
+  const entry={id:uid(),cat:fd.cat,amount,note:(fd.note||'').trim(),
+    date:fd.date||today(),at:transactionStamp()};
+  if(own)recordPaymentFromOwner(amount,entry,entry.date,catLabel(entry.cat));
+  D.cash.push(entry);
+  if(commit())toast(t('money_saved'));
+},
+settings(fd) {
+  Object.assign(D.store,{name:(fd.name||'').trim()||D.store.name,
+    openingCash:r2(num(fd.openingCash)),capital:r2(num(fd.capital)),budget:r2(num(fd.budget))});
+  if(commit())toast(t('t_saved'));
+},
 };
 
-// ---------- Deletes (always undo side effects) ----------
-function revertStock(rec) { if (rec.itemId && rec.stockDelta) { const i = getItem(rec.itemId); if (i) i.stock = r2(i.stock - rec.stockDelta); } }
-async function delEntry(id) {
-  const e = D.ledger.find(x => x.id === id); if (!e) return;
-  const msg = t('a_del_entry', { type: t('type_' + e.type), v: peso(e.amount), d: fmtDate(e.date) }) + (e.cashId ? t('a_also_cash') : '');
-  if (!(await ask(msg))) return;
-  revertStock(e);
-  if (e.cashId) D.cash = D.cash.filter(c => c.id !== e.cashId);
-  D.ledger = D.ledger.filter(x => x.id !== id); commit();
-}
-async function delCash(id) {
-  const c = D.cash.find(x => x.id === id); if (!c) return;
-  const linked = c.linkId && D.ledger.find(e => e.id === c.linkId);
-  const msg = t('a_del_cash', { c: catLabel(c.cat), v: peso(c.amount) }) + (linked ? t('a_also_ledger') : '') + (c.stockDelta ? t('a_also_stock') : '');
-  if (!(await ask(msg))) return;
-  revertStock(c);
-  if (linked) D.ledger = D.ledger.filter(e => e.id !== c.linkId);
-  D.cash = D.cash.filter(x => x.id !== id); commit();
-}
-async function delCust(id) {
-  const c = getCust(id), bal = balanceOf(id);
-  if (!(await ask(bal > 0 ? t('a_del_cust_owes', { c: c.name, v: peso(bal) }) : t('a_del_cust', { c: c.name })))) return;
-  D.ledger = D.ledger.filter(e => e.customerId !== id);
-  D.customers = D.customers.filter(x => x.id !== id);
-  state.cust = null; commit();
+
+// ---------- Deletes (preserve customer/item histories, reverse linked funding) ----------
+function revertStock(rec) {
+  if(rec.itemId&&rec.stockDelta){const i=getItem(rec.itemId);if(i)i.stock=r2(i.stock-rec.stockDelta);}
 }
 
+async function delEntry(id) {
+  const e=D.ledger.find(x=>x.id===id);if(!e)return;
+  const msg=t('a_del_entry',{type:t('type_'+e.type),v:peso(e.amount),d:fmtDate(e.date)})+(e.cashId?t('a_also_cash'):'');
+  if(!(await ask(msg)))return;
+  revertStock(e);
+  if(e.cashId)D.cash=D.cash.filter(x=>x.id!==e.cashId);
+  D.ledger=D.ledger.filter(x=>x.id!==id);
+  commit();
+}
+
+async function delCash(id) {
+  const selected=D.cash.find(x=>x.id===id);if(!selected)return;
+  const c=selected.fundingFor?D.cash.find(x=>x.id===selected.fundingFor):selected;
+  if(!c)return toast(t('backup_invalid'));
+  const linked=c.linkId&&D.ledger.find(e=>e.id===c.linkId);
+  const funding=c.fundedBy?D.cash.find(x=>x.id===c.fundedBy):null;
+  if(c.cat==='paninda'&&c.itemId&&c.stockDelta>0){
+    const later=D.cash.some(x=>x.id!==c.id&&x.itemId===c.itemId&&x.at>c.at) ||
+      D.ledger.some(x=>x.itemId===c.itemId&&x.at>c.at) ||
+      D.adjustments.some(x=>x.itemId===c.itemId&&x.at>c.at);
+    if(later)return toast(t('restock_later'));
+    const item=getItem(c.itemId);
+    if(!item)return toast(t('restock_changed'));
+    if(!(await ask(t('restock_undo'))))return;
+    revertStock(c);
+    if(typeof c.priorCost==='number')item.cost=c.priorCost;
+    if(typeof c.priorPackSize==='number')item.packSize=c.priorPackSize;
+  } else {
+    const msg=t('a_del_cash',{c:catLabel(c.cat),v:peso(c.amount)})+
+      (linked?t('a_also_ledger'):'')+(c.stockDelta?t('a_also_stock'):'');
+    if(!(await ask(msg)))return;
+    revertStock(c);
+  }
+  if(linked)D.ledger=D.ledger.filter(x=>x.id!==linked.id);
+  D.cash=D.cash.filter(x=>x.id!==c.id&&(!funding||x.id!==funding.id));
+  commit();
+}
+
+async function delCust(id) {
+  const c=getCust(id);if(!c)return;
+  if(balanceOf(id)>0)return toast(t('archive_owing'));
+  const hasHistory=D.ledger.some(e=>e.customerId===id);
+  if(!(await ask(hasHistory?t('archive_customer',{n:c.name}):t('a_del_cust',{c:c.name}))))return;
+  if(hasHistory)c.archived=true;else D.customers=D.customers.filter(x=>x.id!==id);
+  state.cust=null;
+  if(commit())toast(hasHistory?t('archive_success'):t('t_saved'));
+}
+
+async function delItem(id) {
+  const i=getItem(id);if(!i)return;
+  const history=D.ledger.some(x=>x.itemId===id)||D.cash.some(x=>x.itemId===id)||
+    D.adjustments.some(x=>x.itemId===id);
+  if(history&&i.stock!==0)return toast(t('archive_stock'));
+  if(!(await ask(history?t('archive_item',{n:i.name}):t('a_del_item'))))return;
+  if(history){i.archived=true;i.savedLow=i.low;i.low=0;}
+  else D.items=D.items.filter(x=>x.id!==id);
+  if(commit())toast(history?t('archive_success'):t('t_saved'));
+}
+
+function unarchiveItem(id) {
+  const i=getItem(id);if(!i)return;
+  i.archived=false;
+  if(typeof i.savedLow==='number'){i.low=i.savedLow;delete i.savedLow;}
+  if(commit())toast(t('t_saved'));
+}
+
+function unarchiveCust(id) {
+  const c=getCust(id);if(!c)return;
+  c.archived=false;
+  if(commit())toast(t('t_saved'));
+}
 // ---------- Sharing, backup, restore ----------
 async function shareText(text) {
   try { if (navigator.share) { await navigator.share({ text }); return; } } catch (e) { if (e.name === 'AbortError') return; }
@@ -1074,27 +1310,85 @@ function shareRestock() {
   const lines = need.map(({ i, q }) => `• ${i.name} — ${fmtQty(q)} ${t('pcs')}${(i.packSize || 1) > 1 ? ` (${fmtQty(q / i.packSize)} pack)` : ''}`).join('\n');
   shareText(t('share_restock', { s: D.store.name, d: fmtDate(today()), lines, v: peso(est) }));
 }
-async function doBackup() {
-  const name = `pinpro-backup-${today()}.json`;
-  const file = new File([JSON.stringify({ ...D, store: { ...D.store, lastBackup: today() } })], name, { type: 'application/json' });
-  let ok = false;
-  try { if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: name }); ok = true; } }
-  catch (e) { if (e.name === 'AbortError') return; }
-  if (!ok) {
-    const a = document.createElement('a'); a.href = URL.createObjectURL(file); a.download = name;
-    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
-  }
-  D.store.lastBackup = today(); Store.save(D); closeSheet(); render(); toast(t('t_backed'));
+function backupFile() {
+  const name=`pinpro-beta-${today()}.json`;
+  return {name,file:new File([JSON.stringify(D,null,2)],name,{type:'application/json'})};
 }
-$('#file').addEventListener('change', async e => {
-  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+
+async function doBackup() {
+  if(!D)return;
+  const {name,file}=backupFile();
   try {
-    const obj = JSON.parse(await f.text());
-    if (!obj || !Array.isArray(obj.items) || !Array.isArray(obj.customers)) throw new Error('bad');
-    if (D && !(await ask(t('a_restore')))) return;
-    D = migrate(obj); Store.save(D); closeSheet(); state.tab = 'home'; state.cust = null; render(); toast(t('t_restored'));
-  } catch (err) { toast(t('t_bad_file')); }
-});
+    if(typeof window.showSaveFilePicker==='function'){
+      const handle=await window.showSaveFilePicker({
+        suggestedName:name,types:[{description:'Pin.Pro JSON backup',accept:{'application/json':['.json']}}]});
+      const writable=await handle.createWritable();
+      await writable.write(file);
+      await writable.close();
+    } else {
+      const url=URL.createObjectURL(file);
+      const a=document.createElement('a');a.href=url;a.download=name;
+      document.body.appendChild(a);a.click();a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),30000);
+    }
+    D.store.lastBackup=today();
+    if(commit())toast(t('backup_started'));
+  } catch(err) {
+    if(err.name!=='AbortError')toast(t('t_cant_save'));
+  }
+}
+
+async function shareBackup() {
+  if(!D)return;
+  try {
+    const {name,file}=backupFile();
+    if(!navigator.canShare||!navigator.canShare({files:[file]}))return toast(t('backup_save'));
+    await navigator.share({files:[file],title:name});
+    D.store.lastBackup=today();
+    if(commit())toast(t('backup_started'));
+  } catch(err) {if(err.name!=='AbortError')toast(t('t_cant_save'));}
+}
+
+function selectBackup(mode) {
+  state.fileMode=mode;
+  $('#file').click();
+}
+
+function comparableBackup(data) {
+  const {lastBackup,lastBackupChecked,...store}=data.store||{};
+  return JSON.stringify({store,items:data.items,customers:data.customers,
+    ledger:data.ledger,cash:data.cash,adjustments:data.adjustments||[]});
+}
+
+async function handleBackupFile(e) {
+  const f=e.target.files&&e.target.files[0];
+  e.target.value='';
+  if(!f)return;
+  try {
+    if(f.size>10*1024*1024)throw Error('too large');
+    const candidate=JSON.parse(await f.text());
+    validateData(candidate);
+    if(state.fileMode==='verify'){
+      if(!D||comparableBackup(candidate)!==comparableBackup(D)){
+        toast(t('backup_mismatch'));return;
+      }
+      D.store.lastBackupChecked=today();
+      if(commit())toast(t('backup_ok'));
+      return;
+    }
+    if(D&&!(await ask(t('a_restore'))))return;
+    D=migrate(candidate);
+    if(commit()) {
+      storageProblem=false;
+      state.tab='home';state.cust=null;
+      render();toast(t('t_restored'));
+    }
+  } catch(err){toast(t('backup_invalid'));}
+}
+
+// One authoritative import handler, shared by restore and optional verification.
+$('#file').addEventListener('change', handleBackupFile);
+
 
 // ---------- Sample store (for trying the app) ----------
 function sampleData() {
@@ -1126,35 +1420,66 @@ function sampleData() {
 
 // ---------- Actions (all taps go through here) ----------
 const ACT = {
-  tab: id => { state.tab = id; state.cust = null; state.q = ''; render(); scrollTo(0, 0); },
+  tab: id => { state.tab=id;state.cust=null;state.q='';render();scrollTo(0,0); },
   lang: id => {
-    if (!LI.hasOwnProperty(id)) return;
-    lang = id; Store.setLang(id);
-    const settingsOpen = !!$('#sheet .sheet-card') && !!D;
-    render(); if (settingsOpen) sheetSettings();
+    if(!Object.prototype.hasOwnProperty.call(LI,id))return;
+    lang=id;Store.setLang(id);
+    const open=!!$('#sheet .sheet-card');
+    render();
+    if(open && D){
+      if(state.settingsPage==='storage')sheetStorage();
+      else if(state.settingsPage==='rules')sheetRules();
+      else sheetSettings();
+    }
   },
   close: closeSheet,
   settings: sheetSettings,
-  item: sheetItem, addItem: () => sheetItemForm(), editItem: id => sheetItemForm(id),
-  sold: sheetSold, restock: sheetRestock, count: sheetCount,
-  delItem: async id => { if (!(await ask(t('a_del_item')))) return; D.items = D.items.filter(i => i.id !== id); commit(); },
-  invFilter: id => { state.invFilter = id; render(); },
+  storage: sheetStorage,
+  rules: sheetRules,
+  item: sheetItem,
+  addItem: () => sheetItemForm(),
+  editItem: id => sheetItemForm(id),
+  sold: sheetSold,
+  restock: sheetRestock,
+  count: sheetCount,
+  delItem,
+  unarchiveItem,
+  archiveItems: () => {state.archivedItems=!state.archivedItems;render();},
+  archiveCustomers: () => {state.archivedCustomers=!state.archivedCustomers;render();},
+  invFilter: id => {state.invFilter=id;render();},
   shareRestock,
-  cust: id => { state.cust = id; render(); scrollTo(0, 0); },
-  openCust: id => { state.tab = 'listahan'; state.cust = id; state.q = ''; render(); scrollTo(0, 0); },
-  back: () => { state.cust = null; render(); },
-  addCust: () => sheetCustForm(), editCust: id => sheetCustForm(id), delCust,
-  newUtang: id => sheetUtang(id), newBayad: id => sheetBayad(id), shareCust, delEntry,
-  fillFull: (id, el) => { el.closest('form').amount.value = el.dataset.v; },
-  newIn: () => sheetCash('in', 'benta'), newOut: () => sheetCash('out', 'gastos'),
-  period: id => { state.period = id; render(); }, delCash,
-  setCapital: () => { D.store.capital = totalNow(); commit(); toast(t('t_cap_set')); },
-  backup: doBackup, restore: () => $('#file').click(),
-  sample: () => { D = sampleData(); D.store.capital = Math.floor(totalNow() / 1000) * 1000; Store.save(D); render(); toast(t('t_sample')); },
+  cust: id => {state.cust=id;render();scrollTo(0,0);},
+  openCust: id => {state.tab='listahan';state.cust=id;state.q='';render();scrollTo(0,0);},
+  back: () => {state.cust=null;render();},
+  addCust: () => sheetCustForm(),
+  editCust: id => sheetCustForm(id),
+  delCust,
+  unarchiveCust,
+  newUtang: id => sheetUtang(id),
+  newBayad: id => sheetBayad(id),
+  shareCust,delEntry,
+  fillFull: (id,el) => {el.closest('form').amount.value=el.dataset.v;},
+  newIn: () => sheetCash('in','benta'),
+  newOut: () => sheetCash('out','gastos'),
+  period: id => {state.period=id;render();},
+  delCash,
+  setCapital: () => {D.store.capital=totalNow();if(commit())toast(t('t_cap_set'));},
+  backup: doBackup,
+  shareBackup,
+  restore: () => selectBackup('restore'),
+  verify: () => selectBackup('verify'),
+  sample: () => {
+    if(storageProblem)return toast(t('storage_corrupt'));
+    D=sampleData();D.store.capital=Math.floor(totalNow()/1000)*1000;
+    if(commit())toast(t('t_sample'));
+  },
   wipe: async () => {
-    if (!(await ask(t('a_wipe1')))) return;
-    if (!(await ask(t('a_wipe2')))) return;
-    Store.clear(); D = null; Object.assign(state, { tab: 'home', cust: null, q: '' }); closeSheet(); render();
+    if(!(await ask(t('a_wipe1'))))return;
+    if(!(await ask(t('a_wipe2'))))return;
+    if(!Store.clear())return toast(t('storage_fail'));
+    D=null;lastRaw=null;lastSnapshot=null;storageProblem=false;
+    Object.assign(state,{tab:'home',cust:null,q:'',archivedItems:false,archivedCustomers:false});
+    closeSheet();render();
   }
 };
 
@@ -1173,18 +1498,21 @@ function onEdit(e) {
   if (el.hasAttribute('data-preview')) { const f = el.closest('form'); PREVIEW[f.dataset.form] && PREVIEW[f.dataset.form](f); }
 }
 document.addEventListener('input', onEdit);
-document.addEventListener('change', e => { if (e.target.tagName === 'SELECT') onEdit(e); });
+document.addEventListener('change', e => { if(e.target.id==='ruleTopic')showRule(); else if(e.target.tagName==='SELECT')onEdit(e); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
 
 // ---------- Start ----------
 lang = (s => LI.hasOwnProperty(s) ? s : guessLang())(Store.getLang());
-D = migrate(Store.load());
+const saved=Store.load();
+try { if(saved)validateData(saved);D=migrate(saved); }
+catch(_) {storageProblem=true;D=null;}
+try {lastRaw=localStorage.getItem(KEY);}catch(_) {storageProblem=true;}
+lastSnapshot=D?JSON.stringify(D):null;
 render();
 // Offline support: only when served from a real website (GitHub Pages, etc.)
 if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
   window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 }
 </script>
-<script src="upgrade-v1.3.js"></script>
 </body>
 </html>
