@@ -1075,8 +1075,10 @@ const PREVIEW = {
   }
 };
 
+let lastTransactionStamp = 0;
+function transactionStamp() { lastTransactionStamp = Math.max(Date.now(), lastTransactionStamp + 1); return lastTransactionStamp; }
 function recordPaymentFromOwner(amount, expense, date, note) {
-  const funding = { id: uid(), cat:'dagdag', amount, date, at:Date.now(),
+  const funding = { id: uid(), cat:'dagdag', amount, date, at:expense.at,
     note:t('funding_note',{n:note}), fundingFor:expense.id };
   expense.fundedBy = funding.id;
   D.cash.push(funding);
@@ -1107,7 +1109,7 @@ async sold(fd,id) {
   if(qty>i.stock && !(await ask(t('a_qty_over',{n:fmtQty(i.stock)}))))return;
   i.stock=r2(i.stock-qty);
   D.cash.push({id:uid(),cat:'benta',amount:r2(qty*price),note:`${i.name} ×${fmtQty(qty)}`,
-    date:today(),at:Date.now(),itemId:i.id,stockDelta:-qty});
+    date:today(),at:transactionStamp(),itemId:i.id,stockDelta:-qty});
   if(commit())toast(t('t_plus_cash',{v:peso(qty*price)}));
 },
 async restock(fd,id) {
@@ -1121,7 +1123,7 @@ async restock(fd,id) {
   i.stock=r2(i.stock+qty);i.packSize=pcs;
   i.cost=r2((Math.max(0,oldStock)*oldCost+spent)/(Math.max(0,oldStock)+qty));
   const out={id:uid(),cat:'paninda',amount:spent,note:`${i.name} +${fmtQty(qty)}`,
-    date:today(),at:Date.now(),itemId:id,stockDelta:qty,priorCost:oldCost,priorPackSize:oldPack};
+    date:today(),at:transactionStamp(),itemId:id,stockDelta:qty,priorCost:oldCost,priorPackSize:oldPack};
   if(own)recordPaymentFromOwner(spent,out,out.date,i.name);
   D.cash.push(out);
   if(commit())toast(t('done_restock',{n:fmtQty(qty)+' '+i.name,v:peso(spent)}));
@@ -1131,7 +1133,7 @@ count(fd,id) {
   if(!i||n<0)return toast(t('invalid_value'));
   const before=i.stock;
   i.stock=n;
-  D.adjustments.push({id:uid(),itemId:id,from:before,to:n,date:today(),at:Date.now()});
+  D.adjustments.push({id:uid(),itemId:id,from:before,to:n,date:today(),at:transactionStamp()});
   if(commit())toast(t('correct_count',{n:fmtQty(n)}));
 },
 cust(fd,id) {
@@ -1165,7 +1167,7 @@ async utang(fd) {
     D.customers.push(customer);
   }
   const e={id:uid(),customerId:customer.id,type:'utang',amount,
-    note:(fd.note||'').trim(),date:today(),at:Date.now()};
+    note:(fd.note||'').trim(),date:today(),at:transactionStamp()};
   if(selected){
     selected.stock=r2(selected.stock-q);e.itemId=selected.id;e.stockDelta=-q;
     if(!e.note)e.note=`${selected.name} ×${fmtQty(q)}`;
@@ -1181,7 +1183,7 @@ async bayad(fd) {
   const bal=balanceOf(customer.id);
   if(amount>bal)return toast(t('payment_exceeds',{v:peso(bal)}));
   const e={id:uid(),customerId:customer.id,type:'bayad',amount,
-    note:(fd.note||'').trim(),date:today(),at:Date.now()};
+    note:(fd.note||'').trim(),date:today(),at:transactionStamp()};
   const entry={id:uid(),cat:'bayad',amount,note:t('note_pay',{c:customer.name}),
     date:e.date,at:e.at,linkId:e.id};
   e.cashId=entry.id;D.cash.push(entry);D.ledger.push(e);
@@ -1196,7 +1198,7 @@ async cash(fd) {
     own=true;
   }
   const entry={id:uid(),cat:fd.cat,amount,note:(fd.note||'').trim(),
-    date:fd.date||today(),at:Date.now()};
+    date:fd.date||today(),at:transactionStamp()};
   if(own)recordPaymentFromOwner(amount,entry,entry.date,catLabel(entry.cat));
   D.cash.push(entry);
   if(commit())toast(t('money_saved'));
@@ -1231,9 +1233,9 @@ async function delCash(id) {
   const linked=c.linkId&&D.ledger.find(e=>e.id===c.linkId);
   const funding=c.fundedBy?D.cash.find(x=>x.id===c.fundedBy):null;
   if(c.cat==='paninda'&&c.itemId&&c.stockDelta>0){
-    const later=D.cash.some(x=>x.id!==c.id&&x.itemId===c.itemId&&x.at>=c.at) ||
-      D.ledger.some(x=>x.itemId===c.itemId&&x.at>=c.at) ||
-      D.adjustments.some(x=>x.itemId===c.itemId&&x.at>=c.at);
+    const later=D.cash.some(x=>x.id!==c.id&&x.itemId===c.itemId&&x.at>c.at) ||
+      D.ledger.some(x=>x.itemId===c.itemId&&x.at>c.at) ||
+      D.adjustments.some(x=>x.itemId===c.itemId&&x.at>c.at);
     if(later)return toast(t('restock_later'));
     const item=getItem(c.itemId);
     if(!item)return toast(t('restock_changed'));
