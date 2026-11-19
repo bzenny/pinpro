@@ -1,11 +1,15 @@
 <!DOCTYPE html>
-<!-- File: index.html  (Pin.Pro v1.4 — single-file, local-first, English / Cebuano / Tagalog) -->
+<!-- Pin.Pro v1.5 — single-file, offline-first, English / Cebuano / Tagalog -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#2563eb">
-<title>Pin.Pro</title>
+<meta name="theme-color" content="#1765d4">
+<title>Pin.Pro Beta | Stock, Utang &amp; Money</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Pin.Pro Beta — Sari-Sari Store Companion">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="mobile-web-app-capable" content="yes">
@@ -102,6 +106,24 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--brand);border-co
 .empty{text-align:center;color:var(--muted);padding:28px 10px}
 #toast{position:fixed;left:50%;bottom:calc(150px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:#1c1f1d;color:#fff;padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:.2s;z-index:30;max-width:90vw;text-align:center}
 #toast.show{opacity:1;transform:translateX(-50%)}
+:focus-visible{outline:3px solid #f59e0b;outline-offset:3px}
+.btn,.row,.fab,#tabs button,.icon-btn{transition:transform .12s ease,box-shadow .18s ease,background-color .18s ease}
+.btn:active,.row:active,.fab:active{transform:scale(.985)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+#tabs button.on{background:linear-gradient(180deg,#eff6ff 0%,#fff 85%);box-shadow:inset 0 3px var(--brand)}
+.card{box-shadow:0 3px 12px rgba(20,38,36,.045)}
+.busy-overlay[hidden],.app-error[hidden]{display:none}
+.busy-overlay{position:fixed;inset:0;z-index:35;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(16,27,37,.42);backdrop-filter:blur(2px)}
+.busy-card{width:min(90vw,300px);background:var(--card);border-radius:20px;padding:24px;display:flex;align-items:center;flex-direction:column;gap:12px;box-shadow:0 16px 48px rgba(0,0,0,.18);text-align:center}
+.busy-ring{width:42px;height:42px;border:4px solid var(--brand-soft);border-top-color:var(--brand);border-radius:50%;animation:pinspin .75s linear infinite}
+@keyframes pinspin{to{transform:rotate(360deg)}}
+.busy-text{font-weight:700;color:var(--ink)}
+.app-error{position:fixed;inset:0;z-index:55;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(19,29,36,.58);backdrop-filter:blur(3px)}
+.app-error-card{background:var(--card);max-width:400px;width:100%;border-radius:20px;padding:22px;box-shadow:0 18px 50px rgba(0,0,0,.20)}
+.app-error-icon{display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;background:#fff4e5;color:var(--warn);border-radius:15px;font-size:26px;margin-bottom:10px}
+.app-error-card h2{margin-bottom:6px}
+.app-error-card p{margin:0 0 14px;color:var(--muted);line-height:1.5}
+@media(prefers-reduced-motion:reduce){.busy-ring{animation-duration:1.5s}.btn,.row,.fab,#tabs button,.icon-btn{transition:none}.sheet-card{animation:none}}
 textarea.copy{min-height:180px}
 .icon-btn{border:0;background:rgba(255,255,255,.15);color:inherit;width:40px;height:40px;border-radius:10px;font-size:18px;cursor:pointer;flex-shrink:0}
 .card .icon-btn{background:var(--brand-soft)}
@@ -117,6 +139,169 @@ a{color:var(--brand)}
 .contact a{word-break:break-all}
 a.btn{text-decoration:none;box-sizing:border-box;display:flex;align-items:center;justify-content:center}
 .beta{flex-shrink:0;font-size:10px;letter-spacing:.06em;background:#f2a93b;color:#3b2500;padding:3px 6px;border-radius:6px}
+
+/* ── Native-launch visual system: responsive, safe-area aware, no external assets ── */
+:root{
+  --bg:#f4f7fb;--card:#fff;--ink:#162333;--muted:#617083;--line:#e3e9f1;
+  --brand:#1765d4;--brand-soft:#eaf2ff;--good:#087c53;--warn:#aa6109;--bad:#c13b41;
+  --r:18px;--surface-raised:#fff;--dock-shadow:0 -6px 28px rgba(22,44,77,.09);
+}
+html{background:var(--bg);-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{
+  font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,system-ui,sans-serif;
+  line-height:1.45;min-height:100vh;min-height:100dvh;
+  padding-bottom:calc(88px + env(safe-area-inset-bottom));
+  overflow-x:hidden;
+}
+#top{
+  min-height:66px;
+  padding:10px max(16px, env(safe-area-inset-right)) 10px max(16px, env(safe-area-inset-left));
+  padding-top:calc(10px + env(safe-area-inset-top));
+  background:linear-gradient(135deg,#1459bb 0%,#227ce2 100%);
+  box-shadow:0 3px 18px rgba(25,74,133,.14);
+}
+.brand{font-size:19px;letter-spacing:-.35px;gap:9px}
+.mark{width:30px;height:30px}
+#top .icon-btn{width:46px;height:46px;min-width:46px;border-radius:15px;font-size:20px}
+#app{max-width:600px;padding:20px 16px 30px}
+#app>h2{font-size:25px;letter-spacing:-.65px;margin:3px 0 15px;font-weight:780}
+#app>p.muted{margin-top:-5px}
+.card{padding:17px;margin-bottom:13px;border:1px solid rgba(219,228,239,.5);border-radius:20px;box-shadow:0 2px 10px rgba(33,65,95,.045)}
+.card.hero{padding:20px;border-radius:23px}
+.hero .big{font-size:clamp(30px,7vw,42px);letter-spacing:-1.35px;line-height:1.12}
+.label{font-size:11px;letter-spacing:.075em}
+.card .muted,.sub{color:var(--muted)}
+.row{min-height:64px;border:1px solid var(--line);border-radius:16px;padding:14px 15px;margin-bottom:9px}
+.row:active{background:#f0f6ff}
+.row .name{font-size:15.5px;letter-spacing:-.15px}
+.row .sub{font-size:12.5px;margin-top:3px}
+.qty{font-size:21px}
+.grid3{gap:9px}
+.grid3 .btn{font-size:13px}
+.btn{min-height:50px;border-radius:14px;letter-spacing:-.12px}
+.btn.primary{background:linear-gradient(180deg,#2276df 0%,#1765d4 100%);box-shadow:0 4px 9px rgba(23,101,212,.16)}
+.btn.ghost{border-color:#d8e0eb}
+.btn:focus-visible,.row:focus-visible,#tabs button:focus-visible{outline:3px solid #f4b544;outline-offset:3px}
+button,input,select,textarea{touch-action:manipulation}
+input,select,textarea{font-size:16px;border-radius:14px;min-height:50px}
+input:focus,select:focus,textarea:focus{outline:3px solid rgba(23,101,212,.20);outline-offset:1px;border-color:var(--brand)}
+.f span{font-size:13px}
+.f{margin-bottom:16px}
+#tabs{
+  background:rgba(255,255,255,.96);
+  border-top:1px solid rgba(198,211,228,.6);
+  box-shadow:var(--dock-shadow);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  min-height:calc(70px + env(safe-area-inset-bottom));
+  padding:5px 8px env(safe-area-inset-bottom);
+  gap:2px;
+}
+#tabs button{
+  min-height:60px;border-radius:13px;margin:1px 0 2px;
+  font-size:11.5px;font-weight:680;letter-spacing:-.1px;
+  justify-content:center;gap:4px;
+}
+#tabs button span{font-size:0;display:flex;align-items:center;justify-content:center;height:25px}
+#tabs button span svg{width:23px;height:23px;display:block;stroke-width:2.15}
+#tabs button.on{
+  color:var(--brand);background:#edf4ff;
+  box-shadow:none;
+}
+.sheet-card{
+  border-radius:24px 24px 0 0;
+  box-shadow:0 -12px 50px rgba(16,38,74,.17);
+  max-height:calc(100dvh - env(safe-area-inset-top) - 14px);
+  overscroll-behavior:contain;
+  padding:23px 18px calc(26px + env(safe-area-inset-bottom));
+}
+.sheet-card:before{
+  content:"";display:block;width:38px;height:5px;border-radius:99px;
+  background:#d4dce7;margin:-13px auto 20px;
+}
+.sheet-card h2{font-size:23px;line-height:1.18;letter-spacing:-.6px;font-weight:780}
+.sheet-bg{background:rgba(12,28,47,.50)}
+.sheet-card .x{min-height:44px;min-width:44px;border-radius:13px}
+.fab{
+  right:16px;bottom:calc(89px + env(safe-area-inset-bottom));
+  border-radius:17px;min-height:55px;padding:15px 19px;
+  box-shadow:0 8px 24px rgba(23,101,212,.28);
+}
+.seg{border:1px solid #e5eaf1;background:#edf1f7}
+.seg button{min-height:44px}
+.stats{gap:5px}
+.stats b{font-size:16px}
+.stats span{font-size:10px}
+.badge{border-radius:7px;padding:3px 7px}
+.beta{border-radius:7px;letter-spacing:.08em}
+.busy-card,.app-error-card{border:1px solid rgba(255,255,255,.35)}
+@media(max-width:360px){
+  #app{padding:14px 11px 23px}
+  .card{padding:13px}
+  .grid3{gap:5px}
+  .actions .btn{font-size:11px}
+  .sheet-card{padding-left:14px;padding-right:14px}
+}
+@media(min-width:700px){
+  body{padding-bottom:28px;padding-left:93px}
+  #top{position:sticky;padding-right:24px;padding-left:24px}
+  #app{max-width:790px;margin:0 auto;padding:30px 25px 48px}
+  #tabs{
+    left:0;right:auto;top:0;bottom:0;width:92px;
+    grid-template-columns:1fr;grid-template-rows:repeat(4,82px);
+    justify-content:center;align-content:center;
+    padding:calc(env(safe-area-inset-top) + 8px) 8px calc(env(safe-area-inset-bottom) + 8px);
+    border-top:0;border-right:1px solid var(--line);box-shadow:5px 0 22px rgba(31,57,91,.08);
+    min-height:0;
+  }
+  #tabs button{min-height:76px;font-size:12px}
+  .fab{right:clamp(26px,8vw,180px);bottom:36px}
+  .sheet-card{left:93px;right:0;bottom:0;max-width:620px;padding:27px 28px 32px}
+  .sheet-card h2{font-size:25px}
+  .grid3 .btn{font-size:15px}
+  .stats b{font-size:19px}
+}
+@media(min-width:1040px){
+  #app{max-width:890px}
+  .card{padding:20px}
+  .sheet-card{max-width:660px}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+}
+
+
+/* Fluid information architecture: stacked on phone, spacious on tablet,
+   and a balanced work surface on laptop and desktop checkout counters. */
+.overview-layout{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
+.overview-main,.overview-side{min-width:0}
+#app.page-paninda #list,#app.page-listahan:not(.page-detail) #list{
+  display:grid;grid-template-columns:minmax(0,1fr);gap:0;align-content:start
+}
+#app.page-paninda #list .row,#app.page-listahan #list .row{min-width:0}
+@media(min-width:880px){
+  #app{max-width:960px}
+  .overview-layout{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:18px}
+  .overview-main>.card,.overview-side>.card{margin-bottom:16px}
+  .overview-main>.grid4{margin-bottom:16px}
+}
+@media(min-width:1100px){
+  #app{max-width:1150px}
+  #app.page-paninda #list,#app.page-listahan:not(.page-detail) #list{
+    grid-template-columns:repeat(2,minmax(0,1fr));column-gap:14px;row-gap:0
+  }
+  .overview-layout{grid-template-columns:minmax(0,1.16fr) minmax(0,.84fr);gap:24px}
+  .overview-main .card.hero{padding:24px}
+  .page-pera>.grid3,.page-pera>.grid2{max-width:780px}
+}
+@media(min-width:1400px){
+  #app{max-width:1270px}
+  .overview-layout{gap:30px}
+}
+
+.shortcut-bar{display:none;flex-wrap:wrap;gap:9px 16px;color:var(--muted);font-size:12px;margin:10px 0 14px;padding:10px 12px;background:#edf3fc;border-radius:12px}
+.shortcut-bar span{display:flex;align-items:center;gap:5px}
+.shortcut-bar kbd{display:inline-block;min-width:25px;border:1px solid #d1ddec;background:#fff;border-bottom-width:2px;border-radius:6px;font:600 11px system-ui,sans-serif;text-align:center;padding:3px 5px;color:var(--ink)}
+@media(min-width:900px) and (hover:hover) and (pointer:fine){.shortcut-bar{display:flex}}
 </style>
 </head>
 <body>
@@ -124,7 +309,11 @@ a.btn{text-decoration:none;box-sizing:border-box;display:flex;align-items:center
 <main id="app"></main>
 <nav id="tabs" hidden></nav>
 <div id="sheet" class="sheet"></div>
-<div id="toast" role="status" aria-live="polite"></div>
+<div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+<div id="busy" class="busy-overlay" role="status" aria-live="polite" aria-atomic="true" hidden>
+  <div class="busy-card"><span class="busy-ring" aria-hidden="true"></span><span id="busy-text" class="busy-text"></span></div>
+</div>
+<div id="app-error" class="app-error" role="alertdialog" aria-modal="true" aria-labelledby="app-error-title" hidden></div>
 <input type="file" id="file" accept="application/json,.json" hidden>
 
 <script>
@@ -142,6 +331,35 @@ a.btn{text-decoration:none;box-sizing:border-box;display:flex;align-items:center
 const LANGS = [['en', 'English'], ['ceb', 'Cebuano'], ['tl', 'Tagalog']];
 const LI = { en: 0, ceb: 1, tl: 2 };
 const STR = {
+  // Native device installation guidance and offline-use transparency
+  ui_install_title: ["Install / use offline","I-install / gamita offline","I-install / gamitin offline"],
+  ui_install_laptop: ["Laptop / desktop","Laptop / desktop","Laptop / desktop"],
+  ui_install_laptop_help: ["Open Pin.Pro in Chrome or Edge, use the browser menu or address-bar install option, then launch it like a normal app.","Ablihi ang Pin.Pro sa Chrome o Edge; pilia ang Install sa browser menu o address bar, unya ablihi isip app.","Buksan ang Pin.Pro sa Chrome o Edge; piliin ang Install sa menu o address bar, tapos buksan bilang app."],
+  ui_install_ipad: ["iPad / iPhone","iPad / iPhone","iPad / iPhone"],
+  ui_install_ipad_help: ["Open Pin.Pro in Safari, tap Share, then Add to Home Screen. Launch it from its icon.","Ablihi ang Pin.Pro sa Safari, pindota ang Share, unya Add to Home Screen. Ablihi sa icon.","Buksan ang Pin.Pro sa Safari, pindutin ang Share, pagkatapos Add to Home Screen. Buksan sa icon."],
+  ui_install_android: ["Android phone / tablet","Android phone / tablet","Android phone / tablet"],
+  ui_install_android_help: ["Open Pin.Pro in Chrome, open the browser menu, then choose Install app or Add to Home screen.","Ablihi ang Pin.Pro sa Chrome, adto sa browser menu, pilia Install app o Add to Home screen.","Buksan ang Pin.Pro sa Chrome, sa browser menu piliin ang Install app o Add to Home screen."],
+  ui_install_offline: ["Open the app once while online to cache it. Then test airplane mode. Records belong to this device/browser only; use JSON backup and restore to transfer between devices. No automatic syncing yet.","Ablihi kausa online aron ma-cache, unya sulayi ang airplane mode. Ang datos ania ra sa device/browser; gamita ang JSON backup ug restore sa pagbalhin. Wala pay awtomatikong sync.","Buksan muna nang online para ma-cache, tapos subukan ang airplane mode. Ang data ay nasa device/browser na ito; JSON backup at restore para maglipat. Wala pang awtomatikong sync."],
+  ui_install_now: ["Install app on this device","I-install ang app sa device","I-install ang app sa device"],
+  ui_install_prompted: ["Follow your browser's install prompt.","Sunda ang install prompt sa browser.","Sundin ang install prompt ng browser."],
+  // Beta v1.5: recovery, progress, and navigation feedback
+  ui_error_title: ["Something went wrong","Adunay wala molampos","May nangyaring problema"],
+  ui_error_body: ["This action stopped. Your previously saved store records have not been cleared. Try reopening this screen; you can also save a backup.","Nahimo ang paghunong sa aksyon. Wala gipapas ang na-save nang datos. Sulayi pag-abli pag-usab o pag-save og backup.","Huminto ang gawain. Hindi binura ang dati nang na-save na tala. Buksan muli ang screen o mag-save ng backup."],
+  ui_try_again: ["Try again","Sulayi pag-usab","Subukan muli"],
+  ui_dismiss: ["Close message","Sirad-i ang pahibalo","Isara ang mensahe"],
+  ui_backup: ["Save recovery copy","I-save ang backup","I-save ang backup"],
+  ui_save_progress: ["Saving backup…","Nag-save sa backup…","Sine-save ang backup…"],
+  ui_restore_progress: ["Checking recovery file…","Gisusi ang backup file…","Sinusuri ang backup file…"],
+  ui_verify_progress: ["Checking backup…","Gisusi ang backup…","Sinusuri ang backup…"],
+  ui_share_progress: ["Opening share options…","Giablihan ang paambit…","Binubuksan ang pagbabahagi…"],
+  ui_loading: ["Working…","Nagtrabaho…","Ginagawa…"],
+  ui_setup_title: ["Get started","Magsugod","Magsimula"],
+  ui_customer_title: ["Customer","Suki","Customer"],
+  ui_settings_title: ["Settings","Mga setting","Mga setting"],
+  ui_stock_description: ["Manage inventory and stock counts","Pagdumala sa baligya ug ihap sa stock","Pamahalaan ang paninda at bilang ng stock"],
+  ui_money_description: ["Track cash, purchases and spending","Susiha ang cash, pamalit ug gasto","Subaybayan ang pera, pamimili at gastos"],
+  ui_utang_description: ["Track customers and credit sales","Paglista sa suki ug utang","Listahan ng customer at utang"],
+  ui_overview_description: ["Review your store's current totals","Tan-awa ang kinatibuk-ang numero sa tindahan","Tingnan ang kabuuang tala ng tindahan"],
   // tabs & general
   tab_home:   ['Overview', 'Sumaryo', 'Buod'],
   tab_stock:  ['Stock', 'Baligya', 'Paninda'],
@@ -488,7 +706,7 @@ function langPicker() {
 
 // ---------- Storage adapter (the only place that touches storage) ----------
 // Beta testers and the official app keep SEPARATE data, even on the same phone.
-const APP_VERSION = '1.4.0';
+const APP_VERSION = '1.5.0';
 const CHANNEL = /(^|[\/.])(beta|test|staging)([\/.-]|$)/i.test(location.hostname + location.pathname) ? 'beta' : 'prod';
 const KEY = CHANNEL === 'beta' ? 'pinpro.beta.v1' : 'pinpro.v1', LANG_KEY = 'pinpro.lang';
 let storageProblem = false;
@@ -593,6 +811,70 @@ const getItem = id => D.items.find(i => i.id === id);
 const getCust = id => D.customers.find(c => c.id === id);
 const byNewest = (a, b) => b.date.localeCompare(a.date) || (b.at || 0) - (a.at || 0);
 
+
+/* Native equivalents of React error boundaries and a shared loading state.
+   Errors are handled locally; no customer information is sent to an error service. */
+let uiBusy = 0;
+let runtimeErrorVisible = false;
+function setBusy(visible, key) {
+  const overlay = $('#busy');
+  if (!overlay) return;
+  uiBusy = visible ? uiBusy + 1 : Math.max(0, uiBusy - 1);
+  overlay.hidden = uiBusy === 0;
+  if (uiBusy) {
+    $('#busy-text').textContent = t(key || 'ui_loading');
+  }
+  const app = $('#app');
+  if (app && typeof app.setAttribute === 'function') app.setAttribute('aria-busy', String(uiBusy > 0));
+}
+async function withBusy(key, work) {
+  if (uiBusy) return;
+  setBusy(true, key);
+  try {
+    // Invoke work synchronously so browser share/save pickers retain user activation.
+    return await work();
+  } finally {
+    setBusy(false);
+  }
+}
+function setPageTitle(label) {
+  const title = label || (!D ? t('ui_setup_title') : state.cust ? t('ui_customer_title') :
+    t(({home:'tab_home',paninda:'tab_stock',listahan:'tab_utang',pera:'tab_money'})[state.tab] || 'tab_home'));
+  document.title = title + ' · Pin.Pro' + (CHANNEL === 'beta' ? ' Beta' : '');
+}
+function reportUnexpected(err) {
+  // A handler can have changed the working object before throwing; discard unsaved mutations.
+  if (lastSnapshot && D) {
+    try { D = JSON.parse(lastSnapshot); } catch (_) { /* keep stored data untouched */ }
+  }
+  if (typeof console !== 'undefined' && console.error) console.error('Pin.Pro unexpected error', err);
+  uiBusy = 0;
+  const busy = $('#busy'); if (busy) busy.hidden = true;
+  const app = $('#app'); if (app && app.setAttribute) app.setAttribute('aria-busy','false');
+  const pane = $('#app-error');
+  if (!pane) return;
+  pane.innerHTML = '<div class="app-error-card"><span class="app-error-icon" aria-hidden="true">⚠️</span>' +
+    '<h2 id="app-error-title">' + esc(t('ui_error_title')) + '</h2><p>' + esc(t('ui_error_body')) + '</p>' +
+    '<button type="button" class="btn primary" data-ui="retry">' + esc(t('ui_try_again')) + '</button>' +
+    (D ? '<button type="button" class="btn ghost" data-ui="backup">' + esc(t('ui_backup')) + '</button>' : '') +
+    '<button type="button" class="btn ghost" data-ui="dismiss">' + esc(t('ui_dismiss')) + '</button></div>';
+  pane.hidden = false;
+  runtimeErrorVisible = true;
+  const retry = pane.querySelector('[data-ui="retry"]');
+  if (retry && retry.focus) retry.focus();
+}
+function runSafely(action) {
+  try {
+    const result = action();
+    if (result && typeof result.then === 'function') result.catch(reportUnexpected);
+  } catch(err) { reportUnexpected(err); }
+}
+function dismissUnexpected() {
+  const pane = $('#app-error');
+  if (pane) pane.hidden = true;
+  runtimeErrorVisible = false;
+}
+
 let toastT;
 function toast(m) { const el = $('#toast'); el.textContent = m; el.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('show'), 2600); }
 function ask(msg) {
@@ -651,19 +933,33 @@ function sinceLine(cid) {
 
 // ---------- Rendering ----------
 function render() {
+  setPageTitle();
   document.documentElement.lang = lang === 'tl' ? 'fil' : lang;
   const top = $('#top'), tabs = $('#tabs'), app = $('#app');
+  app.className = 'page-' + (state.tab || 'home') + (state.cust ? ' page-detail' : '');
   if (!D) {
     top.innerHTML = `<div class="brand">${logo()}<span>Pin.Pro</span>${betaTag()}</div>`;
     tabs.hidden = true; app.innerHTML = viewSetup(); return;
   }
   tabs.hidden = false;
-  top.innerHTML = `<div class="brand">${logo()}<span>${esc(D.store.name || 'Pin.Pro')}</span>${betaTag()}</div><button class="icon-btn" data-act="settings" aria-label="Settings">⚙️</button>`;
+  top.innerHTML = `<div class="brand">${logo()}<span>${esc(D.store.name || 'Pin.Pro')}</span>${betaTag()}</div><button class="icon-btn" data-act="settings" aria-label="${esc(t('ui_settings_title'))}">⚙️</button>`;
   tabs.innerHTML = [['home', '🏠', 'tab_home'], ['paninda', '📦', 'tab_stock'], ['listahan', '📒', 'tab_utang'], ['pera', '💰', 'tab_money']]
-    .map(([id, ic, k]) => `<button data-act="tab" data-id="${id}" class="${state.tab === id ? 'on' : ''}"><span>${ic}</span>${t(k)}</button>`).join('');
+    .map(([id, ic, k]) => `<button data-act="tab" data-id="${id}" class="${state.tab === id ? 'on' : ''}" ${state.tab === id ? 'aria-current="page"' : ''} aria-label="${esc(t(k))}"><span aria-hidden="true">${tabIcon(id)}</span>${t(k)}</button>`).join('');
   const v = { home: viewHome, paninda: viewPaninda, pera: viewPera,
               listahan: () => state.cust ? viewCustomer(state.cust) : viewListahan() }[state.tab];
   app.innerHTML = v();
+}
+
+
+const NAV_ICONS = {
+  home:'<path d="m3 10 9-7 9 7"/><path d="M5 9.5V20h14V9.5"/><path d="M9.5 20v-7h5v7"/>',
+  paninda:'<rect x="3" y="7" width="18" height="14" rx="2"/><path d="M3 11h18M8 7V4h8v3M9 15h6"/>',
+  listahan:'<rect x="5" y="3" width="15" height="18" rx="2"/><path d="M9 7h7M9 11h7M9 15h5M3 7v2M3 13v2"/>',
+  pera:'<rect x="2.5" y="6" width="19" height="13" rx="2.5"/><path d="M2.5 10h19"/><circle cx="12" cy="14" r="2.5"/>'
+};
+function tabIcon(id) {
+  return '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    (NAV_ICONS[id]||NAV_ICONS.home) + '</svg>';
 }
 
 const betaTag = () => CHANNEL === 'beta' ? '<b class="beta">BETA</b>' : '';
@@ -706,6 +1002,7 @@ function viewHome() {
   const needBackup = !D.store.lastBackup || daysBetween(D.store.lastBackup, td) >= 7;
 
   return `
+  <div class="overview-layout"><div class="overview-main">
   <section class="card hero">
     <div class="row-between"><span class="label">${t('cap_now')}</span>${cap ? `<span class="muted small">${t('watch', { v: peso(cap) })}</span>` : ''}</div>
     <div class="big">${peso(total)}</div>
@@ -729,6 +1026,13 @@ function viewHome() {
     <button class="btn" data-act="newUtang"><span>📝</span>${t('q_utang')}</button>
     <button class="btn" data-act="newBayad"><span>✅</span>${t('q_payment')}</button>
   </div>
+  <div class="shortcut-bar" aria-label="Keyboard shortcuts">
+    <span><kbd>F2</kbd> ${t('q_sale')}</span>
+    <span><kbd>F3</kbd> ${t('q_utang')}</span>
+    <span><kbd>F4</kbd> ${t('q_payment')}</span>
+    <span><kbd>/</kbd> ${t('tab_stock')}</span>
+  </div>
+  </div><div class="overview-side">
 
   <section class="card">
     <div class="row-between"><h3>${t('tab_stock')}</h3>${low.length ? `<span class="badge">${t('low_badge', { n: low.length })}</span>` : ''}</div>
@@ -747,7 +1051,8 @@ function viewHome() {
   </section>
 
   ${needBackup ? `<section class="card"><h3>${t('backup_title')}</h3><p class="muted small" style="margin:0 0 4px">${t('backup_why')}</p>
-    <button class="btn" data-act="backup">${t('backup_now')}</button></section>` : ''}`;
+    <button class="btn" data-act="backup">${t('backup_now')}</button></section>` : ''}
+  </div></div>`;
 }
 
 // ----- Stock -----
@@ -905,10 +1210,12 @@ function openSheet(html) {
   s.innerHTML = `<div class="sheet-bg" data-act="close"></div><div class="sheet-card" role="dialog" aria-modal="true">
     <button class="x close" data-act="close" aria-label="${t('close')}">×</button>${html}</div>`;
   s.classList.add('show'); document.body.classList.add('locked');
+  const heading = html.match(/<h2[^>]*>([\s\S]*?)<\/h2>/i);
+  if (heading) setPageTitle(heading[1].replace(/<[^>]*>/g, '').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'"));
   const f = s.querySelector('input:not([type=hidden]):not([type=checkbox]),select');
   if (f && !f.value) setTimeout(() => f.focus(), 60);
 }
-function closeSheet() { const s = $('#sheet'); s.classList.remove('show'); s.innerHTML = ''; document.body.classList.remove('locked'); }
+function closeSheet() { const s = $('#sheet'); s.classList.remove('show'); s.innerHTML = ''; document.body.classList.remove('locked'); setPageTitle(); }
 
 function sheetItem(id) {
   const i = getItem(id); if (!i) return;
@@ -1018,7 +1325,7 @@ function sheetSettings() {
   if(!D)return sheetStorage();
   const s=D.store;
   state.settingsPage='settings';
-  openSheet(`<h2>⚙️ ${t('other')}</h2><span class="label">${t('language')}</span>${langPicker()}
+  openSheet(`<h2>⚙️ ${t('ui_settings_title')}</h2><span class="label">${t('language')}</span>${langPicker()}
   <form data-form="settings">
     ${field(t('setup_name'),'name',s.name,'text')}
     ${field(t('s_open'),'openingCash',s.openingCash)}
@@ -1029,9 +1336,35 @@ function sheetSettings() {
   <h3>${t('storage_title')}</h3>
   <button class="btn" data-act="storage">📁 ${t('storage_title')}</button>
   <button class="btn ghost" data-act="rules">📘 ${t('rules_title')}</button>
+  <button class="btn ghost" data-act="installHelp">📲 ${t('ui_install_title')}</button>
   ${CHANNEL==='beta'?`<p class="hint">${t('beta_note')}</p>`:''}
   <h3>${t('other')}</h3><button class="btn ghost danger" data-act="wipe">${t('wipe_btn')}</button>
   <p class="muted small" style="text-align:center">${t('kb_used',{v:APP_VERSION+'-beta',k:(Store.size()/1024).toFixed(1)})}</p>`);
+}
+
+
+let pendingInstallEvent = null;
+window.addEventListener('beforeinstallprompt', e => {
+  if (e.preventDefault) e.preventDefault();
+  pendingInstallEvent = e;
+});
+window.addEventListener('appinstalled', () => {pendingInstallEvent=null;});
+function sheetInstall() {
+  state.settingsPage='install';
+  openSheet(`<h2>📲 ${t('ui_install_title')}</h2>
+    ${pendingInstallEvent ? `<button class="btn primary" data-act="installNow">${t('ui_install_now')}</button>` : ''}
+    <section class="card"><h3>💻 ${t('ui_install_laptop')}</h3><p class="hint">${t('ui_install_laptop_help')}</p></section>
+    <section class="card"><h3>📱 ${t('ui_install_ipad')}</h3><p class="hint">${t('ui_install_ipad_help')}</p></section>
+    <section class="card"><h3>📲 ${t('ui_install_android')}</h3><p class="hint">${t('ui_install_android_help')}</p></section>
+    <p class="hint">${t('ui_install_offline')}</p>`);
+}
+async function installNow() {
+  const prompt=pendingInstallEvent;
+  if(!prompt)return sheetInstall();
+  pendingInstallEvent=null;
+  await prompt.prompt();
+  if(prompt.userChoice)await prompt.userChoice;
+  toast(t('ui_install_prompted'));
 }
 
 function sheetStorage() {
@@ -1289,9 +1622,11 @@ function unarchiveCust(id) {
 }
 // ---------- Sharing, backup, restore ----------
 async function shareText(text) {
-  try { if (navigator.share) { await navigator.share({ text }); return; } } catch (e) { if (e.name === 'AbortError') return; }
-  try { await navigator.clipboard.writeText(text); toast(t('t_copied')); }
-  catch (e) { openSheet(`<h2>${t('copy')}</h2><textarea class="copy" readonly>${esc(text)}</textarea>`); }
+  return withBusy('ui_share_progress', async () => {
+    try { if (navigator.share) { await navigator.share({ text }); return; } } catch (e) { if (e.name === 'AbortError') return; }
+    try { await navigator.clipboard.writeText(text); toast(t('t_copied')); }
+    catch (e) { openSheet(`<h2>${t('copy')}</h2><textarea class="copy" readonly>${esc(text)}</textarea>`); }
+  });
 }
 function custMsg(id) {
   const c = getCust(id), bal = balanceOf(id);
@@ -1317,38 +1652,42 @@ function backupFile() {
 
 async function doBackup() {
   if(!D)return;
-  const {name,file}=backupFile();
-  try {
-    if(typeof window.showSaveFilePicker==='function'){
-      const handle=await window.showSaveFilePicker({
-        suggestedName:name,types:[{description:'Pin.Pro JSON backup',accept:{'application/json':['.json']}}]});
-      const writable=await handle.createWritable();
-      await writable.write(file);
-      await writable.close();
-    } else {
-      const url=URL.createObjectURL(file);
-      const a=document.createElement('a');a.href=url;a.download=name;
-      document.body.appendChild(a);a.click();a.remove();
-      setTimeout(()=>URL.revokeObjectURL(url),30000);
+  return withBusy('ui_save_progress', async () => {
+    const {name,file}=backupFile();
+    try {
+      if(typeof window.showSaveFilePicker==='function'){
+        // This must run in the same user-activation turn as the button click.
+        const handle=await window.showSaveFilePicker({
+          suggestedName:name,types:[{description:'Pin.Pro JSON backup',accept:{'application/json':['.json']}}]});
+        const writable=await handle.createWritable();
+        await writable.write(file);
+        await writable.close();
+      } else {
+        const url=URL.createObjectURL(file);
+        const a=document.createElement('a');a.href=url;a.download=name;
+        document.body.appendChild(a);a.click();a.remove();
+        setTimeout(()=>URL.revokeObjectURL(url),30000);
+      }
+      D.store.lastBackup=today();
+      if(commit())toast(t('backup_started'));
+    } catch(err) {
+      if(err.name!=='AbortError')toast(t('t_cant_save'));
     }
-    D.store.lastBackup=today();
-    if(commit())toast(t('backup_started'));
-  } catch(err) {
-    if(err.name!=='AbortError')toast(t('t_cant_save'));
-  }
+  });
 }
 
 async function shareBackup() {
   if(!D)return;
-  try {
-    const {name,file}=backupFile();
-    if(!navigator.canShare||!navigator.canShare({files:[file]}))return toast(t('backup_save'));
-    await navigator.share({files:[file],title:name});
-    D.store.lastBackup=today();
-    if(commit())toast(t('backup_started'));
-  } catch(err) {if(err.name!=='AbortError')toast(t('t_cant_save'));}
+  return withBusy('ui_share_progress', async () => {
+    try {
+      const {name,file}=backupFile();
+      if(!navigator.canShare||!navigator.canShare({files:[file]}))return toast(t('backup_save'));
+      await navigator.share({files:[file],title:name});
+      D.store.lastBackup=today();
+      if(commit())toast(t('backup_started'));
+    } catch(err) {if(err.name!=='AbortError')toast(t('t_cant_save'));}
+  });
 }
-
 function selectBackup(mode) {
   state.fileMode=mode;
   $('#file').click();
@@ -1364,28 +1703,29 @@ async function handleBackupFile(e) {
   const f=e.target.files&&e.target.files[0];
   e.target.value='';
   if(!f)return;
-  try {
-    if(f.size>10*1024*1024)throw Error('too large');
-    const candidate=JSON.parse(await f.text());
-    validateData(candidate);
-    if(state.fileMode==='verify'){
-      if(!D||comparableBackup(candidate)!==comparableBackup(D)){
-        toast(t('backup_mismatch'));return;
+  return withBusy(state.fileMode==='verify' ? 'ui_verify_progress' : 'ui_restore_progress', async () => {
+    try {
+      if(f.size>10*1024*1024)throw Error('too large');
+      const candidate=JSON.parse(await f.text());
+      validateData(candidate);
+      if(state.fileMode==='verify'){
+        if(!D||comparableBackup(candidate)!==comparableBackup(D)){
+          toast(t('backup_mismatch'));return;
+        }
+        D.store.lastBackupChecked=today();
+        if(commit())toast(t('backup_ok'));
+        return;
       }
-      D.store.lastBackupChecked=today();
-      if(commit())toast(t('backup_ok'));
-      return;
-    }
-    if(D&&!(await ask(t('a_restore'))))return;
-    D=migrate(candidate);
-    if(commit()) {
-      storageProblem=false;
-      state.tab='home';state.cust=null;
-      render();toast(t('t_restored'));
-    }
-  } catch(err){toast(t('backup_invalid'));}
+      if(D&&!(await ask(t('a_restore'))))return;
+      D=migrate(candidate);
+      if(commit()) {
+        storageProblem=false;
+        state.tab='home';state.cust=null;
+        render();toast(t('t_restored'));
+      }
+    } catch(err){toast(t('backup_invalid'));}
+  });
 }
-
 // One authoritative import handler, shared by restore and optional verification.
 $('#file').addEventListener('change', handleBackupFile);
 
@@ -1429,6 +1769,7 @@ const ACT = {
     if(open && D){
       if(state.settingsPage==='storage')sheetStorage();
       else if(state.settingsPage==='rules')sheetRules();
+      else if(state.settingsPage==='install')sheetInstall();
       else sheetSettings();
     }
   },
@@ -1436,6 +1777,8 @@ const ACT = {
   settings: sheetSettings,
   storage: sheetStorage,
   rules: sheetRules,
+  installHelp: sheetInstall,
+  installNow,
   item: sheetItem,
   addItem: () => sheetItemForm(),
   editItem: id => sheetItemForm(id),
@@ -1485,21 +1828,64 @@ const ACT = {
 
 document.addEventListener('click', e => {
   const el = e.target.closest('[data-act]'); if (!el) return;
-  const fn = ACT[el.dataset.act]; if (fn) { e.preventDefault(); fn(el.dataset.id, el); }
+  const fn = ACT[el.dataset.act];
+  if (fn) { e.preventDefault(); if (uiBusy || runtimeErrorVisible) return;
+    runSafely(() => fn(el.dataset.id, el)); }
+});
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-ui]'); if (!el) return;
+  e.preventDefault();
+  const op = el.dataset.ui;
+  if (op === 'dismiss') dismissUnexpected();
+  else if (op === 'retry') {
+    dismissUnexpected();
+    runSafely(() => render());
+  } else if (op === 'backup') {
+    dismissUnexpected();
+    runSafely(() => doBackup());
+  }
 });
 document.addEventListener('submit', e => {
   e.preventDefault();
+  if (uiBusy || runtimeErrorVisible) return;
   const f = e.target, fn = FORM[f.dataset.form];
-  if (fn) fn(Object.fromEntries(new FormData(f)), f.dataset.id || null);
+  if (fn) runSafely(() => fn(Object.fromEntries(new FormData(f)), f.dataset.id || null));
 });
 function onEdit(e) {
   const el = e.target;
   if (el.id === 'q') { state.q = el.value; $('#list').innerHTML = state.tab === 'paninda' ? itemRows() : custRows(); return; }
   if (el.hasAttribute('data-preview')) { const f = el.closest('form'); PREVIEW[f.dataset.form] && PREVIEW[f.dataset.form](f); }
 }
-document.addEventListener('input', onEdit);
-document.addEventListener('change', e => { if(e.target.id==='ruleTopic')showRule(); else if(e.target.tagName==='SELECT')onEdit(e); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
+document.addEventListener('input', e => runSafely(() => onEdit(e)));
+
+document.addEventListener('change', e => runSafely(() => { if(e.target.id==='ruleTopic')showRule(); else if(e.target.tagName==='SELECT')onEdit(e); }));
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    if (runtimeErrorVisible) dismissUnexpected();
+    else if (!uiBusy) runSafely(() => closeSheet());
+    return;
+  }
+  if (!D || uiBusy || runtimeErrorVisible || $('#sheet').classList.contains('show')) return;
+  const target = e.target || {};
+  const name = String(target.tagName || '').toLowerCase();
+  if (target.isContentEditable || ['input','textarea','select'].includes(name) ||
+      e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+  if (e.key === '/' && (state.tab === 'paninda' || (state.tab === 'listahan' && !state.cust))) {
+    const search = $('#q');
+    if (search && search.focus) {e.preventDefault();search.focus();}
+    return;
+  }
+  const action = ({ F2:'newIn',F3:'newUtang',F4:'newBayad' })[e.key];
+  if (action && ACT[action]) {e.preventDefault();runSafely(() => ACT[action]());}
+});
+window.addEventListener('error', e => {
+  reportUnexpected(e.error || new Error(e.message || 'Unexpected browser error'));
+  if (e.preventDefault) e.preventDefault();
+});
+window.addEventListener('unhandledrejection', e => {
+  reportUnexpected(e.reason || new Error('Unexpected asynchronous error'));
+  if (e.preventDefault) e.preventDefault();
+});
 
 // ---------- Start ----------
 lang = (s => LI.hasOwnProperty(s) ? s : guessLang())(Store.getLang());
@@ -1508,7 +1894,7 @@ try { if(saved)validateData(saved);D=migrate(saved); }
 catch(_) {storageProblem=true;D=null;}
 try {lastRaw=localStorage.getItem(KEY);}catch(_) {storageProblem=true;}
 lastSnapshot=D?JSON.stringify(D):null;
-render();
+try { render(); } catch (err) { reportUnexpected(err); }
 // Offline support: only when served from a real website (GitHub Pages, etc.)
 if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
   window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));

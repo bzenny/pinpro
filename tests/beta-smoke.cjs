@@ -13,7 +13,7 @@
   function node(key) {
     if (nodes.has(key)) return nodes.get(key);
     const n = { innerHTML: '', textContent: '', value: '', style: {}, hidden: false,
-      classList: { add() {}, remove() {} },
+      classList: { add() {}, remove() {}, contains() {return false;} },
       querySelector() { return null; },
       insertAdjacentHTML(_p,s) { this.innerHTML += s; },
       addEventListener(type,fn) { (this.listeners ||= []).push({type,fn}); },
@@ -21,7 +21,7 @@
     nodes.set(key,n);return n;
   }
   const document = {
-    documentElement: {lang:'en'}, body:node('body'),head:node('head'),
+    documentElement: {lang:'en'}, title:'', body:node('body'),head:node('head'),
     querySelector:node,createElement:()=>node('new'+Math.random()),
     addEventListener() {}
   };
@@ -42,12 +42,55 @@
   });
   vm.runInContext(match[1],ctx,{filename:'beta/index.html',timeout:15000});
   const exec=code=>vm.runInContext(code,ctx);
-  assert.equal(exec('APP_VERSION'),'1.4.0');
+  assert.equal(exec('APP_VERSION'),'1.5.0');
   assert.equal(exec('CHANNEL'),'beta');
+  assert.match(document.title,/Pin\.Pro Beta/,'live document title on setup');
+  assert.match(html,/<meta name="robots" content="noindex, nofollow">/,'beta not indexed');
+  assert.match(html,/@media\(min-width:700px\)/,'tablet rail breakpoint');
+  assert.match(html,/@media\(min-width:1100px\)/,'desktop grid breakpoint');
+  assert.match(html,/@media\(min-width:880px\)/,'tablet-landscape workspace breakpoint');
+  assert.match(html,/\.overview-layout\{display:grid/,'responsive overview container');
+  assert.match(html,/max-width:1270px/,'comfortable desktop counter width');
+  assert.match(html,/\.shortcut-bar/,'optional mouse/keyboard hints');
+  assert.match(html,/F2:'newIn',F3:'newUtang',F4:'newBayad'/,'keyboard counter shortcuts');
+  assert.match(html,/<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">/,
+    'iOS and Android safe-area viewport');
+  assert.match(html,/@media\(max-width:360px\)/,'compact-phone breakpoint');
+  assert.match(html,/env\(safe-area-inset-bottom\)/,'native safe-area inset');
+  assert.match(html,/<div id="busy"/,'accessible shared loading overlay');
+  assert.match(html,/<div id="app-error"/,'accessible error fallback');
+  assert.doesNotMatch(html,/react-helmet|AppContext\.jsx|ErrorBoundary\.jsx/,'no unnecessary React dependencies');
+  assert.equal(exec('typeof tabIcon'),'function','platform-neutral inline navigation icons');
+  assert.match(exec("tabIcon('paninda')"),/<svg/);
   assert.equal(node('#file').listeners.filter(x=>x.type==='change').length,1,'one authoritative restore handler');
+  // A thrown handler must show a localized, dismissible, non-destructive error.
+  exec("runSafely(() => {throw new Error('simulated button failure');})");
+  assert.equal(node('#app-error').hidden,false,'unexpected error is visible to owner');
+  assert.match(node('#app-error').innerHTML,/Something went wrong/);
+  exec('dismissUnexpected()');
+  assert.equal(node('#app-error').hidden,true,'error panel dismisses');
+  await assert.rejects(exec("withBusy('ui_loading', async () => {throw new Error('test progress rejection');})"));
+  assert.equal(node('#busy').hidden,true,'spinner clears after a rejected operation');
+  await exec(`withBusy('ui_save_progress', async () => {
+    if ($('#busy').hidden) throw Error('spinner must be visible while operating');
+    if ($('#busy-text').textContent !== t('ui_save_progress')) throw Error('wrong loading label');
+  })`);
+  assert.equal(node('#busy').hidden,true,'spinner cleared in finally');
   exec('ask = async () => true');
   exec("FORM.setup({name:'QA Store',openingCash:'1000'})");
   assert.ok(db.has('pinpro.beta.v1'),'beta store saved in separate namespace');
+  const snapshot = db.get('pinpro.beta.v1');
+  exec("runSafely(() => {D.store.name='not persisted';throw new Error('simulation');})");
+  assert.equal(exec('D.store.name'),'QA Store','unsaved mutations rolled back on unexpected errors');
+  assert.equal(db.get('pinpro.beta.v1'),snapshot,'prior stored records remain intact');
+  exec("dismissUnexpected()");
+  assert.match(exec('viewHome()'),/overview-layout/,'home separates dashboard and supporting panels');
+  assert.match(node('#tabs').innerHTML,/<svg/,'bottom/side navigation uses crisp icons');
+  assert.ok(!node('#tabs').innerHTML.includes('</button>;'),'tabs joined without stray separators');
+  exec("ACT.tab('paninda')");
+  assert.match(document.title,/Stock|Baligya|Paninda/,'tab title follows current screen');
+  exec("ACT.tab('home')");
+  assert.match(document.title,/Overview|Sumaryo|Buod/,'home page title follows current screen');
   await exec("FORM.item({name:'Rice',cost:'10',price:'15',stock:'5',low:'2',packSize:'1'},null)");
   await exec("FORM.sold({qty:'2',price:'15'},D.items[0].id)");
   assert.equal(exec('D.items[0].stock'),3);
@@ -102,6 +145,7 @@
   await exec("FORM.sold({qty:'1',price:'15'},D.items[0].id)");
   assert.equal(exec('D.items[0].stock'),7);
   assert.equal(exec('cashOnHand()'),beforeExternal);
+  assert.ok(node('#app').innerHTML,'last saved view still rendered after failed storage write');
   failing=false;
   assert.match(exec('viewHome()'), /data-act="backup"/);
   assert.equal((exec('viewHome()').match(/data-act="backup"/g)||[]).length,1,'one home reminder');
@@ -133,6 +177,11 @@
   assert.match(node('#sheet').innerHTML,/Mga lagda sa kwarta/);
   exec('ACT.storage()');
   assert.match(node('#sheet').innerHTML,/Pagtipig ug pagbawi/);
+  exec('ACT.installHelp()');
+  assert.match(node('#sheet').innerHTML,/iPad \/ iPhone/);
+  assert.match(node('#sheet').innerHTML,/Laptop \/ desktop/);
+  assert.match(node('#sheet').innerHTML,/Android phone \/ tablet/);
+  assert.match(node('#sheet').innerHTML,/offline/,'explicit offline installation help');
   await exec("FORM.item({name:'Sardines',cost:'2',price:'4',stock:'0',low:'1',packSize:'1'},null)");
   const spare=exec('D.items[1].id');
   await exec("FORM.sold({qty:'1',price:'4'},D.items[1].id)");
@@ -146,8 +195,8 @@
   exec('ACT.rules()');
   assert.match(node('#sheet').innerHTML,/Mga tuntunin sa pera/);
   const sw=fs.readFileSync('beta/sw.js','utf8');
-  assert.match(sw,/const VERSION = '1\.4\.0'/);
+  assert.match(sw,/const VERSION = '1\.5\.0'/);
   assert.doesNotMatch(sw,/upgrade-v1\.3\.js/);
   assert.match(sw,/'\.\/index\.html'/);
-  console.log('PASS beta 1.4: one-file app, cash/credit, warning sales, funded purchases, weighted costs, undo, storage rollback, weekly backup, strict import, archive, 3-language UI, offline cache');
+  console.log('PASS beta 1.5: responsive shell, native navigation, safe errors, progress, titles, cash/credit, funded purchases, weekly backup, archives, offline caching');
 })().catch(err=>{console.error(err);process.exitCode=1;});

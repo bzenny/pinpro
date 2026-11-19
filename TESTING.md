@@ -1,11 +1,11 @@
-# Pin.Pro Beta v1.4 — Store-Owner Field Test
+# Pin.Pro Beta v1.5 — Store-Owner Field Test
 
 **Beta:** https://bzenny.github.io/pinpro/beta/  
 **Official v1.2:** https://bzenny.github.io/pinpro/ (unchanged)
 
 ## First opening on phone, tablet or computer
 
-1. Open the **beta** while online, then close and reopen it. In Settings, confirm **1.4.0-beta**.
+1. Open the **beta** while online, then close and reopen it. In Settings, confirm **1.5.0-beta**.
 2. The installed beta icon is amber and the app shows a **BETA** badge.
 3. Existing beta stores should load in place. **Do not clear browser data to update.**
 4. Work from sample data first. Keep the paper notebook during the whole field test.
@@ -75,6 +75,25 @@ as *paired bookkeeping records*, not as real cash deposited in the drawer.
 - [ ] Open offline in airplane mode, record a sale, then reconnect
 - [ ] Repeat on Android Chrome and iOS Safari where available
 - [ ] Confirm official v1.2 remains unchanged
+
+## Cross-device launch polish (v1.5)
+
+Test the same beta build across **laptop counter**, **iPad portrait/landscape**, and **phone**. 
+Records stay local to each browser/device. This is layout portability, **not data sync**.
+
+- [ ] Phone at 360–430 CSS px: bottom navigation remains visible, touch buttons and forms do not clip, on-screen keyboard does not hide an action
+- [ ] iPad portrait / landscape: rail navigation, spacing, forms and lists adapt during rotation without resetting the current store
+- [ ] Laptop around 1366×768: left rail, two-column overview, wide stock/customer grids, and keyboard/mouse controls work
+- [ ] Laptop F2: open quick cash sale; F3: open utang; F4: open payment; /: focus stock/customer search outside text inputs
+- [ ] Tap each tab: document/browser title changes and current tab is labeled accessibly
+- [ ] Settings → Install / use offline: instructions are understandable for Chrome/Edge laptop, Safari iPad/iPhone, Chrome Android
+- [ ] Settings and recovery messages still work in Cebuano and Tagalog
+- [ ] Backup/restore/share shows progress and clears it after completion, cancellation or validation failure
+- [ ] Simulated unexpected UI error shows an actionable translated recovery panel instead of a blank page
+- [ ] Offline reopen works after first online load, but not with uninstalled local `file://` HTML alone
+
+The beta includes a native-feeling **responsive PWA**, not completed App Store/Play Store
+native packages. See [LAUNCH_READINESS.md](LAUNCH_READINESS.md) for their next acceptance gates.
 
 ## Report results
 

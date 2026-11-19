@@ -1,6 +1,6 @@
 // File: sw.js — offline support for Pin.Pro
 // When you publish a new version, change VERSION so phones refresh their saved copy.
-const VERSION = '1.4.0';
+const VERSION = '1.5.0';
 const CACHE = 'pinpro-' + new URL(self.registration.scope).pathname + '-' + VERSION;
 const PREFIX = 'pinpro-' + new URL(self.registration.scope).pathname + '-';
 const FILES = ['./', './index.html', './manifest.webmanifest',

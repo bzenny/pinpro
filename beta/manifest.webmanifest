@@ -1,14 +1,13 @@
 {
-  "name": "Pin.Pro Beta v1.3",
+  "name": "Pin.Pro Beta v1.5",
   "short_name": "Pin.Pro β",
-  "description": "Offline sari-sari store money, stock and utang — beta with local backup and finance rules.",
+  "description": "Pin.Pro beta: an offline-first, mobile-ready sari-sari store companion for stock, utang and money.",
   "id": "./",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#f4f5f2",
-  "theme_color": "#d97706",
+  "background_color": "#f4f7fb",
+  "theme_color": "#1765d4",
   "lang": "en",
   "icons": [
     {

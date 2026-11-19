@@ -37,6 +37,22 @@ finance rules. The home backup reminder is weekly, not transaction-by-transactio
 
 Never put an untested file straight into the root — that's the official app people rely on.
 
+## Beta v1.5 — a fluid store app
+
+The beta is one vanilla JavaScript application file with no React dependencies:
+- Phones: safe-area-aware bottom dock, stacked data cards, one-handed touch controls.
+- iPads/tablets: navigation rail and spacious layouts that adapt to rotation.
+- Counter laptops: two-column overview, adaptive item/customer grids and keyboard shortcuts.
+- More resilient experience: translated error recovery, loading indicators for file operations,
+  screen-specific titles and optional install instructions.
+
+The same records **do not automatically synchronize** between a laptop, iPad and phone.
+The local device/browser owns its data; use a verified JSON backup for deliberate transfers.
+An installed PWA supports offline use after a successful first online load.
+
+See [Launch readiness](LAUNCH_READINESS.md) for the cross-device UX contract, platform requirements
+and native store release gates. The native iOS/Android packages are not yet shipped.
+
 ## Later: Play Store / App Store
 
 Both apps remain single-file HTML applications suitable for later Capacitor integration.
