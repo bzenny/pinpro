@@ -269,6 +269,34 @@ input:focus,select:focus,textarea:focus{outline:3px solid rgba(23,101,212,.20);o
   html{scroll-behavior:auto}
 }
 
+
+/* Fluid information architecture: stacked on phone, spacious on tablet,
+   and a balanced work surface on laptop and desktop checkout counters. */
+.overview-layout{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
+.overview-main,.overview-side{min-width:0}
+#app.page-paninda #list,#app.page-listahan:not(.page-detail) #list{
+  display:grid;grid-template-columns:minmax(0,1fr);gap:0;align-content:start
+}
+#app.page-paninda #list .row,#app.page-listahan #list .row{min-width:0}
+@media(min-width:880px){
+  #app{max-width:960px}
+  .overview-layout{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:18px}
+  .overview-main>.card,.overview-side>.card{margin-bottom:16px}
+  .overview-main>.grid4{margin-bottom:16px}
+}
+@media(min-width:1100px){
+  #app{max-width:1150px}
+  #app.page-paninda #list,#app.page-listahan:not(.page-detail) #list{
+    grid-template-columns:repeat(2,minmax(0,1fr));column-gap:14px;row-gap:0
+  }
+  .overview-layout{grid-template-columns:minmax(0,1.16fr) minmax(0,.84fr);gap:24px}
+  .overview-main .card.hero{padding:24px}
+  .page-pera>.grid3,.page-pera>.grid2{max-width:780px}
+}
+@media(min-width:1400px){
+  #app{max-width:1270px}
+  .overview-layout{gap:30px}
+}
 </style>
 </head>
 <body>
@@ -892,6 +920,7 @@ function render() {
   setPageTitle();
   document.documentElement.lang = lang === 'tl' ? 'fil' : lang;
   const top = $('#top'), tabs = $('#tabs'), app = $('#app');
+  app.className = 'page-' + (state.tab || 'home') + (state.cust ? ' page-detail' : '');
   if (!D) {
     top.innerHTML = `<div class="brand">${logo()}<span>Pin.Pro</span>${betaTag()}</div>`;
     tabs.hidden = true; app.innerHTML = viewSetup(); return;
@@ -899,7 +928,7 @@ function render() {
   tabs.hidden = false;
   top.innerHTML = `<div class="brand">${logo()}<span>${esc(D.store.name || 'Pin.Pro')}</span>${betaTag()}</div><button class="icon-btn" data-act="settings" aria-label="${esc(t('ui_settings_title'))}">⚙️</button>`;
   tabs.innerHTML = [['home', '🏠', 'tab_home'], ['paninda', '📦', 'tab_stock'], ['listahan', '📒', 'tab_utang'], ['pera', '💰', 'tab_money']]
-    .map(([id, ic, k]) => `<button data-act="tab" data-id="${id}" class="${state.tab === id ? 'on' : ''}" ${state.tab === id ? 'aria-current="page"' : ''} aria-label="${esc(t(k))}"><span aria-hidden="true">${tabIcon(id)}</span>${t(k)}</button>`).join(';');
+    .map(([id, ic, k]) => `<button data-act="tab" data-id="${id}" class="${state.tab === id ? 'on' : ''}" ${state.tab === id ? 'aria-current="page"' : ''} aria-label="${esc(t(k))}"><span aria-hidden="true">${tabIcon(id)}</span>${t(k)}</button>`).join('');
   const v = { home: viewHome, paninda: viewPaninda, pera: viewPera,
               listahan: () => state.cust ? viewCustomer(state.cust) : viewListahan() }[state.tab];
   app.innerHTML = v();
@@ -957,6 +986,7 @@ function viewHome() {
   const needBackup = !D.store.lastBackup || daysBetween(D.store.lastBackup, td) >= 7;
 
   return `
+  <div class="overview-layout"><div class="overview-main">
   <section class="card hero">
     <div class="row-between"><span class="label">${t('cap_now')}</span>${cap ? `<span class="muted small">${t('watch', { v: peso(cap) })}</span>` : ''}</div>
     <div class="big">${peso(total)}</div>
@@ -980,6 +1010,7 @@ function viewHome() {
     <button class="btn" data-act="newUtang"><span>📝</span>${t('q_utang')}</button>
     <button class="btn" data-act="newBayad"><span>✅</span>${t('q_payment')}</button>
   </div>
+  </div><div class="overview-side">
 
   <section class="card">
     <div class="row-between"><h3>${t('tab_stock')}</h3>${low.length ? `<span class="badge">${t('low_badge', { n: low.length })}</span>` : ''}</div>
@@ -998,7 +1029,8 @@ function viewHome() {
   </section>
 
   ${needBackup ? `<section class="card"><h3>${t('backup_title')}</h3><p class="muted small" style="margin:0 0 4px">${t('backup_why')}</p>
-    <button class="btn" data-act="backup">${t('backup_now')}</button></section>` : ''}`;
+    <button class="btn" data-act="backup">${t('backup_now')}</button></section>` : ''}
+  </div></div>`;
 }
 
 // ----- Stock -----
