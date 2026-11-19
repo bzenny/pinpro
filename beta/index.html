@@ -331,6 +331,17 @@ input:focus,select:focus,textarea:focus{outline:3px solid rgba(23,101,212,.20);o
 const LANGS = [['en', 'English'], ['ceb', 'Cebuano'], ['tl', 'Tagalog']];
 const LI = { en: 0, ceb: 1, tl: 2 };
 const STR = {
+  // Native device installation guidance and offline-use transparency
+  ui_install_title: ["Install / use offline","I-install / gamita offline","I-install / gamitin offline"],
+  ui_install_laptop: ["Laptop / desktop","Laptop / desktop","Laptop / desktop"],
+  ui_install_laptop_help: ["Open Pin.Pro in Chrome or Edge, use the browser menu or address-bar install option, then launch it like a normal app.","Ablihi ang Pin.Pro sa Chrome o Edge; pilia ang Install sa browser menu o address bar, unya ablihi isip app.","Buksan ang Pin.Pro sa Chrome o Edge; piliin ang Install sa menu o address bar, tapos buksan bilang app."],
+  ui_install_ipad: ["iPad / iPhone","iPad / iPhone","iPad / iPhone"],
+  ui_install_ipad_help: ["Open Pin.Pro in Safari, tap Share, then Add to Home Screen. Launch it from its icon.","Ablihi ang Pin.Pro sa Safari, pindota ang Share, unya Add to Home Screen. Ablihi sa icon.","Buksan ang Pin.Pro sa Safari, pindutin ang Share, pagkatapos Add to Home Screen. Buksan sa icon."],
+  ui_install_android: ["Android phone / tablet","Android phone / tablet","Android phone / tablet"],
+  ui_install_android_help: ["Open Pin.Pro in Chrome, open the browser menu, then choose Install app or Add to Home screen.","Ablihi ang Pin.Pro sa Chrome, adto sa browser menu, pilia Install app o Add to Home screen.","Buksan ang Pin.Pro sa Chrome, sa browser menu piliin ang Install app o Add to Home screen."],
+  ui_install_offline: ["Open the app once while online to cache it. Then test airplane mode. Records belong to this device/browser only; use JSON backup and restore to transfer between devices. No automatic syncing yet.","Ablihi kausa online aron ma-cache, unya sulayi ang airplane mode. Ang datos ania ra sa device/browser; gamita ang JSON backup ug restore sa pagbalhin. Wala pay awtomatikong sync.","Buksan muna nang online para ma-cache, tapos subukan ang airplane mode. Ang data ay nasa device/browser na ito; JSON backup at restore para maglipat. Wala pang awtomatikong sync."],
+  ui_install_now: ["Install app on this device","I-install ang app sa device","I-install ang app sa device"],
+  ui_install_prompted: ["Follow your browser's install prompt.","Sunda ang install prompt sa browser.","Sundin ang install prompt ng browser."],
   // Beta v1.5: recovery, progress, and navigation feedback
   ui_error_title: ["Something went wrong","Adunay wala molampos","May nangyaring problema"],
   ui_error_body: ["This action stopped. Your previously saved store records have not been cleared. Try reopening this screen; you can also save a backup.","Nahimo ang paghunong sa aksyon. Wala gipapas ang na-save nang datos. Sulayi pag-abli pag-usab o pag-save og backup.","Huminto ang gawain. Hindi binura ang dati nang na-save na tala. Buksan muli ang screen o mag-save ng backup."],
@@ -1325,9 +1336,35 @@ function sheetSettings() {
   <h3>${t('storage_title')}</h3>
   <button class="btn" data-act="storage">📁 ${t('storage_title')}</button>
   <button class="btn ghost" data-act="rules">📘 ${t('rules_title')}</button>
+  <button class="btn ghost" data-act="installHelp">📲 ${t('ui_install_title')}</button>
   ${CHANNEL==='beta'?`<p class="hint">${t('beta_note')}</p>`:''}
   <h3>${t('other')}</h3><button class="btn ghost danger" data-act="wipe">${t('wipe_btn')}</button>
   <p class="muted small" style="text-align:center">${t('kb_used',{v:APP_VERSION+'-beta',k:(Store.size()/1024).toFixed(1)})}</p>`);
+}
+
+
+let pendingInstallEvent = null;
+window.addEventListener('beforeinstallprompt', e => {
+  if (e.preventDefault) e.preventDefault();
+  pendingInstallEvent = e;
+});
+window.addEventListener('appinstalled', () => {pendingInstallEvent=null;});
+function sheetInstall() {
+  state.settingsPage='install';
+  openSheet(`<h2>📲 ${t('ui_install_title')}</h2>
+    ${pendingInstallEvent ? `<button class="btn primary" data-act="installNow">${t('ui_install_now')}</button>` : ''}
+    <section class="card"><h3>💻 ${t('ui_install_laptop')}</h3><p class="hint">${t('ui_install_laptop_help')}</p></section>
+    <section class="card"><h3>📱 ${t('ui_install_ipad')}</h3><p class="hint">${t('ui_install_ipad_help')}</p></section>
+    <section class="card"><h3>📲 ${t('ui_install_android')}</h3><p class="hint">${t('ui_install_android_help')}</p></section>
+    <p class="hint">${t('ui_install_offline')}</p>`);
+}
+async function installNow() {
+  const prompt=pendingInstallEvent;
+  if(!prompt)return sheetInstall();
+  pendingInstallEvent=null;
+  await prompt.prompt();
+  if(prompt.userChoice)await prompt.userChoice;
+  toast(t('ui_install_prompted'));
 }
 
 function sheetStorage() {
@@ -1732,6 +1769,7 @@ const ACT = {
     if(open && D){
       if(state.settingsPage==='storage')sheetStorage();
       else if(state.settingsPage==='rules')sheetRules();
+      else if(state.settingsPage==='install')sheetInstall();
       else sheetSettings();
     }
   },
@@ -1739,6 +1777,8 @@ const ACT = {
   settings: sheetSettings,
   storage: sheetStorage,
   rules: sheetRules,
+  installHelp: sheetInstall,
+  installNow,
   item: sheetItem,
   addItem: () => sheetItemForm(),
   editItem: id => sheetItemForm(id),
