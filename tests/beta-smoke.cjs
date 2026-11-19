@@ -48,6 +48,13 @@
   assert.match(html,/<meta name="robots" content="noindex, nofollow">/,'beta not indexed');
   assert.match(html,/@media\(min-width:700px\)/,'tablet rail breakpoint');
   assert.match(html,/@media\(min-width:1100px\)/,'desktop grid breakpoint');
+  assert.match(html,/@media\(min-width:880px\)/,'tablet-landscape workspace breakpoint');
+  assert.match(html,/\.overview-layout\{display:grid/,'responsive overview container');
+  assert.match(html,/max-width:1270px/,'comfortable desktop counter width');
+  assert.match(html,/\.shortcut-bar/,'optional mouse/keyboard hints');
+  assert.match(html,/F2:'newIn',F3:'newUtang',F4:'newBayad'/,'keyboard counter shortcuts');
+  assert.match(html,/<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">/,
+    'iOS and Android safe-area viewport');
   assert.match(html,/@media\(max-width:360px\)/,'compact-phone breakpoint');
   assert.match(html,/env\(safe-area-inset-bottom\)/,'native safe-area inset');
   assert.match(html,/<div id="busy"/,'accessible shared loading overlay');
@@ -62,6 +69,8 @@
   assert.match(node('#app-error').innerHTML,/Something went wrong/);
   exec('dismissUnexpected()');
   assert.equal(node('#app-error').hidden,true,'error panel dismisses');
+  await assert.rejects(exec("withBusy('ui_loading', async () => {throw new Error('test progress rejection');})"));
+  assert.equal(node('#busy').hidden,true,'spinner clears after a rejected operation');
   await exec(`withBusy('ui_save_progress', async () => {
     if ($('#busy').hidden) throw Error('spinner must be visible while operating');
     if ($('#busy-text').textContent !== t('ui_save_progress')) throw Error('wrong loading label');
@@ -70,6 +79,11 @@
   exec('ask = async () => true');
   exec("FORM.setup({name:'QA Store',openingCash:'1000'})");
   assert.ok(db.has('pinpro.beta.v1'),'beta store saved in separate namespace');
+  const snapshot = db.get('pinpro.beta.v1');
+  exec("runSafely(() => {D.store.name='not persisted';throw new Error('simulation');})");
+  assert.equal(exec('D.store.name'),'QA Store','unsaved mutations rolled back on unexpected errors');
+  assert.equal(db.get('pinpro.beta.v1'),snapshot,'prior stored records remain intact');
+  exec("dismissUnexpected()");
   assert.match(exec('viewHome()'),/overview-layout/,'home separates dashboard and supporting panels');
   assert.match(node('#tabs').innerHTML,/<svg/,'bottom/side navigation uses crisp icons');
   assert.ok(!node('#tabs').innerHTML.includes('</button>;'),'tabs joined without stray separators');
@@ -163,6 +177,11 @@
   assert.match(node('#sheet').innerHTML,/Mga lagda sa kwarta/);
   exec('ACT.storage()');
   assert.match(node('#sheet').innerHTML,/Pagtipig ug pagbawi/);
+  exec('ACT.installHelp()');
+  assert.match(node('#sheet').innerHTML,/iPad \/ iPhone/);
+  assert.match(node('#sheet').innerHTML,/Laptop \/ desktop/);
+  assert.match(node('#sheet').innerHTML,/Android phone \/ tablet/);
+  assert.match(node('#sheet').innerHTML,/offline/,'explicit offline installation help');
   await exec("FORM.item({name:'Sardines',cost:'2',price:'4',stock:'0',low:'1',packSize:'1'},null)");
   const spare=exec('D.items[1].id');
   await exec("FORM.sold({qty:'1',price:'4'},D.items[1].id)");
