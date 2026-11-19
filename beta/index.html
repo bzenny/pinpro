@@ -637,6 +637,70 @@ const getItem = id => D.items.find(i => i.id === id);
 const getCust = id => D.customers.find(c => c.id === id);
 const byNewest = (a, b) => b.date.localeCompare(a.date) || (b.at || 0) - (a.at || 0);
 
+
+/* Native equivalents of React error boundaries and a shared loading state.
+   Errors are handled locally; no customer information is sent to an error service. */
+let uiBusy = 0;
+let runtimeErrorVisible = false;
+function setBusy(visible, key) {
+  const overlay = $('#busy');
+  if (!overlay) return;
+  uiBusy = visible ? uiBusy + 1 : Math.max(0, uiBusy - 1);
+  overlay.hidden = uiBusy === 0;
+  if (uiBusy) {
+    $('#busy-text').textContent = t(key || 'ui_loading');
+  }
+  const app = $('#app');
+  if (app && typeof app.setAttribute === 'function') app.setAttribute('aria-busy', String(uiBusy > 0));
+}
+async function withBusy(key, work) {
+  if (uiBusy) return;
+  setBusy(true, key);
+  try {
+    // Invoke work synchronously so browser share/save pickers retain user activation.
+    return await work();
+  } finally {
+    setBusy(false);
+  }
+}
+function setPageTitle(label) {
+  const title = label || (!D ? t('ui_setup_title') : state.cust ? t('ui_customer_title') :
+    t(({home:'tab_home',paninda:'tab_stock',listahan:'tab_utang',pera:'tab_money'})[state.tab] || 'tab_home'));
+  document.title = title + ' · Pin.Pro' + (CHANNEL === 'beta' ? ' Beta' : '');
+}
+function reportUnexpected(err) {
+  // A handler can have changed the working object before throwing; discard unsaved mutations.
+  if (lastSnapshot && D) {
+    try { D = JSON.parse(lastSnapshot); } catch (_) { /* keep stored data untouched */ }
+  }
+  if (typeof console !== 'undefined' && console.error) console.error('Pin.Pro unexpected error', err);
+  uiBusy = 0;
+  const busy = $('#busy'); if (busy) busy.hidden = true;
+  const app = $('#app'); if (app && app.setAttribute) app.setAttribute('aria-busy','false');
+  const pane = $('#app-error');
+  if (!pane) return;
+  pane.innerHTML = '<div class="app-error-card"><span class="app-error-icon" aria-hidden="true">⚠️</span>' +
+    '<h2 id="app-error-title">' + esc(t('ui_error_title')) + '</h2><p>' + esc(t('ui_error_body')) + '</p>' +
+    '<button type="button" class="btn primary" data-ui="retry">' + esc(t('ui_try_again')) + '</button>' +
+    (D ? '<button type="button" class="btn ghost" data-ui="backup">' + esc(t('ui_backup')) + '</button>' : '') +
+    '<button type="button" class="btn ghost" data-ui="dismiss">' + esc(t('ui_dismiss')) + '</button></div>';
+  pane.hidden = false;
+  runtimeErrorVisible = true;
+  const retry = pane.querySelector('[data-ui="retry"]');
+  if (retry && retry.focus) retry.focus();
+}
+function runSafely(action) {
+  try {
+    const result = action();
+    if (result && typeof result.then === 'function') result.catch(reportUnexpected);
+  } catch(err) { reportUnexpected(err); }
+}
+function dismissUnexpected() {
+  const pane = $('#app-error');
+  if (pane) pane.hidden = true;
+  runtimeErrorVisible = false;
+}
+
 let toastT;
 function toast(m) { const el = $('#toast'); el.textContent = m; el.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('show'), 2600); }
 function ask(msg) {
@@ -695,6 +759,7 @@ function sinceLine(cid) {
 
 // ---------- Rendering ----------
 function render() {
+  setPageTitle();
   document.documentElement.lang = lang === 'tl' ? 'fil' : lang;
   const top = $('#top'), tabs = $('#tabs'), app = $('#app');
   if (!D) {
@@ -702,9 +767,9 @@ function render() {
     tabs.hidden = true; app.innerHTML = viewSetup(); return;
   }
   tabs.hidden = false;
-  top.innerHTML = `<div class="brand">${logo()}<span>${esc(D.store.name || 'Pin.Pro')}</span>${betaTag()}</div><button class="icon-btn" data-act="settings" aria-label="Settings">⚙️</button>`;
+  top.innerHTML = `<div class="brand">${logo()}<span>${esc(D.store.name || 'Pin.Pro')}</span>${betaTag()}</div><button class="icon-btn" data-act="settings" aria-label="${esc(t('ui_settings_title'))}">⚙️</button>`;
   tabs.innerHTML = [['home', '🏠', 'tab_home'], ['paninda', '📦', 'tab_stock'], ['listahan', '📒', 'tab_utang'], ['pera', '💰', 'tab_money']]
-    .map(([id, ic, k]) => `<button data-act="tab" data-id="${id}" class="${state.tab === id ? 'on' : ''}"><span>${ic}</span>${t(k)}</button>`).join('');
+    .map(([id, ic, k]) => `<button data-act="tab" data-id="${id}" class="${state.tab === id ? 'on' : ''}" ${state.tab === id ? 'aria-current="page"' : ''} aria-label="${esc(t(k))}"><span aria-hidden="true">${ic}</span>${t(k)}</button>`).join('');
   const v = { home: viewHome, paninda: viewPaninda, pera: viewPera,
               listahan: () => state.cust ? viewCustomer(state.cust) : viewListahan() }[state.tab];
   app.innerHTML = v();
@@ -949,10 +1014,12 @@ function openSheet(html) {
   s.innerHTML = `<div class="sheet-bg" data-act="close"></div><div class="sheet-card" role="dialog" aria-modal="true">
     <button class="x close" data-act="close" aria-label="${t('close')}">×</button>${html}</div>`;
   s.classList.add('show'); document.body.classList.add('locked');
+  const heading = html.match(/<h2[^>]*>([\s\S]*?)<\/h2>/i);
+  if (heading) setPageTitle(heading[1].replace(/<[^>]*>/g, '').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'"));
   const f = s.querySelector('input:not([type=hidden]):not([type=checkbox]),select');
   if (f && !f.value) setTimeout(() => f.focus(), 60);
 }
-function closeSheet() { const s = $('#sheet'); s.classList.remove('show'); s.innerHTML = ''; document.body.classList.remove('locked'); }
+function closeSheet() { const s = $('#sheet'); s.classList.remove('show'); s.innerHTML = ''; document.body.classList.remove('locked'); setPageTitle(); }
 
 function sheetItem(id) {
   const i = getItem(id); if (!i) return;
@@ -1062,7 +1129,7 @@ function sheetSettings() {
   if(!D)return sheetStorage();
   const s=D.store;
   state.settingsPage='settings';
-  openSheet(`<h2>⚙️ ${t('other')}</h2><span class="label">${t('language')}</span>${langPicker()}
+  openSheet(`<h2>⚙️ ${t('ui_settings_title')}</h2><span class="label">${t('language')}</span>${langPicker()}
   <form data-form="settings">
     ${field(t('setup_name'),'name',s.name,'text')}
     ${field(t('s_open'),'openingCash',s.openingCash)}
