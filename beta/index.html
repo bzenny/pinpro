@@ -1400,9 +1400,11 @@ function unarchiveCust(id) {
 }
 // ---------- Sharing, backup, restore ----------
 async function shareText(text) {
-  try { if (navigator.share) { await navigator.share({ text }); return; } } catch (e) { if (e.name === 'AbortError') return; }
-  try { await navigator.clipboard.writeText(text); toast(t('t_copied')); }
-  catch (e) { openSheet(`<h2>${t('copy')}</h2><textarea class="copy" readonly>${esc(text)}</textarea>`); }
+  return withBusy('ui_share_progress', async () => {
+    try { if (navigator.share) { await navigator.share({ text }); return; } } catch (e) { if (e.name === 'AbortError') return; }
+    try { await navigator.clipboard.writeText(text); toast(t('t_copied')); }
+    catch (e) { openSheet(`<h2>${t('copy')}</h2><textarea class="copy" readonly>${esc(text)}</textarea>`); }
+  });
 }
 function custMsg(id) {
   const c = getCust(id), bal = balanceOf(id);
@@ -1428,38 +1430,42 @@ function backupFile() {
 
 async function doBackup() {
   if(!D)return;
-  const {name,file}=backupFile();
-  try {
-    if(typeof window.showSaveFilePicker==='function'){
-      const handle=await window.showSaveFilePicker({
-        suggestedName:name,types:[{description:'Pin.Pro JSON backup',accept:{'application/json':['.json']}}]});
-      const writable=await handle.createWritable();
-      await writable.write(file);
-      await writable.close();
-    } else {
-      const url=URL.createObjectURL(file);
-      const a=document.createElement('a');a.href=url;a.download=name;
-      document.body.appendChild(a);a.click();a.remove();
-      setTimeout(()=>URL.revokeObjectURL(url),30000);
+  return withBusy('ui_save_progress', async () => {
+    const {name,file}=backupFile();
+    try {
+      if(typeof window.showSaveFilePicker==='function'){
+        // This must run in the same user-activation turn as the button click.
+        const handle=await window.showSaveFilePicker({
+          suggestedName:name,types:[{description:'Pin.Pro JSON backup',accept:{'application/json':['.json']}}]});
+        const writable=await handle.createWritable();
+        await writable.write(file);
+        await writable.close();
+      } else {
+        const url=URL.createObjectURL(file);
+        const a=document.createElement('a');a.href=url;a.download=name;
+        document.body.appendChild(a);a.click();a.remove();
+        setTimeout(()=>URL.revokeObjectURL(url),30000);
+      }
+      D.store.lastBackup=today();
+      if(commit())toast(t('backup_started'));
+    } catch(err) {
+      if(err.name!=='AbortError')toast(t('t_cant_save'));
     }
-    D.store.lastBackup=today();
-    if(commit())toast(t('backup_started'));
-  } catch(err) {
-    if(err.name!=='AbortError')toast(t('t_cant_save'));
-  }
+  });
 }
 
 async function shareBackup() {
   if(!D)return;
-  try {
-    const {name,file}=backupFile();
-    if(!navigator.canShare||!navigator.canShare({files:[file]}))return toast(t('backup_save'));
-    await navigator.share({files:[file],title:name});
-    D.store.lastBackup=today();
-    if(commit())toast(t('backup_started'));
-  } catch(err) {if(err.name!=='AbortError')toast(t('t_cant_save'));}
+  return withBusy('ui_share_progress', async () => {
+    try {
+      const {name,file}=backupFile();
+      if(!navigator.canShare||!navigator.canShare({files:[file]}))return toast(t('backup_save'));
+      await navigator.share({files:[file],title:name});
+      D.store.lastBackup=today();
+      if(commit())toast(t('backup_started'));
+    } catch(err) {if(err.name!=='AbortError')toast(t('t_cant_save'));}
+  });
 }
-
 function selectBackup(mode) {
   state.fileMode=mode;
   $('#file').click();
@@ -1475,28 +1481,29 @@ async function handleBackupFile(e) {
   const f=e.target.files&&e.target.files[0];
   e.target.value='';
   if(!f)return;
-  try {
-    if(f.size>10*1024*1024)throw Error('too large');
-    const candidate=JSON.parse(await f.text());
-    validateData(candidate);
-    if(state.fileMode==='verify'){
-      if(!D||comparableBackup(candidate)!==comparableBackup(D)){
-        toast(t('backup_mismatch'));return;
+  return withBusy(state.fileMode==='verify' ? 'ui_verify_progress' : 'ui_restore_progress', async () => {
+    try {
+      if(f.size>10*1024*1024)throw Error('too large');
+      const candidate=JSON.parse(await f.text());
+      validateData(candidate);
+      if(state.fileMode==='verify'){
+        if(!D||comparableBackup(candidate)!==comparableBackup(D)){
+          toast(t('backup_mismatch'));return;
+        }
+        D.store.lastBackupChecked=today();
+        if(commit())toast(t('backup_ok'));
+        return;
       }
-      D.store.lastBackupChecked=today();
-      if(commit())toast(t('backup_ok'));
-      return;
-    }
-    if(D&&!(await ask(t('a_restore'))))return;
-    D=migrate(candidate);
-    if(commit()) {
-      storageProblem=false;
-      state.tab='home';state.cust=null;
-      render();toast(t('t_restored'));
-    }
-  } catch(err){toast(t('backup_invalid'));}
+      if(D&&!(await ask(t('a_restore'))))return;
+      D=migrate(candidate);
+      if(commit()) {
+        storageProblem=false;
+        state.tab='home';state.cust=null;
+        render();toast(t('t_restored'));
+      }
+    } catch(err){toast(t('backup_invalid'));}
+  });
 }
-
 // One authoritative import handler, shared by restore and optional verification.
 $('#file').addEventListener('change', handleBackupFile);
 
@@ -1596,21 +1603,50 @@ const ACT = {
 
 document.addEventListener('click', e => {
   const el = e.target.closest('[data-act]'); if (!el) return;
-  const fn = ACT[el.dataset.act]; if (fn) { e.preventDefault(); fn(el.dataset.id, el); }
+  const fn = ACT[el.dataset.act];
+  if (fn) { e.preventDefault(); if (uiBusy || runtimeErrorVisible) return;
+    runSafely(() => fn(el.dataset.id, el)); }
+});
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-ui]'); if (!el) return;
+  e.preventDefault();
+  const op = el.dataset.ui;
+  if (op === 'dismiss') dismissUnexpected();
+  else if (op === 'retry') {
+    dismissUnexpected();
+    runSafely(() => render());
+  } else if (op === 'backup') {
+    dismissUnexpected();
+    runSafely(() => doBackup());
+  }
 });
 document.addEventListener('submit', e => {
   e.preventDefault();
+  if (uiBusy || runtimeErrorVisible) return;
   const f = e.target, fn = FORM[f.dataset.form];
-  if (fn) fn(Object.fromEntries(new FormData(f)), f.dataset.id || null);
+  if (fn) runSafely(() => fn(Object.fromEntries(new FormData(f)), f.dataset.id || null));
 });
 function onEdit(e) {
   const el = e.target;
   if (el.id === 'q') { state.q = el.value; $('#list').innerHTML = state.tab === 'paninda' ? itemRows() : custRows(); return; }
   if (el.hasAttribute('data-preview')) { const f = el.closest('form'); PREVIEW[f.dataset.form] && PREVIEW[f.dataset.form](f); }
 }
-document.addEventListener('input', onEdit);
-document.addEventListener('change', e => { if(e.target.id==='ruleTopic')showRule(); else if(e.target.tagName==='SELECT')onEdit(e); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
+document.addEventListener('input', e => runSafely(() => onEdit(e)));
+
+document.addEventListener('change', e => runSafely(() => { if(e.target.id==='ruleTopic')showRule(); else if(e.target.tagName==='SELECT')onEdit(e); }));
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (runtimeErrorVisible) dismissUnexpected();
+  else if (!uiBusy) runSafely(() => closeSheet());
+});
+window.addEventListener('error', e => {
+  reportUnexpected(e.error || new Error(e.message || 'Unexpected browser error'));
+  if (e.preventDefault) e.preventDefault();
+});
+window.addEventListener('unhandledrejection', e => {
+  reportUnexpected(e.reason || new Error('Unexpected asynchronous error'));
+  if (e.preventDefault) e.preventDefault();
+});
 
 // ---------- Start ----------
 lang = (s => LI.hasOwnProperty(s) ? s : guessLang())(Store.getLang());
@@ -1619,7 +1655,7 @@ try { if(saved)validateData(saved);D=migrate(saved); }
 catch(_) {storageProblem=true;D=null;}
 try {lastRaw=localStorage.getItem(KEY);}catch(_) {storageProblem=true;}
 lastSnapshot=D?JSON.stringify(D):null;
-render();
+try { render(); } catch (err) { reportUnexpected(err); }
 // Offline support: only when served from a real website (GitHub Pages, etc.)
 if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
   window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
