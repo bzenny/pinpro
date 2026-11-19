@@ -297,6 +297,11 @@ input:focus,select:focus,textarea:focus{outline:3px solid rgba(23,101,212,.20);o
   #app{max-width:1270px}
   .overview-layout{gap:30px}
 }
+
+.shortcut-bar{display:none;flex-wrap:wrap;gap:9px 16px;color:var(--muted);font-size:12px;margin:10px 0 14px;padding:10px 12px;background:#edf3fc;border-radius:12px}
+.shortcut-bar span{display:flex;align-items:center;gap:5px}
+.shortcut-bar kbd{display:inline-block;min-width:25px;border:1px solid #d1ddec;background:#fff;border-bottom-width:2px;border-radius:6px;font:600 11px system-ui,sans-serif;text-align:center;padding:3px 5px;color:var(--ink)}
+@media(min-width:900px) and (hover:hover) and (pointer:fine){.shortcut-bar{display:flex}}
 </style>
 </head>
 <body>
@@ -1009,6 +1014,12 @@ function viewHome() {
     <button class="btn" data-act="newOut"><span>💸</span>${t('q_expense')}</button>
     <button class="btn" data-act="newUtang"><span>📝</span>${t('q_utang')}</button>
     <button class="btn" data-act="newBayad"><span>✅</span>${t('q_payment')}</button>
+  </div>
+  <div class="shortcut-bar" aria-label="Keyboard shortcuts">
+    <span><kbd>F2</kbd> ${t('q_sale')}</span>
+    <span><kbd>F3</kbd> ${t('q_utang')}</span>
+    <span><kbd>F4</kbd> ${t('q_payment')}</span>
+    <span><kbd>/</kbd> ${t('tab_stock')}</span>
   </div>
   </div><div class="overview-side">
 
@@ -1809,9 +1820,23 @@ document.addEventListener('input', e => runSafely(() => onEdit(e)));
 
 document.addEventListener('change', e => runSafely(() => { if(e.target.id==='ruleTopic')showRule(); else if(e.target.tagName==='SELECT')onEdit(e); }));
 document.addEventListener('keydown', e => {
-  if (e.key !== 'Escape') return;
-  if (runtimeErrorVisible) dismissUnexpected();
-  else if (!uiBusy) runSafely(() => closeSheet());
+  if (e.key === 'Escape') {
+    if (runtimeErrorVisible) dismissUnexpected();
+    else if (!uiBusy) runSafely(() => closeSheet());
+    return;
+  }
+  if (!D || uiBusy || runtimeErrorVisible || $('#sheet').classList.contains('show')) return;
+  const target = e.target || {};
+  const name = String(target.tagName || '').toLowerCase();
+  if (target.isContentEditable || ['input','textarea','select'].includes(name) ||
+      e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+  if (e.key === '/' && (state.tab === 'paninda' || (state.tab === 'listahan' && !state.cust))) {
+    const search = $('#q');
+    if (search && search.focus) {e.preventDefault();search.focus();}
+    return;
+  }
+  const action = ({ F2:'newIn',F3:'newUtang',F4:'newBayad' })[e.key];
+  if (action && ACT[action]) {e.preventDefault();runSafely(() => ACT[action]());}
 });
 window.addEventListener('error', e => {
   reportUnexpected(e.error || new Error(e.message || 'Unexpected browser error'));
