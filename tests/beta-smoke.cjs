@@ -62,10 +62,10 @@
   assert.match(node('#app-error').innerHTML,/Something went wrong/);
   exec('dismissUnexpected()');
   assert.equal(node('#app-error').hidden,true,'error panel dismisses');
-  await exec("withBusy('ui_save_progress', async () => {
+  await exec(`withBusy('ui_save_progress', async () => {
     if ($('#busy').hidden) throw Error('spinner must be visible while operating');
     if ($('#busy-text').textContent !== t('ui_save_progress')) throw Error('wrong loading label');
-  })");
+  })`);
   assert.equal(node('#busy').hidden,true,'spinner cleared in finally');
   exec('ask = async () => true');
   exec("FORM.setup({name:'QA Store',openingCash:'1000'})");
