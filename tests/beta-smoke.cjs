@@ -72,7 +72,7 @@
   assert.ok(db.has('pinpro.beta.v1'),'beta store saved in separate namespace');
   assert.match(exec('viewHome()'),/overview-layout/,'home separates dashboard and supporting panels');
   assert.match(node('#tabs').innerHTML,/<svg/,'bottom/side navigation uses crisp icons');
-  assert.doesNotMatch(node('#tabs').innerHTML,/<\\/button>;/,'tabs joined without stray separators');
+  assert.ok(!node('#tabs').innerHTML.includes('</button>;'),'tabs joined without stray separators');
   exec("ACT.tab('paninda')");
   assert.match(document.title,/Stock|Baligya|Paninda/,'tab title follows current screen');
   exec("ACT.tab('home')");
